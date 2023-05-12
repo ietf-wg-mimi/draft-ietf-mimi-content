@@ -40,6 +40,12 @@ the MLS protocol [@!I-D.ietf-mls-protocol].
 
 # Introduction
 
+RFC EDITOR: PLEASE REMOVE THE FOLLOWING PARAGRAPH. The source for
+this draft is maintained in GitHub. Suggested changes should be
+submitted as pull requests at https://github.com/ietf-wg-mimi/draft-ietf-mimi-content.
+Editorial changes can be managed in GitHub, but any substantive 
+change should be discussed on the MIMI mailing list (mimi@ietf.org).
+
 MLS [@!I-D.ietf-mls-protocol] is a group key establishment protocol
 motivated by the desire for group chat with efficient end-to-end encryption.
 While one of the motivations of MLS is interoperable standards-based secure
