@@ -273,7 +273,8 @@ enum Disposition {
     inline = 4,
     icon = 5,
     attachment = 6,
-    session = 7
+    session = 7,
+    preview = 8
 };
 
 struct NestablePart {
@@ -837,7 +838,133 @@ Person & email address to contact for further information:
 
 # Security Considerations
 
-TBC
+## General handling
+
+The following cases are examples of nonsensical values that most likely
+represent malicious messages. These should be logged and discarded.
+
+* sender of the message
+  - where the apparent sender is not a member of the target MLS group
+* message IDs
+  - which are very long (greater than 4096 octets)
+  - where the sender domain and the `messageId` domain are different
+  - where the `messageId` in this format is expected to match a similar
+    field in the enclosing transfer protocol, but does not
+* timestamps
+  - received more than a few minutes in the future, or 
+  - before the first concrete syntax of this document is published
+* inReplyTo
+  - `inReplyTo.hash-alg` is `none` even when the `inReplyTo.message` is present
+  - `inReplyTo.hash-alg` is an unknown value
+  - the length of `inReplyTo.replyToHash` does not correspond to the algorithm
+    specified in `inReplyTo.hash-alg`
+* topicId
+  - the `topicId` is very long (greater than 4096 octets)
+  - a topic is specified, but an `inReplyTo` or `replaces` field refers to a
+    message outside of the topic
+* expires
+  - refers to a date more than a year in the past
+  - refers to a date more than a year in the future
+* body
+  - has too many body parts (more than 1024)
+  - is nested too deeply (more than 4 levels deep)
+  - is too large (according to local policy)
+  - has an unknown PartSemantics value
+  - contains `partIndex` values which are not continuous from zero
+
+For the avoidance of doubt, the following cases may be examples of legitimate use
+cases, and should not be considered the result of a malicious sender.
+
+* message IDs
+  - where `inReplyTo.message` or `replaces` refer to an unknown message.
+    Such a message could have been sent before the local client joined.
+* body
+  - where a body part contains an unrecognized Disposition value. The
+  unknown value should be treated as if it where `render`.
+  - where a contentType is unrecognized or unsupported.
+  - where a language tag is unrecognized or unsupported.
+
+## Alternate content rendering
+
+This document includes a mechanism where the sender can offer alternate
+versions of content in a single message. For example, the sender could
+send:
+
+* an plain text and an HTML version of a text message
+* a thumbnail preview and link to a high-resolution image or video
+* versions of the same message in multiple languages
+* an PNG image and a scalable vector graphics version of a line drawing
+
+A malicious client could use this mechanism to send content that will appear
+different to a subset of the members of a group and possibly elicit an
+incorrect or misleading response.
+
+~~~
+Message as seen by Alice (manager)
+Xavier: Do you want me to reserve a room for the review meeting?
+
+Message as seen by Bob (Alice's assistant)
+Xavier: @Bob I need to pickup Alice's Ferarri keys. She'll confirm
+
+Reply sent by Alice
+Alice: Yes please.
+~~~
+
+## Link and Mention handling
+
+Both Markdown and HTML support links. Using the example of an HTTP link,
+if the rendered text and the link target match exactly or are canonically
+equivalent, there is no need for confirmation if the end user selects the link.
+
+~~~
+[example.com/foobar](https://example.com/foobar)
+[https://example.com/foobar](https://example.com/foobar)
+[https://example.com:443/foobar](https://example.com/foobar)
+~~~
+
+However, if the link text is different, the user should be presented with
+an alert warning that the text is not the same.
+
+~~~
+[https://example.com/foobar](https://spearphishers.example/foobar)
+~~~
+
+Likewise, for a Mention, if the link text exactly matches the IM URI, or
+exactly matches the canonical handle for that URI, the IM application
+can render the link as a Mention. In some clients, this may result in
+a different notification policy.
+
+~~~
+[im:alice-smith@example.com](im:alice-smith@example.com)
+[@AliceSmith](im:alice-smith@example.com)
+~~~
+
+Otherwise, the application, should render the text as any other link
+that requires an alert warning.
+
+## Delivery and Read Receipts
+
+Delivery and Read Receipts can provide useful information inside a group,
+or they can reveal sensitive private information. In many IM systems
+there is are per-group policies for and/or delivery read receipts:
+
+* they are required
+* they are permitted, but optional
+* they are forbidden
+
+In the first case, everyone in the group would have to claim to support
+read receipts to be in the group and agree to the policy of sending them
+whenever a message was read. A user who did not wish to send read receipts could
+review the policy (automatically or manually) and choose not to join
+the group. Of course, requiring read receipts is a cooperative effort
+just like using self-deleting messages. A malicious client could obviously 
+read a message and not send a read receipt, or send a read receipt for a
+message that was never rendered. However, cooperating clients have a way to
+agree that they will send read receipts when a message is read in a specific
+group.
+
+In the second case, sending a read receipt would be at the discretion
+of each receiver of the message (via local preferences).
 
 
 {backmatter}
