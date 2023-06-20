@@ -172,10 +172,10 @@ struct MessageId {
 struct MimiContent {
     MessageId messageId;     // required value {1}
     uint64 timestamp;        // milliseconds since 01-Jan-1970 {2}
-    ReplyToInfo inReplyTo;   // {3}
-    MessageId replaces;      // {4}
-    Octets topicId;          // {5}
-    uint32 expires;          // 0 = does not expire {6}
+    MessageId replaces;      // {3}
+    Octets topicId;          // {4}
+    uint32 expires;          // 0 = does not expire {5}
+    ReplyToInfo inReplyTo;   // {6}
     NestablePart body;       // {7}
 };
 ```
@@ -187,14 +187,51 @@ the whole number of milliseconds since the start of the UNIX epoch
 
 ## Message Behavior Fields 
 
-The `inReplyTo` {3} data field indicates that the current message is
+The `replaces` {3} data field indicates that the current message
+is a replacement or update to a previous message whose message ID
+is in the `replaces` data field. It is used to edit previously-sent
+messages, delete previously-sent messages, and adjust reactions to
+messages to which the client previously reacted.
+ If the `replaces` field is empty (i.e. both the message ID
+`localPart` and the `domain` are zero length), the receiver
+assumes that the current message has not identified any special
+relationship with another previous message. 
+
+The `topicId` {4} data field indicates that the current message is
+part of a logical grouping of messages which all share the same
+value in the `topicId` data field. If the `topicId` is zero length,
+there is no such grouping.
+
+The `expires` {5} data field is a hint from the sender to the receiver
+that the message should be locally deleted and disregarded at a specific
+timestamp in the future. Indicate a message with no specific expiration
+time with the value zero. The data field is an unsigned integer number of
+seconds after the start of the UNIX epoch. Using an 32-bit unsigned
+integer allows expiration dates until the year 2106. Note that
+specifying an expiration time provides no assurance that the client
+actually honors or can honor the expiration time, nor that the end user
+didn't otherwise save the expiring message (ex: via a screenshot).
+
+The `inReplyTo` {6} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
 It contains the message ID of the referenced message and the SHA-256
-hash [@!RFC6234] of its `body.content`. If the `message` field is
+hash [@!RFC6234] of its `MimiContent` structure. If the `message` field is
 empty (i.e. both the message ID `localPart` and the `domain` are
 zero length), the receiver assumes that the current message has not
 identified any special relationship with another previous message;
-in that case the `hash-alg` is `none` and the `replyToHash` is zero length.
+in that case the `hash-alg` is `none` and the `replyToHash` is zero
+length. 
+
+The `inReplyTo` hash is a message digest used to make sure that a MIMI
+message cannot refer to a sequence of referred messages which refers
+back to itself. When replying a client checks if the referenced message
+is itself a Reply. It compares the hash
+
+When receiving a message, the client verifies that the hash is correct. Next
+it checks if the referenced message is itself a Reply. If so, it continues
+following the referenced messages, checking that neither the messageId nor
+the hash of any of referenced messages indicates a Reply which "loops" back
+to a message later in the inReplyTo chain.
 
 ``` c++
 enum HashAlgorithm {
@@ -208,35 +245,11 @@ struct ReplyToInfo {
     Octets replyToHash;      // empty or hash of body.content
 };
 ```
-
-The `replaces` {4} data field indicates that the current message
-is a replacement or update to a previous message whose message ID
-is in the `replaces` data field. It is used to edit previously-sent
-messages, delete previously-sent messages, and adjust reactions to
-messages to which the client previously reacted.
- If the `replaces` field is empty (i.e. both the message ID
-`localPart` and the `domain` are zero length), the receiver
-assumes that the current message has not identified any special
-relationship with another previous message. Note that a `inReplyTo`
+Note that a `inReplyTo`
 always references a specific message ID. Even if the original message
 was edited several times, a reply always refers to a specific version
 of that message, and SHOULD refer to the most current version at the
 time the reply is sent.
-
-The `topicId` {5} data field indicates that the current message is
-part of a logical grouping of messages which all share the same
-value in the `topicId` data field. If the `topicId` is zero length,
-there is no such grouping.
-
-The `expires` {6} data field is a hint from the sender to the receiver
-that the message should be locally deleted and disregarded at a specific
-timestamp in the future. Indicate a message with no specific expiration
-time with the value zero. The data field is an unsigned integer number of
-seconds after the start of the UNIX epoch. Using an 32-bit unsigned
-integer allows expiration dates until the year 2106. Note that
-specifying an expiration time provides no assurance that the client
-actually honors or can honor the expiration time, nor that the end user
-didn't otherwise save the expiring message (ex: via a screenshot).
 
 
 ## Message Bodies
