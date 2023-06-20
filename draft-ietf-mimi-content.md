@@ -180,7 +180,8 @@ struct MimiContent {
 };
 ```
 
-Every MIMI content message has a timestamp {2}, represented as
+Every MIMI content message has a timestamp {2} when the message was
+encrypted. It is represented as
 the whole number of milliseconds since the start of the UNIX epoch
 (01-Jan-1970 00:00:00 UTC).
 
@@ -726,16 +727,16 @@ Clients compliant with MIMI MUST be able to receive the following media types:
 * application/mimi-content -- the MIMI Content container format (described in this document)
 * text/plain;charset=utf-8 
 * text/markdown;variant=GFM -- Github Flavored Markdown [@!GFM])
-* message/external-body [@!RFC4483]
+* message/external-body -- [@!RFC4483]
 
 Note that it is acceptable to render the contents of a received markdown
 document as plain text.
 
 The following MIME types are RECOMMENDED:
 
-* text/markdown;variant=CommonMark [CommonMark](https://spec.commonmark.org/0.30)
+* text/markdown;variant=CommonMark -- [CommonMark](https://spec.commonmark.org/0.30)
 * text/html
-* application/mimi-message-status (described in this document)
+* application/mimi-message-status -- (described in this document)
 * image/jpeg
 * image/png
 
@@ -751,20 +752,87 @@ encryption. An example is given in the Appendix.
 
 # IANA Considerations
 
-## MIME subtype registration of application/mimi-message-status
-
-This document proposes registration of a media subtype with IANA.
-
-~~~~~~~
-TBC
-~~~~~~~
-
 ## MIME subtype registration of application/mimi-content
 
 This document proposes registration of a media subtype with IANA.
 
 ~~~~~~~
-TBC
+Type name: application
+
+Subtype name: mimi-content
+
+Required parameters: none
+
+Optional parameters: none
+
+Encoding considerations:
+   This message type should be encoded as binary data
+
+Security considerations:
+   See Section A of RFC XXXX
+
+Interoperability considerations:
+   See Section Y.Z of RFC XXXX
+
+Published specification: RFC XXXX
+
+Applications that use this media type:
+   Instant Messaging Applications
+
+Fragment identifier considerations: N/A
+
+Additional information:
+
+   Deprecated alias names for this type: N/A
+   Magic number(s): N/A
+   File extension(s): N/A
+   Macintosh file type code(s): N/A
+
+Person & email address to contact for further information:
+   IETF MIMI Working Group mimi@ietf.org
+
+
+~~~~~~~
+
+## MIME subtype registration of application/mimi-message-status
+
+This document proposes registration of a media subtype with IANA.
+
+~~~~~~~
+Type name: application
+
+Subtype name: mimi-message-status
+
+Required parameters: none
+
+Optional parameters: none
+
+Encoding considerations:
+   This message type should be encoded as binary data
+
+Security considerations:
+   See Section A of RFC XXXX
+
+Interoperability considerations:
+   See Section Y.Z of RFC XXXX
+
+Published specification: RFC XXXX
+
+Applications that use this media type:
+   Instant Messaging Applications
+
+Fragment identifier considerations: N/A
+
+Additional information:
+
+   Deprecated alias names for this type: N/A
+   Magic number(s): N/A
+   File extension(s): N/A
+   Macintosh file type code(s): N/A
+
+Person & email address to contact for further information:
+   IETF MIMI Working Group mimi@ietf.org
+
 ~~~~~~~
 
 # Security Considerations
@@ -943,4 +1011,5 @@ struct {
 * changed timestamp to a whole number of milliseconds since the epoch
 to avoid confusion
 * added Security Considerations section
+* added IANA Considerations section
 * added change log
