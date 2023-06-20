@@ -1013,27 +1013,42 @@ of each receiver of the message (via local preferences).
 
 ## Proprietary and Common formats sent as alternatives
 
-TODO: Revise to use the built-in NestedPart data structure.
+Example of body needed to send this profile and a proprietary
+messaging protocol simultaneously.
 
-Example sending this profile and proprietary messaging protocol simultaneously.
 ~~~~~~~
-Content-type: multipart/alternative; boundary=XcrSXMwuRwk9
+body = new NestablePart();
+body.disposition = render;
+body.language = "";
+body.partIndex = 0;
+body.partSemantics = chooseOne;
 
---XcrSXMwuRwk9
-Content-type: message/cpim
+s = new SinglePart();
+s.contentType = "application/mimi-content";
+s.content = "\xabcdef0123456789....";
 
-From: <im:alice-smith@example.com>
-DateTime: 2022-02-08T22:13:45-00:00
-Message-ID: <28fd19857ad7@example.com>
+standardPart = new NestablePart()
+standardPart.disposition = render;
+standardPart.language = "";
+standardPart.partIndex = 1;
+standardPart.partSemantics = singlePart;
+standardPart.part = s;
 
-Content-Type: text/plain; charset=utf-8
+p = new SinglePart();
+p.contentType = 
+  "application/vnd.examplevendor-fancy-im-message";
+p.content = "\x0123456789abcdef....";
 
-Test Message
---XcrSXMwuRwk9
-Content-type: application/vnd.examplevendor-fancy-im-message
+proprietaryPart = new NestablePart()
+proprietaryPart.disposition = render;
+proprietaryPart.language = "";
+proprietaryPart.partIndex = 2;
+proprietaryPart.partSemantics = singlePart;
+proprietaryPart.part = p;
 
-<content of example vendor's fancy proprietary format>
---XcrSXMwuRwk9
+body.part = new MultiParts();
+body.part.push(standardPart);
+body.part.push(proprietaryPart);
 ~~~~~~~
 
 ## Mulitple Reactions Example
@@ -1052,78 +1067,30 @@ TBC
 
 ## TLS Presentation Language multipart container format
 
-TODO: Revise to use the built-in NestedPart data structure.
-
 In a heterogenous group of IM clients, it is often desirable to send more than one
 media type as alternatives, such that IM clients have a choice of which media
 type to render. For example, imagine an IM group containing a set of clients
 which support a common video format and a subset which only support animated GIFs.
-The sender could send a `multipart/alternative` [@?RFC2046] container containing
-both media types. Every client in the group chat could render something resembling the
-media sent.
+The sender could use a `MultiParts` NestablePart with `chooseOne` semantics
+containing both media types. Every client in the group chat could render something
+resembling the media sent. This is analogous to the `multipart/alternative` [@?RFC2046]
+media type.
 
 Likewise it is often desirable to send more than one media type intended to be
 rendered together as in (for example a rich text document with embedded images),
-which can be represented using the `multipart/mixed` [@?RFC2046] media type.
+which can be represented using a `MultiParts` NestablePart with `processAll`
+semantics. This is analogous to the `multipart/mixed` [@?RFC2046] media type.
 
 Some implementors complain that the multipart types are unnatural to use inside a
 binary protocol which requires explicit lengths such as MLS
 [@?I-D.ietf-mls-protocol]. Concretely, an implementation has to scan through the
 entire content to construct a boundary token which is not contained in the content.
 
-While the author does not care about the specific syntax used, for comparison
-purposes presents a multipart container format using the TLS presentation language
-syntax used by the MLS protocol.
-
 Note that there is a minor semantic difference between multipart/alternative and
-the proposal below. In multipart/alternative, the parts are presented in
-preference order by the sender. The receiver is support to render the first type
-which it supports. This container includes an ordering flag. As well, even if the
-flag is ordered, it is up to the IETF community to decide if it is acceptable for
-the receiver to choose its "best" format to render among an ordered preference list
-provided by the sender, or if the receiver must respect the ordered preference of
-the sender.
+`MultiParts` with `chooseOne` semantics. In multipart/alternative, the parts are 
+presented in preference order by the sender. With `MultiParts` the receiver
+chooses its "best" format to render according to its own preferences.
 
-``` tls
-struct {
-    /* a valid "Language-tag" as defined in RFC 5646 */
-    opaque language_tag<1..52>;
-} LanguageTag;
-
-struct {
-  ContentType content_type;
-  LanguageTag content_languages<V>;
-  opaque<V> body;
-} Part;
-
-enum {
-  reserved(0),
-  multipart_container_v1(1),
-  (255)
-} MultipartVersion;
-
-enum {
-  reserved(0),
-  mixed(1),
-  alternative(2),
-  (255)
-} MultipartSemantics;
-
-enum {
-  reserved(0),
-  unordered(1),
-  ordered(2),
-  (255)
-} MultipartOrdering;
-
-struct {
-    uint8 container_version;
-    uint16 number_of_parts;
-    MultipartSemantics semantics;
-    MultipartOrdering ordering;
-    Part parts<V>;
-} MultipartContainer;
-```
 # Changelog
 
 ## Changes between draft-mahy-mimi-content-01 and draft-mahy-mimi-content-02
