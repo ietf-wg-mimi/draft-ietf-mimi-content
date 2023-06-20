@@ -63,7 +63,7 @@ SIP [@?RFC3261] and XMPP [@?RFC6120].  For a variety of practical reasons, inter
 end-to-end encryption between IM systems was never deployed commercially.
 
 There are now several instant messaging vendors implementing MLS, and the
-MIMI (More Instant Messaging Interoperability) Working Group is charted
+MIMI (More Instant Messaging Interoperability) Working Group is chartered
 to standardize an extensible interoperable messaging format for common
 features to be conveyed "inside" MLS application messages.
 Most of these features can reuse the semantics of
@@ -73,7 +73,7 @@ MIMI problem outline [@!I-D.mahy-mimi-problem-outline].
 
 This document assumes that MLS clients advertise media types they support
 and can determine what media types are required to join a
-specific MLS group using the content advertisement extensions in
+specific MLS group using the content advertisement extensions in Section 2.3 of
 [@!I-D.ietf-mls-extensions]. It allows implementations to define MLS groups
 with different media type requirements and allows MLS clients to send
 extended or proprietary messages that would be interpreted by some members
@@ -107,7 +107,7 @@ of identifier described later as the senderUserUrl in the examples, which
 is analogous to the From header in email.
 * client/device identifier (internal representation). This is the type
 of identifier described as the senderClientUrl in the examples.
-* group or conversation or channel name (either internal or external representation).
+* group or room or conversation or channel name (either internal or external representation).
 This is the type of identifier described as the MLS group URL in the examples.
 
 This proposal relies on URIs for naming and identifiers. All the example use
@@ -170,39 +170,62 @@ struct MessageId {
 };
 
 struct MimiContent {
-    MessageId messageId;         // required value {1}
-    double timestamp;            // seconds since 01-Jan-1970 {2}
-    MessageId inReplyTo;         // {3}
-    MessageId replaces;          // {4}
-    MessageId threadId;          // {5}
-    uint32 expires;              // 0 = does not expire {6}
-    NestablePart body;           // {7}
+    MessageId messageId;     // required value {1}
+    uint64 timestamp;        // milliseconds since 01-Jan-1970 {2}
+    ReplyToInfo inReplyTo;   // {3}
+    MessageId replaces;      // {4}
+    Octets topicId;          // {5}
+    uint32 expires;          // 0 = does not expire {6}
+    NestablePart body;       // {7}
 };
 ```
 
 Every MIMI content message has a timestamp {2}, represented as
-the number of (fractional) seconds since the start of the UNIX epoch
+the whole number of milliseconds since the start of the UNIX epoch
 (01-Jan-1970 00:00:00 UTC).
 
 ## Message Behavior Fields 
 
 The `inReplyTo` {3} data field indicates that the current message is
-a related continuation of the message ID of another message sent
-in the same MLS group. For all three message behavior fields which
-take a message ID, if the field is empty (i.e. both the message ID
-`localPart` and the `domain` are zero length), the receiver
-assumes that the current message has not identified any special
-relationship with another previous message.
+a related continuation of another message sent in the same MLS group.
+It contains the message ID of the referenced message and the SHA-256
+hash [@!RFC6234] of its `body.content`. If the `message` field is
+empty (i.e. both the message ID `localPart` and the `domain` are
+zero length), the receiver assumes that the current message has not
+identified any special relationship with another previous message;
+in that case the `hash-alg` is `none` and the `replyToHash` is zero length.
+
+``` c++
+enum HashAlgorithm {
+    none = 0,
+    sha256 = 1
+};
+
+struct ReplyToInfo {
+    MessageId message;
+    HashAlgorithm hash-alg;  
+    Octets replyToHash;      // empty or hash of body.content
+};
+```
 
 The `replaces` {4} data field indicates that the current message
 is a replacement or update to a previous message whose message ID
 is in the `replaces` data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
+ If the `replaces` field is empty (i.e. both the message ID
+`localPart` and the `domain` are zero length), the receiver
+assumes that the current message has not identified any special
+relationship with another previous message. Note that a `inReplyTo`
+always references a specific message ID. Even if the original message
+was edited several times, a reply always refers to a specific version
+of that message, and SHOULD refer to the most current version at the
+time the reply is sent.
 
-The `threadId` {5} data field indicates that the current message is
-part of a logical thread of messages which begins with a message with
-the message ID specified in the `threadId` data field.
+The `topicId` {5} data field indicates that the current message is
+part of a logical grouping of messages which all share the same
+value in the `topicId` data field. If the `topicId` is zero length,
+there is no such grouping.
 
 The `expires` {6} data field is a hint from the sender to the receiver
 that the message should be locally deleted and disregarded at a specific
@@ -238,7 +261,7 @@ enum PartSemantics { // {10}
     singlePart = 1, // the bodyParts is a single part
     chooseOne = 2,  // receiver picks exactly one part to process
     singleUnit = 3  // receiver processes all parts as single unit
-    processAll = 4 // receiver processes all parts individually
+    processAll = 4  // receiver processes all parts individually
 };
 
 enum Disposition {
@@ -270,7 +293,7 @@ for example a choice among multiple languages, or between two
 different image formats. The relationship semantics among the parts
 is specified as an enumeration {10}. 
 
-The `nullPart` part semantic is used when there is no body part—for
+The `nullPart` part semantic is used when there is no body part--for
 deleting and unliking. The `singlePart` part semantic is used when
 there is a single body part.
 
@@ -301,12 +324,13 @@ the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
 [@?RFC2183].
 The `render` and `inline` dispositions mean that the content should
-be rendered "inline" directly in the chat interface.
+be rendered "inline" directly in the chat interface. In the MIMI context
+the two dispositions are equivalent.
 The `attachment` disposition means that the content is intended to
 be downloaded by the receiver instead of being rendered immediately.
 The `reaction` disposition means that the content is a single
 reaction to another message, typically an emoji, but which could be
-an image, sound, or video. The disposition was originally published
+an image, sound, or video. The `reaction` disposition was originally published
 in [@?RFC9078], but was incorrectly placed in the Content Disposition
 Parameters IANA registry instead of in the Content Disposition Values
 registry.
@@ -345,9 +369,9 @@ struct MessageDerivedValues {
 
 # Examples
 
-In the following examples, we assume that an MLS group is already established and that either out-of-band
-or using the MLS protocol or MLS extensions that the following is known to every
-member of the group:
+In the following examples, we assume that an MLS group is already established and
+that either out-of-band or using the MLS protocol or MLS extensions that the
+following is known to every member of the group:
 
 * The membership of the group (via MLS).
 * The identity of any MLS client which sends an application message (via MLS).
@@ -381,7 +405,7 @@ Below are the relevant data fields set by the sender:
 
 ~~~~~~~ c++
 messageId = "28fd19857ad7@example.com";
-timestamp = 1644387225.019;  // 2022-02-08T22:13:45-00:00
+timestamp = 1644387225019;  // 2022-02-08T22:13:45-00:00
 expires = 0;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
@@ -404,8 +428,11 @@ The data fields needed:
 
 ~~~~~~~ c++
 messageId = "e701beee59f9@example.com";
-timestamp = 1644387237.492;   // 2022-02-08T22:13:57-00:00
-inReplyTo: "28fd19857ad7@example.com";
+timestamp = 1644387237492;   // 2022-02-08T22:13:57-00:00
+inReplyTo.message: "28fd19857ad7@example.com";
+inReplyTo.hash-alg: sha256;
+inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
+                       "\x7668174ba385af066011e43bd7e51501";
 expires = 0;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
@@ -414,8 +441,8 @@ body.content = "Right on! _Congratulations_ 'all!";
 
 ## Reaction
 
-A reaction, uses the Disposition token of reaction. It is modeled on the
-reaction Content-Disposition token defined in [@RFC9078].
+A reaction looks like a reply, but uses the Disposition token of reaction. It is
+modeled on the reaction Content-Disposition token defined in [@RFC9078].
 Both indicate that the intended disposition of the
 contents of the message is a reaction.
 
@@ -434,13 +461,16 @@ Note that many systems allow mutiple independent reactions per sender.
 
 ~~~~~~~ c++
 messageId = "1a771ca1d84f@example.com";
-timestamp = 1644387237.728;   // 2022-02-08T22:13:57-00:00
-inReplyTo: "28fd19857ad7@example.com";
+timestamp = 1644387237728;   // 2022-02-08T22:13:57-00:00
+inReplyTo.message: "28fd19857ad7@example.com";
+inReplyTo.hash-alg: sha256;
+inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
+                       "\x7668174ba385af066011e43bd7e51501";
 expires = 0;
 body.disposition = reaction;
 body.partIndex = 0;
 body.contentType = "text/plain;charset=utf-8";
-body.content = "♥";
+body.content = "\u2665"; \\ ♥
 ~~~~~~~
 
 ## Mentions
@@ -460,7 +490,7 @@ or HTML rich content. For example, a mention using Markdown is indicated below.
 
 ~~~~~~~ c++
 messageId = "4dcab7711a77@example.com";
-timestamp = 1644387243.008;   // 2022-02-08T22:14:03-00:00
+timestamp = 1644387243008;   // 2022-02-08T22:14:03-00:00
 expires = 0;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
@@ -494,7 +524,7 @@ Here Bob Jones corrects a typo in his original message:
 
 ~~~~~~~ c++
 messageId = "89d3472622a4@example.com";
-timestamp = 1644387248.621;   // 2022-02-08T22:14:08-00:00
+timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
 replaces: "e701beee59f9@example.com";
 expires = 0;
 body.partIndex = 0;
@@ -518,7 +548,7 @@ as shown below.
 
 ~~~~~~~
 messageId = "89d3472622a4@example.com";
-timestamp = 1644387248.621;   // 2022-02-08T22:14:08-00:00
+timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
 replaces: "e701beee59f9@example.com";
 expires = 0;
 body.partSemantics = nullPart;
@@ -540,7 +570,7 @@ created the reaction, as shown below.
 
 ~~~~~~~ c++
 messageId = "d052cace46f8@example.com";
-timestamp = 1644387250.389;   // 2022-02-08T22:14:10-00:00
+timestamp = 1644387250389;   // 2022-02-08T22:14:10-00:00
 replaces: "1a771ca1d84f@example.com";
 expires = 0;
 body.disposition = reaction;
@@ -568,7 +598,7 @@ network connectivity necessary.
   
 ~~~~~~~ c++
 messageId = "5c95a4dfddab@example.com";
-timestamp = 1644389403.227;   // 2022-02-08T22:49:06-00:00
+timestamp = 1644389403227;   // 2022-02-08T22:49:06-00:00
 expires = 1644390004;         // ~10 minutes later
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
@@ -585,8 +615,8 @@ The disposition data field is set to attachment.
 ~~~~~~~
 body.disposition = attachment;
 body.contentType = "message/external-body; access-type=URL;" +
-  "URL=\"https://example.com/storage/bigfile.m4v\"" +
-  "size=708234961";
+  "URL=\"https://example.com/storage/bigfile.m4v\";" +
+  "size=708234961;hash=10AB568E91245681AC1B";
 ~~~~~~~
 
 
@@ -606,10 +636,15 @@ body.contentType = "message/external-body; access-type=URL;" +
   "URL=\"https://example.com/join/12345\"";
 ~~~~~~~
 
-## Threading
+## Topics / Threading
 
-Clients participating in a thread populate the `threadId` with the
-message ID of the first message sent in the thread. The sort order
+As popularized by the messaging application Slack, some messaging
+applications have a notion of a Topic or message Thread
+(not to be confused with message threading as used in email).
+Clients beginning a new "topic" populate the `topicId` with a unique
+opaque octet string. This could be the message ID of the first message
+sent related to the topic. Subsequent messages may include the same
+`topicId` for those messages to be associated with the same topic. The sort order
 for messages within a thread uses the timestamp field. If more than
 one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
@@ -658,7 +693,7 @@ struct PerMessageStatus {
 };
 
 struct MessageStatusReport {
-    double timestamp;
+    unit64 timestamp;
     // a vector of message statuses in the same MLS group
     std::vector<PerMessageStatus> statuses;
 };
@@ -668,7 +703,7 @@ struct MessageStatusReport {
   im:bob-jones@example.com
 
 ~~~~~~~ c++
-timestamp = 1644284703.227;
+timestamp = 1644284703227;
 statuses[0].messageId = "4dcab7711a77@example.com";
 statuses[0].status = read;
 statuses[1].messageId = "285f75c46430@example.com";
@@ -688,9 +723,9 @@ As the MIMI Content container is just a container, the plain text or rich
 text messages sent inside, and any image or other formats needs to be specified.
 Clients compliant with MIMI MUST be able to receive the following media types:
 
-* application/mimi-content — the MIMI Content container format (described in this document)
+* application/mimi-content -- the MIMI Content container format (described in this document)
 * text/plain;charset=utf-8 
-* text/markdown;variant=GFM — Github Flavored Markdown [@!GFM])
+* text/markdown;variant=GFM -- Github Flavored Markdown [@!GFM])
 * message/external-body [@!RFC4483]
 
 Note that it is acceptable to render the contents of a received markdown
@@ -894,4 +929,18 @@ struct {
     Part parts<V>;
 } MultipartContainer;
 ```
+# Changelog
 
+## Changes between draft-mahy-mimi-content-01 and draft-mahy-mimi-content-02
+
+* made semantics abstract (C++ structs) instead of using CPIM or MIME headers
+
+## Changes between draft-mahy-mimi-content-02 and draft-ietf-mimi-content-00
+
+* replaced threadId with topicId
+* inReplyTo now has a hash of the referenced message
+* clarified that replies are always to a specific version of a modified message
+* changed timestamp to a whole number of milliseconds since the epoch
+to avoid confusion
+* added Security Considerations section
+* added change log
