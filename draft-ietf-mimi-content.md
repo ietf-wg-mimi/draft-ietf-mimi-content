@@ -32,8 +32,9 @@ interoperability of messages end-to-end encrypted inside the MLS
 
 # Terminology
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to
-be interpreted as described in RFC 2119 [@!RFC2219].
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] when,
+and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS group, and KeyPackage have the same meanings as in
 the MLS protocol [@!I-D.ietf-mls-protocol].
@@ -56,7 +57,7 @@ systems, which encrypt messages end-to-end using variations of the
 Double Ratchet protocol [@?DoubleRatchet].
 
 End-to-end encrypted instant messaging was also a motivator for the Common
-Protocol for Instant Messaging (CPIM) [@!RFC3862], however the model used at the time
+Protocol for Instant Messaging (CPIM) [@?RFC3862], however the model used at the time
 assumed standalone encryption of each message using a protocol such as S/MIME
 [@?RFC8551] or PGP [@?RFC3156] to interoperate between IM protocols such as
 SIP [@?RFC3261] and XMPP [@?RFC6120].  For a variety of practical reasons, interoperable
@@ -355,7 +356,7 @@ The `preview` disposition means that the content is a sender-generated
 preview of something, such as the contents of a link. 
 The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
-in [@!RFC2382]. 
+in [@!RFC5646]. 
 
 Each part also has an part index {13}, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
@@ -513,7 +514,7 @@ body.content = "Kudos to [@Alice Smith](im:alice-smith@example.com)"
              + "for making the release happen!";
 ~~~~~~~
 
-The same mention using HTML [@?W3C.CR-html52-20170808] is indicated below.
+The same mention using HTML [@!W3C.CR-html52-20170808] is indicated below.
 
 ~~~~~~~
 body.contentType = "text/html;charset=utf-8";
