@@ -423,6 +423,7 @@ Below are the relevant data fields set by the sender:
 messageId = "28fd19857ad7@example.com";
 timestamp = 1644387225019;  // 2022-02-08T22:13:45-00:00
 expires = 0;
+body.disposition = render;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
 body.content = "Hi everyone, we just shipped release 2.0." +
@@ -450,6 +451,7 @@ inReplyTo.hash-alg: sha256;
 inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
                        "\x7668174ba385af066011e43bd7e51501";
 expires = 0;
+body.disposition = render;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
 body.content = "Right on! _Congratulations_ 'all!";
@@ -508,6 +510,7 @@ or HTML rich content. For example, a mention using Markdown is indicated below.
 messageId = "4dcab7711a77@example.com";
 timestamp = 1644387243008;   // 2022-02-08T22:14:03-00:00
 expires = 0;
+body.disposition = render;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
 body.content = "Kudos to [@Alice Smith](im:alice-smith@example.com)"
@@ -543,6 +546,7 @@ messageId = "89d3472622a4@example.com";
 timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
 replaces: "e701beee59f9@example.com";
 expires = 0;
+body.disposition = render;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
 body.content = "Right on! _Congratulations_ y'all!";
@@ -567,6 +571,7 @@ messageId = "89d3472622a4@example.com";
 timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
 replaces: "e701beee59f9@example.com";
 expires = 0;
+body.disposition = render;
 body.partSemantics = nullPart;
 body.part = NullPart;
 ~~~~~~~
@@ -616,6 +621,7 @@ network connectivity necessary.
 messageId = "5c95a4dfddab@example.com";
 timestamp = 1644389403227;   // 2022-02-08T22:49:06-00:00
 expires = 1644390004;         // ~10 minutes later
+body.disposition = render;
 body.partIndex = 0;
 body.contentType = "text/markdown;charset=utf-8";
 body.content = "__*VPN GOING DOWN*__\n" +
