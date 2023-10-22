@@ -846,23 +846,23 @@ then it contains a single `MimiMessageAad` TLS struct as defined
 below.
 
 ~~~~~ tls
-enum Handling {
+enum {
     unspecified(0),
     message(1),
     status(2),
     ephemeral(3)
-};
+} Handling;
 
-struct MimiMessageId {
+struct {
     opaque localPart<V>;
     opaque domain<V>;
-};
+} MimiMessageId;
 
-struct MimiMessageAad {
+struct {
     MimiMessageId message_id;
     uint64 timestamp;
     Handling handling;
-};
+} MimiMessageAad;
 ~~~~~
 
 # Support for Specific Media Types
