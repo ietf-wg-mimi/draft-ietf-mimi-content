@@ -807,6 +807,35 @@ statuses[3].messageId = "5c95a4dfddab@example.com";
 statuses[3].status = expired;
 ~~~~~~~
 
+# Additional Authenticated Data
+
+This document defines some additional data that should be
+conveyed end-to-end, but still visible to intermediaries.
+In MLS this information is conveyed inside application messages in the
+`authenticated_data` field. If that field is non-empty and the
+media type of the MLS application message is application/mimi-content,
+then it contains a single `MimiMessageAad` TLS struct as defined
+below.
+
+~~~~~ tls
+enum Handling {
+    unspecified(0),
+    message(1),
+    status(2),
+    ephemeral(3)
+};
+
+struct MimiMessageId {
+    opaque localPart<V>;
+    opaque domain<V>;
+};
+
+struct MimiMessageAad {
+    MimiMessageId message_id;
+    uint64 timestamp;
+    Handling handling;
+};
+~~~~~
 
 # Support for Specific Media Types
 
@@ -831,8 +860,9 @@ The following MIME types are RECOMMENDED:
 * image/jpeg
 * image/png
 
-Clients compliant with this specification must be able to decrypt ExternalParts
-encrypted with AES-128-GCM.
+Clients compliant with this specification must be able to download
+ExternalParts with `http` and `https` URLs, and decrypt downloaded content
+encrypted with the AES-128-GCM AEAD algorithm.
 
 ## Use of proprietary media types
 
@@ -943,9 +973,11 @@ represent malicious messages. These should be logged and discarded.
   - where the sender domain and the `messageId` domain are different
   - where the `messageId` in this format is expected to match a similar
     field in the enclosing transfer protocol, but does not
+  - which duplicate another message ID already encountered
 * timestamps
   - received more than a few minutes in the future, or 
   - before the first concrete syntax of this document is published
+  - before the room containing them was created
 * inReplyTo
   - `inReplyTo.hash-alg` is `none` even when the `inReplyTo.message` is present
   - `inReplyTo.hash-alg` is an unknown value
@@ -976,6 +1008,28 @@ cases, and should not be considered the result of a malicious sender.
   unknown value should be treated as if it where `render`.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
+
+## Provider validation of Message ID and timestamp
+
+This document describes a way to communicate a copy of the message ID and
+timestamp field in the MLS additional authenticated data of the message.
+This information will be available to intermediaries. These intermediaries
+can perform limited validation on these two fields.
+
+The message ID consists of a local part (typically a UUID) and a domain.
+The provider of the sending client and the owning provider of the MLS group
+MAY reject messages where the domain in the message ID does not match the
+domain of the sending client's provider. The sending client's provider MAY
+also reject messages where the message ID matches its domain and the UUID
+is the duplicate of another previously seen message. Note that an exhaustive
+search for duplicate message IDs is not feasible on high-traffic highly
+available systems.
+
+The provider of the sending client and the owning provider of the MLS group
+MAY reject messages where the timestamp is excessive (ex: more than two
+hours ahead or behind the correct time). A receiving provider may receive
+messages which are days or weeks old, but may still reject messages with a
+timestamp which is far in the future.
 
 ## Alternate content rendering
 
@@ -1206,3 +1260,7 @@ to avoid confusion
 * created new abstract format for attachment information, instead of using
   message/external-body
 * added discussion of encrypting external content
+* clarified the difference between `render` and `inline` dispositions
+* created a way for the messageId and timestamp to be shared in the MLS
+  additional authenticated data field
+
