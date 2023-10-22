@@ -308,7 +308,7 @@ struct NestablePart {
     String language;          // {12}
     uint16 partIndex;         // {13}
     PartSemantics partSemantics;
-    std::variant<NullPart, SinglePart, ExternalPart, MultiParts> part;
+    std::variant<NullPart,SinglePart,ExternalPart,MultiParts> part;
 };
 
 ```
@@ -1059,7 +1059,7 @@ Alice: Yes please.
 
 ## Link and Mention handling
 
-Both Markdown and HTML support links. Using the example of an HTTP link,
+Both Markdown and HTML support links. Using the example of an `https` link,
 if the rendered text and the link target match exactly or are canonically
 equivalent, there is no need for confirmation if the end user selects the link.
 
@@ -1069,25 +1069,43 @@ equivalent, there is no need for confirmation if the end user selects the link.
 [https://example.com:443/foobar](https://example.com/foobar)
 ~~~
 
-However, if the link text is different, the user should be presented with
+However, if the link text is different, or the scheme is downgraded
+from https to http, the user should be presented with
 an alert warning that the text is not the same.
 
 ~~~
 [https://example.com/foobar](https://spearphishers.example/foobar)
+[https://example.com/foobar](http://example.com/foobar)
 ~~~
 
-Likewise, for a Mention, if the link text exactly matches the IM URI, or
-exactly matches the canonical handle for that URI, the IM application
-can render the link as a Mention. In some clients, this may result in
-a different notification policy.
+An IM URI link to a user who has a member client in the MLS
+group in which the message was sent is considered a mention. Clients may
+support special rendering of mentions instead of treating them like any
+other type of link. In Markdown and HTML, the display text portion of a
+link is considered a rendering hint from the sender to the receiver of
+the message. The receiver should use local policy to decide if the hint
+is an acceptable local representation of the user represented by the link
+itself. If the hint is not an acceptable representation, the client should
+instead display its canonical representation for the user. 
+
+For example, in the first examples, the sender expresses no preference
+about how to render the mention. In the second example, the sender requests
+that the mention is rendered as the literal URI. In the third example, the
+sender requests the canonical handle for Alice. In the fourth example, the
+sender requests Alice's first name.
 
 ~~~
+<im:alice-smith@example.com>
 [im:alice-smith@example.com](im:alice-smith@example.com)
 [@AliceSmith](im:alice-smith@example.com)
+[Alice](im:alice-smith@example.com)
 ~~~
 
-Otherwise, the application, should render the text as any other link
-that requires an alert warning.
+Note that in some clients, presence of a mention for the local user may
+result in a different notification policy.
+
+If the client does not support special rendering of mentions, the
+application, should render the text like any other link.
 
 ## Delivery and Read Receipts
 
@@ -1263,4 +1281,6 @@ to avoid confusion
 * clarified the difference between `render` and `inline` dispositions
 * created a way for the messageId and timestamp to be shared in the MLS
   additional authenticated data field
-
+* expanded discussion of what can and should be rendered when a mention is
+  encountered; discussed how to prevent confusion attacks with mentions.
+  
