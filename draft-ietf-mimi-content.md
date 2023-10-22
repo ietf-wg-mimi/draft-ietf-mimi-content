@@ -269,6 +269,18 @@ struct SinglePart {
     Octets content;       // The actual content
 };
 
+struct ExternalPart {
+    String contentType;   // An IANA media type {9}
+    String url;           // A URL where the content can be fetched
+    uint32 expires;       // 0 = does not expire
+    uint64 size;          // size of content in octets
+    uint16 encAlg;        // An IANA AEAD Algorithm number, or zero
+    Octets key;           // AEAD key
+    Octets nonce;         // AEAD nonce
+    Octets aad;           // AEAD additional authentiation data
+    String description;   // an optional text description
+};
+
 typedef std::vector<NestablePart> MultiParts; 
 
 enum PartSemantics { // {10}
@@ -296,7 +308,7 @@ struct NestablePart {
     String language;          // {12}
     uint16 partIndex;         // {13}
     PartSemantics partSemantics;
-    std::variant<NullPart, SinglePart, MultiParts> part;
+    std::variant<NullPart, SinglePart, ExternalPart, MultiParts> part;
 };
 
 ```
@@ -363,6 +375,44 @@ depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
 {Nested body examples} for an example of how the part index is
 calculated.
+
+## External content
+
+It is common in Instant Messaging systems to reference external
+content via URI that will be processed automatically, either to
+store bulky content (ex: videos, images, recorded sounds) outside the
+the messaging infrastructure, or to access a specific service URI,
+for example, a media forwarding service for conferencing. 
+
+An ExternalPart is a convenient way to reference this content. It
+provides a similar function to the message/external-body media type.
+It optionally includes the size of the data in octets (or zero if
+the length is not provided). It also includes an optional timestamp
+after which the external content is invalid, expressed as seconds
+since the start of the UNIX epoch (01-Jan-1970), or zero if the
+content does not expire.
+
+Typically, external content is encrypted with an ephemeral symmetric
+key before it is uploaded, and whatever is necessary for decryption
+is shared over the message channel.
+
+It is a matter of local policy where the content is uploaded. Often
+in federated messaging systems, the sender of the content stores the
+external content in their own domain, but in some systems the content
+is stored in the "owning" or "hub" domain of the MLS group.
+
+Before being uploaded, external content is encrypted with an
+IANA-registered Authenticated Encryption with Additional Data (AEAD)
+algorithm as described in [@!RFC5116]. The key, nonce, and additional
+authenticated data (aad) values are set to the values used during the
+encryption. Unless modified by an extension, the default value of the
+`aad` is zero length.
+
+If the external URL is a service, the `encAlg` is set to zero, and the
+`key`, `nonce`, and `aad` fields are zero length. 
+
+Implementations of this specification MUST implement the AES-128-GCM
+algorithm.
 
 ## Derived Data Values
 
@@ -630,22 +680,36 @@ body.content = "__*VPN GOING DOWN*__\n" +
 
 ## Attachments
 
-The message/external-body MIME Type is a convenient way to present a
-URL to download an attachment which should not be rendered inline.
-The disposition data field is set to attachment.
+An ExternalPart is a convenient way to present both "attachments" and
+(possibly inline rendered) content which is too large to be included
+in an MLS application message. The disposition data
+field is set to inline if the sender recommends inline rendering, or
+attachment if the sender intends the content to be downloaded or
+rendered separately.
 
 ~~~~~~~
 body.disposition = attachment;
-body.contentType = "message/external-body; access-type=URL;" +
-  "URL=\"https://example.com/storage/bigfile.m4v\";" +
-  "size=708234961;hash=10AB568E91245681AC1B";
+body.expires = 0;
+body.contentType = "video/mp4";
+body.URL = "https://example.com/storage/bigfile.mp4";
+body.size = 708234961;
+body.encAlg = 0x0001;    // AES-128-GCM
+body.key = "\x21399320958a6f4c745dde670d95e0d8";
+body.nonce = "\xc86cf2c33f21527d1dd76f5b";
+body.aad = "";
+body.description = "2 hours of key signing video";
 ~~~~~~~
+
+Other dispositions of external content are also possible, for example
+an external GIF animation of a rocket ship could be used with a
+reaction disposition.
 
 
 ## Conferencing
 
-Joining a conference via URL is also possible. The link could be
-rendered to the user, requiring a click. Alternatively the 
+Joining a conference via an external URL is possible. The link could be
+rendered to the user, requiring a click. Alternatively the URL could be
+rendered the 
 disposition could be specified as `session` which could be processed 
 differently by the client (for example, alerting the user or presenting
 a dialog box). 
@@ -653,9 +717,16 @@ Further discussion of calling and conferencing functionality is out-of-scope
 of this document.
 
 ~~~~~~~
-body.disposition = session;
-body.contentType = "message/external-body; access-type=URL;" +
-  "URL=\"https://example.com/join/12345\"";
+body.expires = 0;
+body.url = "https://example.com/join/12345";
+body.description = "Join the Foo 118 conference";
+body.expires = 1699671600; // 10-Nov-2023 19:00 UTC
+body.contentType = "";     // contentType not relevant
+body.size = 0;             // no defined size
+body.encAlg = 0;           // no encryption
+body.key = "";
+body.nonce = "";
+body.aad = "";
 ~~~~~~~
 
 ## Topics / Threading
@@ -748,7 +819,6 @@ Clients compliant with MIMI MUST be able to receive the following media types:
 * application/mimi-content -- the MIMI Content container format (described in this document)
 * text/plain;charset=utf-8 
 * text/markdown;variant=GFM -- Github Flavored Markdown [@!GFM])
-* message/external-body -- [@!RFC4483]
 
 Note that it is acceptable to render the contents of a received markdown
 document as plain text.
@@ -760,6 +830,9 @@ The following MIME types are RECOMMENDED:
 * application/mimi-message-status -- (described in this document)
 * image/jpeg
 * image/png
+
+Clients compliant with this specification must be able to decrypt ExternalParts
+encrypted with AES-128-GCM.
 
 ## Use of proprietary media types
 
@@ -1127,3 +1200,9 @@ to avoid confusion
 * added Security Considerations section
 * added IANA Considerations section
 * added change log
+
+## Changes between draft-ietf-mimi-content-00 and draft-ietf-mimi-content-01
+
+* created new abstract format for attachment information, instead of using
+  message/external-body
+* added discussion of encrypting external content
