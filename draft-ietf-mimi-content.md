@@ -9,7 +9,7 @@ keyword = ["mimi","content","mls","mime"]
 [seriesInfo]
 status = "informational"
 name = "Internet-Draft"
-value = "draft-ietf-mimi-content-00"
+value = "draft-ietf-mimi-content-01"
 stream = "IETF"
 
 [[author]]
@@ -443,18 +443,18 @@ algorithm.
 
 In addition to fields which are contained in a MIMI content message,
 there are also two fields which the implementation can definitely derive
-(the MLS group ID {14}, and the leaf index of the sender {15}). Many
+(the MLS group ID {15}, and the leaf index of the sender {16}). Many
 implementations could also determine one or more of: the senders client
-identifier URL {16}, the user identifier URL of the credential associated with
-the sender {17}, and the identifier URL for the MLS group {18}.
+identifier URL {17}, the user identifier URL of the credential associated with
+the sender {18}, and the identifier URL for the MLS group {19}.
 
 ~~~~~~~ c++
 struct MessageDerivedValues {
-    Octets mlsGroupId;       // value always available {14}
-    uint32 senderLeafIndex;  // value always available {15}
-    ImUrl senderClientUrl;   // {16}
-    ImUrl senderUserUrl;     // "From" {17}
-    ImUrl mlsGroupUrl;       // "To" {18}
+    Octets mlsGroupId;       // value always available {15}
+    uint32 senderLeafIndex;  // value always available {16}
+    ImUrl senderClientUrl;   // {17}
+    ImUrl senderUserUrl;     // "From" {18}
+    ImUrl mlsGroupUrl;       // "To" {19}
 };
 ~~~~~~~
 
