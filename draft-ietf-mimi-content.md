@@ -177,7 +177,8 @@ struct MimiContent {
     Octets topicId;          // {4}
     uint32 expires;          // 0 = does not expire {5}
     ReplyToInfo inReplyTo;   // {6}
-    NestablePart body;       // {7}
+    std::vector<MessageId> lastSeen; // {7}
+    NestablePart body;               // {8}
 };
 ```
 
@@ -252,25 +253,49 @@ was edited several times, a reply always refers to a specific version
 of that message, and SHOULD refer to the most current version at the
 time the reply is sent.
 
+## Message Ordering
+
+The `lastSeen` {7} data field indicates the latest message the sender
+was aware of in the group.  It is a list of message ids.
+
+If the sender recently joined the group and has not yet seen any messages,
+the list is empty.
+
+If the sender identifies a single message as unambiguously the latest
+message in the group, the `lastSeen` list contains a single message id
+from that message.
+
+Imagine however that two users (Bob and Cathy) see a message from Alice
+offering free Hawaiian pizza, and reply at the same time. Bob and Cathy both send
+messages with their `lastSeen` including a single message id (Alice's)
+message about pizza.  Their messages don't need to be replies or reactions.
+Bob might just send a message saying he doesn't like pineapple on pizza.
+Now Doug receives all these messages and replies
+as well. Doug's message contains a `lastSeen` including the message id
+list of both Bob's and Cathy's replies, effectively "merging" the order
+of messages. 
+
+The next message after Doug's message contains a `lastSeen` containing
+only the message id of Doug's message.
 
 ## Message Bodies
 
-Every MIMI content message has a body {7} which can have multiple,
+Every MIMI content message has a body {8} which can have multiple,
 possibly nested parts. A body with zero parts is permitted when
-deleting or unliking {8}. When there is a single body, its IANA
+deleting or unliking {9}. When there is a single body, its IANA
 media type, subtype, and parameters are included in the
-contentType field {9}. 
+contentType field {10}. 
 
 ```c++
-typedef std::monostate NullPart; // {8}
+typedef std::monostate NullPart; // {9}
 
 struct SinglePart {
-    String contentType;   // An IANA media type {9}
+    String contentType;   // An IANA media type {10}
     Octets content;       // The actual content
 };
 
 struct ExternalPart {
-    String contentType;   // An IANA media type {9}
+    String contentType;   // An IANA media type {10}
     String url;           // A URL where the content can be fetched
     uint32 expires;       // 0 = does not expire
     uint64 size;          // size of content in octets
@@ -283,7 +308,7 @@ struct ExternalPart {
 
 typedef std::vector<NestablePart> MultiParts; 
 
-enum PartSemantics { // {10}
+enum PartSemantics { // {11}
     nullPart = 0,    
     singlePart = 1, // the bodyParts is a single part
     chooseOne = 2,  // receiver picks exactly one part to process
@@ -304,9 +329,9 @@ enum Disposition {
 };
 
 struct NestablePart {
-    Disposition disposition;  // {11}
-    String language;          // {12}
-    uint16 partIndex;         // {13}
+    Disposition disposition;  // {12}
+    String language;          // {13}
+    uint16 partIndex;         // {14}
     PartSemantics partSemantics;
     std::variant<NullPart,SinglePart,ExternalPart,MultiParts> part;
 };
@@ -319,7 +344,7 @@ for example a rich-text message with an inline image. With other
 messages, there are multiple choices available for the same content,
 for example a choice among multiple languages, or between two
 different image formats. The relationship semantics among the parts
-is specified as an enumeration {10}. 
+is specified as an enumeration {11}. 
 
 The `nullPart` part semantic is used when there is no body part--for
 deleting and unliking. The `singlePart` part semantic is used when
@@ -346,7 +371,7 @@ could be expressed using this semantic. Processing the preview image
 is not strictly necessary for the correct rendering of the rich text
 part.
 
-The disposition {11} and language {12} of each part can be specified
+The disposition {12} and language {13} of each part can be specified
 for any part, including for nested parts. The disposition represents
 the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
@@ -370,7 +395,7 @@ The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
 in [@!RFC5646]. 
 
-Each part also has an part index {13}, which is a zero-indexed,
+Each part also has an part index {14}, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
 {Nested body examples} for an example of how the part index is
@@ -384,8 +409,8 @@ store bulky content (ex: videos, images, recorded sounds) outside the
 the messaging infrastructure, or to access a specific service URI,
 for example, a media forwarding service for conferencing. 
 
-An ExternalPart is a convenient way to reference this content. It
-provides a similar function to the message/external-body media type.
+An `ExternalPart` is a convenient way to reference this content. It
+provides a similar function to the `message/external-body` media type.
 It optionally includes the size of the data in octets (or zero if
 the length is not provided). It also includes an optional timestamp
 after which the external content is invalid, expressed as seconds
@@ -406,7 +431,7 @@ IANA-registered Authenticated Encryption with Additional Data (AEAD)
 algorithm as described in [@!RFC5116]. The key, nonce, and additional
 authenticated data (aad) values are set to the values used during the
 encryption. Unless modified by an extension, the default value of the
-`aad` is zero length.
+`aad` is empty.
 
 If the external URL is a service, the `encAlg` is set to zero, and the
 `key`, `nonce`, and `aad` fields are zero length. 
@@ -602,6 +627,9 @@ body.contentType = "text/markdown;charset=utf-8";
 body.content = "Right on! _Congratulations_ y'all!";
 ~~~~~~~
 
+Note that replies and reactions always refer to a specific message id,
+and therefore a specific "version" of a message, which could have been
+edited before and/or after the message id referenced in the reply or reaction.
 
 ## Delete
 
@@ -990,6 +1018,13 @@ represent malicious messages. These should be logged and discarded.
 * expires
   - refers to a date more than a year in the past
   - refers to a date more than a year in the future
+* lastSeen
+  - is empty, but the sender has previously sent messages in the room
+  - results in a loop
+  - refers to an excessive number of lastSeen messages simultaneously
+    (contains more than 65535 message IDs). (Note that a popular
+    message sent in a large group can result in thousands of reactions in
+    a few hundred milliseconds.)
 * body
   - has too many body parts (more than 1024)
   - is nested too deeply (more than 4 levels deep)
@@ -1003,6 +1038,9 @@ cases, and should not be considered the result of a malicious sender.
 * message IDs
   - where `inReplyTo.message` or `replaces` refer to an unknown message.
     Such a message could have been sent before the local client joined.
+* lastSeen
+  - refers to an unknown message
+  - is empty for the sender's first message sent in the room
 * body
   - where a body part contains an unrecognized Disposition value. The
   unknown value should be treated as if it where `render`.
@@ -1283,4 +1321,5 @@ to avoid confusion
   additional authenticated data field
 * expanded discussion of what can and should be rendered when a mention is
   encountered; discussed how to prevent confusion attacks with mentions.
-  
+* added a lastSeen field used to ensure a more consistent sort order of
+  messages in a room.
