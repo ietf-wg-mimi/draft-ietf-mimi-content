@@ -24,7 +24,7 @@ organization = "Wire"
 .# Abstract
 
 This document describes content semantics common in Instant Messaging (IM)
-systems and describes an example profile suitable for instant messaging
+systems and describes a profile suitable for instant messaging
 interoperability of messages end-to-end encrypted inside the MLS 
 (Message Layer Security) Protocol.
 
@@ -242,7 +242,7 @@ enum HashAlgorithm {
 
 struct ReplyToInfo {
     MessageId message;
-    HashAlgorithm hash-alg;  
+    HashAlgorithm hashAlg;
     Octets replyToHash;      // empty or hash of body.content
 };
 ```
@@ -351,9 +351,9 @@ for any part, including for nested parts. The disposition represents
 the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
 [@?RFC2183].
-The `render` and `inline` dispositions mean that the content should
-be rendered "inline" directly in the chat interface. In the MIMI context
-the two dispositions are equivalent.
+The `render` disposition means that the content should be rendered
+according to local policy. The  `inline` dispositions means that the
+content should be rendered "inline" directly in the chat interface.
 The `attachment` disposition means that the content is intended to
 be downloaded by the receiver instead of being rendered immediately.
 The `reaction` disposition means that the content is a single
