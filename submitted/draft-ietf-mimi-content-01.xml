@@ -1,0 +1,1352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
+<rfc version="3" ipr="trust200902" docName="draft-ietf-mimi-content-01" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true" consensus="true">
+
+<front>
+<title abbrev="MIMI Content">More Instant Messaging Interoperability (MIMI) message content</title><seriesInfo value="draft-ietf-mimi-content-01" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<author initials="R." surname="Mahy" fullname="Rohan Mahy"><organization>Wire</organization><address><postal><street></street>
+</postal><email>rohan.mahy@wire.com</email>
+</address></author><date/>
+<area>art</area>
+<workgroup>MIMI</workgroup>
+<keyword>mimi</keyword>
+<keyword>content</keyword>
+<keyword>mls</keyword>
+<keyword>mime</keyword>
+
+<abstract>
+<t>This document describes content semantics common in Instant Messaging (IM)
+systems and describes a profile suitable for instant messaging
+interoperability of messages end-to-end encrypted inside the MLS
+(Message Layer Security) Protocol.</t>
+</abstract>
+
+</front>
+
+<middle>
+
+<section anchor="terminology"><name>Terminology</name>
+<t>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;,
+&quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this
+document are to be interpreted as described in BCP 14 <xref target="RFC2119"></xref> <xref target="RFC8174"></xref> when,
+and only when, they appear in all capitals, as shown here.</t>
+<t>The terms MLS client, MLS group, and KeyPackage have the same meanings as in
+the MLS protocol <xref target="I-D.ietf-mls-protocol"></xref>. Other relevant terminology may be
+found in <xref target="I-D.barnes-mimi-arch"></xref> and <xref target="I-D.ralston-mimi-terminology"></xref>.</t>
+</section>
+
+<section anchor="introduction"><name>Introduction</name>
+<t>RFC EDITOR: PLEASE REMOVE THE FOLLOWING PARAGRAPH. The source for
+this draft is maintained in GitHub. Suggested changes should be
+submitted as pull requests at <eref target="https://github.com/ietf-wg-mimi/draft-ietf-mimi-content">https://github.com/ietf-wg-mimi/draft-ietf-mimi-content</eref>.
+Editorial changes can be managed in GitHub, but any substantive
+change should be discussed on the MIMI mailing list (mimi@ietf.org).</t>
+<t>MLS <xref target="I-D.ietf-mls-protocol"></xref> is a group key establishment protocol
+motivated by the desire for group chat with efficient end-to-end encryption.
+While one of the motivations of MLS is interoperable standards-based secure
+messaging, the MLS protocol does not define or prescribe any format for the
+encrypted &quot;application messages&quot; encoded by MLS.  The development of MLS
+was strongly motivated by the needs of a number of Instant Messaging (IM)
+systems, which encrypt messages end-to-end using variations of the
+Double Ratchet protocol <xref target="DoubleRatchet"></xref>.</t>
+<t>End-to-end encrypted instant messaging was also a motivator for the Common
+Protocol for Instant Messaging (CPIM) <xref target="RFC3862"></xref>, however the model used at the time
+assumed standalone encryption of each message using a protocol such as S/MIME
+<xref target="RFC8551"></xref> or PGP <xref target="RFC3156"></xref> to interoperate between IM protocols such as
+SIP <xref target="RFC3261"></xref> and XMPP <xref target="RFC6120"></xref>.  For a variety of practical reasons, interoperable
+end-to-end encryption between IM systems was never deployed commercially.</t>
+<t>There are now several instant messaging vendors implementing MLS, and the
+MIMI (More Instant Messaging Interoperability) Working Group is chartered
+to standardize an extensible interoperable messaging format for common
+features to be conveyed &quot;inside&quot; MLS application messages.
+Most of these features can reuse the semantics of
+previously-defined URIs, message headers, and media types.
+This document represents a solution to one part of the
+MIMI problem outline <xref target="I-D.mahy-mimi-problem-outline"></xref>.</t>
+<t>This document assumes that MLS clients advertise media types they support
+and can determine what media types are required to join a
+specific MLS group using the content advertisement extensions in Section 2.3 of
+<xref target="I-D.ietf-mls-extensions"></xref>. It allows implementations to define MLS groups
+with different media type requirements and allows MLS clients to send
+extended or proprietary messages that would be interpreted by some members
+of the group while assuring that an interoperable end-to-end encrypted
+baseline is available to all members, even when the group spans multiple
+systems or vendors.</t>
+<t>Below is a list of some features commonly found in IM group chat systems:</t>
+
+<ul spacing="compact">
+<li>plain text and rich text messaging</li>
+<li>mentions</li>
+<li>replies</li>
+<li>reactions</li>
+<li>edit or delete previously sent messages</li>
+<li>expiring messages</li>
+<li>delivery notifications</li>
+<li>read receipts</li>
+<li>shared files/audio/videos</li>
+<li>calling / conferencing</li>
+<li>message threading</li>
+</ul>
+</section>
+
+<section anchor="overview"><name>Overview</name>
+
+<section anchor="naming-schemes"><name>Naming schemes</name>
+<t>IM systems have a number of types of identifiers. These are described in detail
+in <xref target="I-D.mahy-mimi-identity"></xref>. A few of these used in this document are:</t>
+
+<ul spacing="compact">
+<li>handle identifier (external, friendly representation). This is the type
+of identifier described later as the senderUserUrl in the examples, which
+is analogous to the From header in email.</li>
+<li>client/device identifier (internal representation). This is the type
+of identifier described as the senderClientUrl in the examples.</li>
+<li>group or room or conversation or channel name (either internal or external representation).
+This is the type of identifier described as the MLS group URL in the examples.</li>
+</ul>
+<t>This proposal relies on URIs for naming and identifiers. All the example use
+the <tt>im:</tt> URI scheme (defined in <xref target="RFC3862"></xref>), but any instant messaging scheme
+could be used.</t>
+</section>
+
+<section anchor="message-container"><name>Message Container</name>
+<t>Most common instant messaging features are expressed as individual messages.
+A plain or rich text message is obviously a message, but a reaction (ex: like),
+a reply, editing a previous message, deleting an earlier message, and read
+receipts are all typically modeled as another message with different properties.</t>
+<t>This document describes the semantics of a message container, which contains a
+message ID and timestamp and represents most of these previously mentioned messages.
+The container typically carries one or more body parts with the actual message
+content (for example, an emoji used in a reaction, a plain text or rich text
+message or reply, a link, or an inline image).</t>
+</section>
+
+<section anchor="message-status-report"><name>Message Status Report</name>
+<t>This document also describes the semantics of a status report of other messages.
+The status report has a timestamp, but does not have a message ID of its own.
+Because some messaging systems deliver messages in batches and allow a user to
+mark several messages read at a time, the report format allows a single report
+to convey the read/delivered status of multiple messages (by message ID) within
+the same MLS group at a time.</t>
+</section>
+</section>
+
+<section anchor="mimi-content-container-message-semantics"><name>MIMI Content Container Message Semantics</name>
+<t>Each MIMI Content message is a container format with three categories
+of information:</t>
+
+<ul spacing="compact">
+<li>the required message ID and timestamp fields,</li>
+<li>the message behavior fields (which can have default or empty values), and</li>
+<li>the body part(s) and associated parameters</li>
+</ul>
+<t>To focus on the semantics of a MIMI Content message, we use C/C++ struct
+notation to describe its data fields. These fields are numbered in
+curly braces for reference in the text. We do not propose any specific syntax
+for the format, but two reasonable constraints are:</t>
+
+<ul spacing="compact">
+<li>we do not want to scan body parts to check for boundary marker
+collisions. This rules out using multipart MIME types.</li>
+<li>we do not want to base64 encode body parts with binary media
+types (ex: images). This rules out using JSON to carry the binary data.</li>
+</ul>
+
+<section anchor="required-fields"><name>Required Fields</name>
+<t>Every MIMI content message has a message ID {1}. The message ID
+has a local part and a domain part. The domain part corresponds to the
+domain of the sender of the message. The local part must be unique
+among all messages sent in the domain. Using a UUID for the local part
+is RECOMMENDED.</t>
+
+<sourcecode type="c++"><![CDATA[struct MessageId {
+    Octets localPart;
+    String domain;
+};
+
+struct MimiContent {
+    MessageId messageId;     // required value {1}
+    uint64 timestamp;        // milliseconds since 01-Jan-1970 {2}
+    MessageId replaces;      // {3}
+    Octets topicId;          // {4}
+    uint32 expires;          // 0 = does not expire {5}
+    ReplyToInfo inReplyTo;   // {6}
+    std::vector<MessageId> lastSeen; // {7}
+    NestablePart body;               // {8}
+};
+]]>
+</sourcecode>
+<t>Every MIMI content message has a timestamp {2} when the message was
+encrypted. It is represented as
+the whole number of milliseconds since the start of the UNIX epoch
+(01-Jan-1970 00:00:00 UTC).</t>
+</section>
+
+<section anchor="message-behavior-fields"><name>Message Behavior Fields</name>
+<t>The <tt>replaces</tt> {3} data field indicates that the current message
+is a replacement or update to a previous message whose message ID
+is in the <tt>replaces</tt> data field. It is used to edit previously-sent
+messages, delete previously-sent messages, and adjust reactions to
+messages to which the client previously reacted.
+ If the <tt>replaces</tt> field is empty (i.e. both the message ID
+<tt>localPart</tt> and the <tt>domain</tt> are zero length), the receiver
+assumes that the current message has not identified any special
+relationship with another previous message.</t>
+<t>The <tt>topicId</tt> {4} data field indicates that the current message is
+part of a logical grouping of messages which all share the same
+value in the <tt>topicId</tt> data field. If the <tt>topicId</tt> is zero length,
+there is no such grouping.</t>
+<t>The <tt>expires</tt> {5} data field is a hint from the sender to the receiver
+that the message should be locally deleted and disregarded at a specific
+timestamp in the future. Indicate a message with no specific expiration
+time with the value zero. The data field is an unsigned integer number of
+seconds after the start of the UNIX epoch. Using an 32-bit unsigned
+integer allows expiration dates until the year 2106. Note that
+specifying an expiration time provides no assurance that the client
+actually honors or can honor the expiration time, nor that the end user
+didn't otherwise save the expiring message (ex: via a screenshot).</t>
+<t>The <tt>inReplyTo</tt> {6} data field indicates that the current message is
+a related continuation of another message sent in the same MLS group.
+It contains the message ID of the referenced message and the SHA-256
+hash <xref target="RFC6234"></xref> of its <tt>MimiContent</tt> structure. If the <tt>message</tt> field is
+empty (i.e. both the message ID <tt>localPart</tt> and the <tt>domain</tt> are
+zero length), the receiver assumes that the current message has not
+identified any special relationship with another previous message;
+in that case the <tt>hash-alg</tt> is <tt>none</tt> and the <tt>replyToHash</tt> is zero
+length.</t>
+<t>The <tt>inReplyTo</tt> hash is a message digest used to make sure that a MIMI
+message cannot refer to a sequence of referred messages which refers
+back to itself. When replying a client checks if the referenced message
+is itself a Reply. It compares the hash</t>
+<t>When receiving a message, the client verifies that the hash is correct. Next
+it checks if the referenced message is itself a Reply. If so, it continues
+following the referenced messages, checking that neither the messageId nor
+the hash of any of referenced messages indicates a Reply which &quot;loops&quot; back
+to a message later in the inReplyTo chain.</t>
+
+<sourcecode type="c++"><![CDATA[enum HashAlgorithm {
+    none = 0,
+    sha256 = 1
+};
+
+struct ReplyToInfo {
+    MessageId message;
+    HashAlgorithm hashAlg;
+    Octets replyToHash;      // empty or hash of body.content
+};
+]]>
+</sourcecode>
+<t>Note that a <tt>inReplyTo</tt>
+always references a specific message ID. Even if the original message
+was edited several times, a reply always refers to a specific version
+of that message, and SHOULD refer to the most current version at the
+time the reply is sent.</t>
+</section>
+
+<section anchor="message-ordering"><name>Message Ordering</name>
+<t>The <tt>lastSeen</tt> {7} data field indicates the latest message the sender
+was aware of in the group.  It is a list of message ids.</t>
+<t>If the sender recently joined the group and has not yet seen any messages,
+the list is empty.</t>
+<t>If the sender identifies a single message as unambiguously the latest
+message in the group, the <tt>lastSeen</tt> list contains a single message id
+from that message.</t>
+<t>Imagine however that two users (Bob and Cathy) see a message from Alice
+offering free Hawaiian pizza, and reply at the same time. Bob and Cathy both send
+messages with their <tt>lastSeen</tt> including a single message id (Alice's)
+message about pizza.  Their messages don't need to be replies or reactions.
+Bob might just send a message saying he doesn't like pineapple on pizza.
+Now Doug receives all these messages and replies
+as well. Doug's message contains a <tt>lastSeen</tt> including the message id
+list of both Bob's and Cathy's replies, effectively &quot;merging&quot; the order
+of messages.</t>
+<t>The next message after Doug's message contains a <tt>lastSeen</tt> containing
+only the message id of Doug's message.</t>
+</section>
+
+<section anchor="message-bodies"><name>Message Bodies</name>
+<t>Every MIMI content message has a body {8} which can have multiple,
+possibly nested parts. A body with zero parts is permitted when
+deleting or unliking {9}. When there is a single body, its IANA
+media type, subtype, and parameters are included in the
+contentType field {10}.</t>
+
+<sourcecode type="c++"><![CDATA[typedef std::monostate NullPart; // {9}
+
+struct SinglePart {
+    String contentType;   // An IANA media type {10}
+    Octets content;       // The actual content
+};
+
+struct ExternalPart {
+    String contentType;   // An IANA media type {10}
+    String url;           // A URL where the content can be fetched
+    uint32 expires;       // 0 = does not expire
+    uint64 size;          // size of content in octets
+    uint16 encAlg;        // An IANA AEAD Algorithm number, or zero
+    Octets key;           // AEAD key
+    Octets nonce;         // AEAD nonce
+    Octets aad;           // AEAD additional authentiation data
+    String description;   // an optional text description
+};
+
+typedef std::vector<NestablePart> MultiParts; 
+
+enum PartSemantics { // {11}
+    nullPart = 0,    
+    singlePart = 1, // the bodyParts is a single part
+    chooseOne = 2,  // receiver picks exactly one part to process
+    singleUnit = 3  // receiver processes all parts as single unit
+    processAll = 4  // receiver processes all parts individually
+};
+
+enum Disposition {
+    unspecified = 0,
+    render = 1,
+    reaction = 2,
+    profile = 3,
+    inline = 4,
+    icon = 5,
+    attachment = 6,
+    session = 7,
+    preview = 8
+};
+
+struct NestablePart {
+    Disposition disposition;  // {12}
+    String language;          // {13}
+    uint16 partIndex;         // {14}
+    PartSemantics partSemantics;
+    std::variant<NullPart,SinglePart,ExternalPart,MultiParts> part;
+};
+
+]]>
+</sourcecode>
+<t>With some types of message content, there are multiple media types
+associated with the same message which need to be rendered together,
+for example a rich-text message with an inline image. With other
+messages, there are multiple choices available for the same content,
+for example a choice among multiple languages, or between two
+different image formats. The relationship semantics among the parts
+is specified as an enumeration {11}.</t>
+<t>The <tt>nullPart</tt> part semantic is used when there is no body part--for
+deleting and unliking. The <tt>singlePart</tt> part semantic is used when
+there is a single body part.</t>
+<t>The <tt>chooseOne</tt> part semantic is roughly analogous to the semantics of the
+<tt>multipart/alternative</tt> media type, except that the ordering of the
+nested body parts is merely a preference of the sender. The receiver
+can choose the body part among those provided according to its own
+policy.</t>
+<t>The <tt>singleUnit</tt> part semantic is roughly analogous to the semantics
+of the <tt>multipart/related</tt> media type, in that all the nested body
+parts at this level are part of a single entity (for example, a
+rich text message with an inline image). If the receiver does not
+understand even one of the nested parts at this level, the receiver
+should not process any of them.</t>
+<t>The <tt>processAll</tt> part semantic is roughly analogous to the semantics
+of the <tt>multipart/mixed</tt> media type. The receiver should process as
+many of the nested parts at this level as possible. For example, a
+rich text document with a link, and a preview image of the link target
+could be expressed using this semantic. Processing the preview image
+is not strictly necessary for the correct rendering of the rich text
+part.</t>
+<t>The disposition {12} and language {13} of each part can be specified
+for any part, including for nested parts. The disposition represents
+the intended semantics of the body part or a set of nested parts.
+It is inspired by the values in the Content-Disposition MIME header
+<xref target="RFC2183"></xref>.
+The <tt>render</tt> disposition means that the content should be rendered
+according to local policy. The  <tt>inline</tt> dispositions means that the
+content should be rendered &quot;inline&quot; directly in the chat interface.
+The <tt>attachment</tt> disposition means that the content is intended to
+be downloaded by the receiver instead of being rendered immediately.
+The <tt>reaction</tt> disposition means that the content is a single
+reaction to another message, typically an emoji, but which could be
+an image, sound, or video. The <tt>reaction</tt> disposition was originally published
+in <xref target="RFC9078"></xref>, but was incorrectly placed in the Content Disposition
+Parameters IANA registry instead of in the Content Disposition Values
+registry.
+The <tt>session</tt> disposition means that the content is a description of
+a multimedia session, or a URI used to join one.
+The <tt>preview</tt> disposition means that the content is a sender-generated
+preview of something, such as the contents of a link.
+The value of the language data field is an empty string or a
+comma-separated list of one or more <tt>Language-tag</tt>s as defined
+in <xref target="RFC5646"></xref>.</t>
+<t>Each part also has an part index {14}, which is a zero-indexed,
+depth-first integer. It is used to efficiently refer to a specific
+body part (for example, an inline image) within another part. See
+{Nested body examples} for an example of how the part index is
+calculated.</t>
+</section>
+
+<section anchor="external-content"><name>External content</name>
+<t>It is common in Instant Messaging systems to reference external
+content via URI that will be processed automatically, either to
+store bulky content (ex: videos, images, recorded sounds) outside the
+the messaging infrastructure, or to access a specific service URI,
+for example, a media forwarding service for conferencing.</t>
+<t>An <tt>ExternalPart</tt> is a convenient way to reference this content. It
+provides a similar function to the <tt>message/external-body</tt> media type.
+It optionally includes the size of the data in octets (or zero if
+the length is not provided). It also includes an optional timestamp
+after which the external content is invalid, expressed as seconds
+since the start of the UNIX epoch (01-Jan-1970), or zero if the
+content does not expire.</t>
+<t>Typically, external content is encrypted with an ephemeral symmetric
+key before it is uploaded, and whatever is necessary for decryption
+is shared over the message channel.</t>
+<t>It is a matter of local policy where the content is uploaded. Often
+in federated messaging systems, the sender of the content stores the
+external content in their own domain, but in some systems the content
+is stored in the &quot;owning&quot; or &quot;hub&quot; domain of the MLS group.</t>
+<t>Before being uploaded, external content is encrypted with an
+IANA-registered Authenticated Encryption with Additional Data (AEAD)
+algorithm as described in <xref target="RFC5116"></xref>. The key, nonce, and additional
+authenticated data (aad) values are set to the values used during the
+encryption. Unless modified by an extension, the default value of the
+<tt>aad</tt> is empty.</t>
+<t>If the external URL is a service, the <tt>encAlg</tt> is set to zero, and the
+<tt>key</tt>, <tt>nonce</tt>, and <tt>aad</tt> fields are zero length.</t>
+<t>Implementations of this specification MUST implement the AES-128-GCM
+algorithm.</t>
+</section>
+
+<section anchor="derived-data-values"><name>Derived Data Values</name>
+<t>In addition to fields which are contained in a MIMI content message,
+there are also two fields which the implementation can definitely derive
+(the MLS group ID {15}, and the leaf index of the sender {16}). Many
+implementations could also determine one or more of: the senders client
+identifier URL {17}, the user identifier URL of the credential associated with
+the sender {18}, and the identifier URL for the MLS group {19}.</t>
+
+<sourcecode type="c++"><![CDATA[struct MessageDerivedValues {
+    Octets mlsGroupId;       // value always available {15}
+    uint32 senderLeafIndex;  // value always available {16}
+    ImUrl senderClientUrl;   // {17}
+    ImUrl senderUserUrl;     // "From" {18}
+    ImUrl mlsGroupUrl;       // "To" {19}
+};
+]]>
+</sourcecode>
+</section>
+</section>
+
+<section anchor="examples"><name>Examples</name>
+<t>In the following examples, we assume that an MLS group is already established and
+that either out-of-band or using the MLS protocol or MLS extensions that the
+following is known to every member of the group:</t>
+
+<ul spacing="compact">
+<li>The membership of the group (via MLS).</li>
+<li>The identity of any MLS client which sends an application message (via MLS).</li>
+<li>The MLS group ID (via MLS)</li>
+<li>The human readable name(s) of the MLS group, if any (out-of-band or extension).</li>
+<li>Which media types are mandatory to implement (MLS content advertisement extensions).</li>
+<li>For each member, the media types each supports (MLS content advertisement extensions).</li>
+</ul>
+<t>Messages sent to an MLS group are delivered to every member of the group active during
+the epoch in which the message was sent.</t>
+
+<section anchor="original-message"><name>Original Message</name>
+<t>In this example, Alice Smith sends a rich-text (Markdown) <xref target="RFC7763"></xref>
+message to the Engineering Team MLS group. The following values are
+derived from the client:</t>
+
+<ul spacing="compact">
+<li>Sender leaf index: 4</li>
+<li>Sender client ID URL:
+im:3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003@example.com</li>
+<li>Sender user handle URL:
+im:%40alice-smith@example.com</li>
+<li>MLS group ID:
+7u4NEqe1tbeBFa0aHdsTgRyD/XOHxD5meZpZS+7aJr8=</li>
+<li>The MLS group URL:
+im:#engineering_team@example.com</li>
+<li>The MLS group name: &quot;Engineering Team&quot;</li>
+</ul>
+<t>Below are the relevant data fields set by the sender:</t>
+
+<sourcecode type="c++"><![CDATA[messageId = "28fd19857ad7@example.com";
+timestamp = 1644387225019;  // 2022-02-08T22:13:45-00:00
+expires = 0;
+body.disposition = render;
+body.partIndex = 0;
+body.contentType = "text/markdown;charset=utf-8";
+body.content = "Hi everyone, we just shipped release 2.0." +
+               " __Good work__!";
+]]>
+</sourcecode>
+</section>
+
+<section anchor="reply"><name>Reply</name>
+<t>A reply message looks similar, but contains the message ID of the
+original message in the <tt>inReplyTo</tt> data field. The derived MLS
+group ID, URL, and name do not change in this example. The derived
+senderClientId and senderLeafIndex are not especially relevant so
+all but the user handle URL will be omitted.</t>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:%40bob-jones@example.com</li>
+</ul>
+<t>The data fields needed:</t>
+
+<sourcecode type="c++"><![CDATA[messageId = "e701beee59f9@example.com";
+timestamp = 1644387237492;   // 2022-02-08T22:13:57-00:00
+inReplyTo.message: "28fd19857ad7@example.com";
+inReplyTo.hash-alg: sha256;
+inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
+                       "\x7668174ba385af066011e43bd7e51501";
+expires = 0;
+body.disposition = render;
+body.partIndex = 0;
+body.contentType = "text/markdown;charset=utf-8";
+body.content = "Right on! _Congratulations_ 'all!";
+]]>
+</sourcecode>
+</section>
+
+<section anchor="reaction"><name>Reaction</name>
+<t>A reaction looks like a reply, but uses the Disposition token of reaction. It is
+modeled on the reaction Content-Disposition token defined in <xref target="RFC9078"></xref>.
+Both indicate that the intended disposition of the
+contents of the message is a reaction.</t>
+<t>The content in the sample message is a single Unicode heart character (U+2665).
+Discovering the range of characters each implementation could render as a
+reaction can occur out-of-band and is not within the scope of this proposal.
+However, an implementation which receives a reaction character string it
+does not recognize could render the reaction as a reply, possibly prefixing
+with a localized string such as &quot;Reaction: &quot;.  Note that a reaction could
+theoretically even be another media type (ex: image, audio, or video), although
+not currently implemented in major instant messaging systems.
+Note that many systems allow mutiple independent reactions per sender.</t>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:cathy-washington@example.com</li>
+</ul>
+
+<sourcecode type="c++"><![CDATA[messageId = "1a771ca1d84f@example.com";
+timestamp = 1644387237728;   // 2022-02-08T22:13:57-00:00
+inReplyTo.message: "28fd19857ad7@example.com";
+inReplyTo.hash-alg: sha256;
+inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
+                       "\x7668174ba385af066011e43bd7e51501";
+expires = 0;
+body.disposition = reaction;
+body.partIndex = 0;
+body.contentType = "text/plain;charset=utf-8";
+body.content = "\u2665"; \\ ♥
+]]>
+</sourcecode>
+</section>
+
+<section anchor="mentions"><name>Mentions</name>
+<t>In instant messaging systems and social media, a mention allows special
+formatting and behavior when a name, handle, or tag associated with a
+known group is encountered, often when prefixed with a commercial-at &quot;@&quot;
+character for mentions of users or a hash &quot;#&quot; character for groups or tags.
+A message which contains a mention may trigger distinct notifications on
+the IM client.</t>
+<t>We can convey a mention by linking the user handle URI, or group URI in Markdown
+or HTML rich content. For example, a mention using Markdown is indicated below.</t>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:cathy-washington@example.com</li>
+</ul>
+
+<sourcecode type="c++"><![CDATA[messageId = "4dcab7711a77@example.com";
+timestamp = 1644387243008;   // 2022-02-08T22:14:03-00:00
+expires = 0;
+body.disposition = render;
+body.partIndex = 0;
+body.contentType = "text/markdown;charset=utf-8";
+body.content = "Kudos to [@Alice Smith](im:alice-smith@example.com)"
+             + "for making the release happen!";
+]]>
+</sourcecode>
+<t>The same mention using HTML <xref target="W3C.CR-html52-20170808"></xref> is indicated below.</t>
+
+<artwork><![CDATA[body.contentType = "text/html;charset=utf-8";
+body.content = "<p>Kudos to <a href='im:alice-smith@example.com'>" +
+               "@Alice Smith</a> for making the release happen!</p>"
+]]>
+</artwork>
+</section>
+
+<section anchor="edit"><name>Edit</name>
+<t>Unlike with email messages, it is common in IM systems to allow the sender of
+a message to edit or delete the message after the fact. Typically the message
+is replaced in the user interface of the receivers (even after the original
+message is read) but shows a visual indication that it has been edited.</t>
+<t>The <tt>replaces</tt> data field includes the message ID of the message to
+edit/replace. The message included in the body is a replacement for the message
+with the replaced message ID.</t>
+<t>Here Bob Jones corrects a typo in his original message:</t>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:%40bob-jones@example.com</li>
+</ul>
+
+<sourcecode type="c++"><![CDATA[messageId = "89d3472622a4@example.com";
+timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
+replaces: "e701beee59f9@example.com";
+expires = 0;
+body.disposition = render;
+body.partIndex = 0;
+body.contentType = "text/markdown;charset=utf-8";
+body.content = "Right on! _Congratulations_ y'all!";
+]]>
+</sourcecode>
+<t>Note that replies and reactions always refer to a specific message id,
+and therefore a specific &quot;version&quot; of a message, which could have been
+edited before and/or after the message id referenced in the reply or reaction.
+It is a matter of local policy how to render (if at all) a reaction to
+a subsequently edited message.</t>
+</section>
+
+<section anchor="delete"><name>Delete</name>
+<t>In IM systems, a delete means that the author of a specific message has
+retracted the message, regardless if other users have read the message
+or not. Typically a placeholder remains in the user interface showing
+that a message was deleted. Replies which reference a deleted message
+typically hide the quoted portion and reflect that the original message
+was deleted.</t>
+<t>If Bob deleted his message instead of modifying it, we would represent it
+using the <tt>replaces</tt> data field, and using an empty body (NullPart),
+as shown below.</t>
+
+<artwork><![CDATA[messageId = "89d3472622a4@example.com";
+timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
+replaces: "e701beee59f9@example.com";
+expires = 0;
+body.disposition = render;
+body.partSemantics = nullPart;
+body.part = NullPart;
+]]>
+</artwork>
+</section>
+
+<section anchor="unlike"><name>Unlike</name>
+<t>In most IM systems, not only is it possible to react to a message (&quot;Like&quot;),
+but it is possible to remove a previous reaction (&quot;Unlike&quot;). This can be
+accomplished by deleting the message which creates the original reaction</t>
+<t>If Cathy removes her reaction, we would represent the removal using a
+<tt>replaces</tt> data field with an empty body, referring to the message which
+created the reaction, as shown below.</t>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:cathy-washington@example.com</li>
+</ul>
+
+<sourcecode type="c++"><![CDATA[messageId = "d052cace46f8@example.com";
+timestamp = 1644387250389;   // 2022-02-08T22:14:10-00:00
+replaces: "1a771ca1d84f@example.com";
+expires = 0;
+body.disposition = reaction;
+body.partIndex = 0;
+body.partSemantics = nullPart;
+body.part = NullPart;
+]]>
+</sourcecode>
+</section>
+
+<section anchor="expiring"><name>Expiring</name>
+<t>Expiring messages are designed to be deleted automatically by the receiving
+client at a certain time whether they have been read or not.  As with manually
+deleted messages, there is no guarantee that an uncooperative client or a
+determined user will not save the content of the message, however most clients
+respect the convention.</t>
+<t>The <tt>expires</tt> data field contains the timestamp when the message can be deleted.
+The semantics of the header are that the message is automatically deleted
+by the receiving clients at the indicated time without user interaction or
+network connectivity necessary.</t>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:alice-smith@example.com</li>
+</ul>
+
+<sourcecode type="c++"><![CDATA[messageId = "5c95a4dfddab@example.com";
+timestamp = 1644389403227;   // 2022-02-08T22:49:06-00:00
+expires = 1644390004;         // ~10 minutes later
+body.disposition = render;
+body.partIndex = 0;
+body.contentType = "text/markdown;charset=utf-8";
+body.content = "__*VPN GOING DOWN*__\n" +
+    "I'm rebooting the VPN in ten minutes unless anyone objects."
+]]>
+</sourcecode>
+</section>
+
+<section anchor="attachments"><name>Attachments</name>
+<t>An ExternalPart is a convenient way to present both &quot;attachments&quot; and
+(possibly inline rendered) content which is too large to be included
+in an MLS application message. The disposition data
+field is set to inline if the sender recommends inline rendering, or
+attachment if the sender intends the content to be downloaded or
+rendered separately.</t>
+
+<artwork><![CDATA[body.disposition = attachment;
+body.expires = 0;
+body.contentType = "video/mp4";
+body.URL = "https://example.com/storage/bigfile.mp4";
+body.size = 708234961;
+body.encAlg = 0x0001;    // AES-128-GCM
+body.key = "\x21399320958a6f4c745dde670d95e0d8";
+body.nonce = "\xc86cf2c33f21527d1dd76f5b";
+body.aad = "";
+body.description = "2 hours of key signing video";
+]]>
+</artwork>
+<t>Other dispositions of external content are also possible, for example
+an external GIF animation of a rocket ship could be used with a
+reaction disposition.</t>
+</section>
+
+<section anchor="conferencing"><name>Conferencing</name>
+<t>Joining a conference via an external URL is possible. The link could be
+rendered to the user, requiring a click. Alternatively the URL could be
+rendered the
+disposition could be specified as <tt>session</tt> which could be processed
+differently by the client (for example, alerting the user or presenting
+a dialog box).
+Further discussion of calling and conferencing functionality is out-of-scope
+of this document.</t>
+
+<artwork><![CDATA[body.expires = 0;
+body.url = "https://example.com/join/12345";
+body.description = "Join the Foo 118 conference";
+body.expires = 1699671600; // 10-Nov-2023 19:00 UTC
+body.contentType = "";     // contentType not relevant
+body.size = 0;             // no defined size
+body.encAlg = 0;           // no encryption
+body.key = "";
+body.nonce = "";
+body.aad = "";
+]]>
+</artwork>
+</section>
+
+<section anchor="topics-threading"><name>Topics / Threading</name>
+<t>As popularized by the messaging application Slack, some messaging
+applications have a notion of a Topic or message Thread
+(not to be confused with message threading as used in email).
+Clients beginning a new &quot;topic&quot; populate the <tt>topicId</tt> with a unique
+opaque octet string. This could be the message ID of the first message
+sent related to the topic. Subsequent messages may include the same
+<tt>topicId</tt> for those messages to be associated with the same topic. The sort order
+for messages within a thread uses the timestamp field. If more than
+one message has the same timestamp, the lexically lowest message ID
+sorts earlier.</t>
+</section>
+
+<section anchor="delivery-reporting-and-read-receipts"><name>Delivery Reporting and Read Receipts</name>
+<t>In instant messaging systems, read receipts typically generate a distinct
+indicator for each message. In some systems, the number of users in a group
+who have read the message is subtly displayed and the list of users who
+read the message is available on further inspection.</t>
+<t>Of course, Internet mail has support for read receipts as well, but
+the existing message disposition notification mechanism defined for email
+in <xref target="RFC8098"></xref> is completely inappropriate in this context:</t>
+
+<ul spacing="compact">
+<li>notifications can be sent by intermediaries</li>
+<li>only one notification can be sent about a single message per recipient</li>
+<li>a human-readable version of the notification is expected</li>
+<li>each notification can refer to only one message</li>
+<li>it is extremely verbose</li>
+</ul>
+<t>Instead we would like to be able to include status changes about multiple
+messages in each report, the ability to mark a message delivered, then read, then unread, then expired
+for example.</t>
+<t>The proposed format below, application/mimi-message-status is sent
+by one member of an MLS group to the entire group and can refer to multiple messages in that group.
+The format contains its own timestamp, and a list of message ID / status pairs. As
+the status at the recipient changes, the status can be updated in a subsequent notification.</t>
+
+<sourcecode type="c++"><![CDATA[enum MessageStatus {
+    unread = 0,
+    delivered = 1,
+    read = 2,
+    expired = 3,
+    deleted = 4,
+    hidden = 5,
+    error = 6
+};
+
+struct PerMessageStatus {
+    MessageId messageId;
+    MessageStatus status;
+};
+
+struct MessageStatusReport {
+    unit64 timestamp;
+    // a vector of message statuses in the same MLS group
+    std::vector<PerMessageStatus> statuses;
+};
+]]>
+</sourcecode>
+
+<ul spacing="compact">
+<li>Sender user handle URL:
+im:bob-jones@example.com</li>
+</ul>
+
+<sourcecode type="c++"><![CDATA[timestamp = 1644284703227;
+statuses[0].messageId = "4dcab7711a77@example.com";
+statuses[0].status = read;
+statuses[1].messageId = "285f75c46430@example.com";
+statuses[1].status = read;
+statuses[2].messageId = "c5e0cd6140e6@example.com";
+statuses[2].status = unread;
+statuses[3].messageId = "5c95a4dfddab@example.com";
+statuses[3].status = expired;
+]]>
+</sourcecode>
+</section>
+</section>
+
+<section anchor="additional-authenticated-data"><name>Additional Authenticated Data</name>
+<t>This document defines some additional data that should be
+conveyed end-to-end, but still visible to intermediaries.
+In MLS this information is conveyed inside application messages in the
+<tt>authenticated_data</tt> field. If that field is non-empty and the
+media type of the MLS application message is application/mimi-content,
+then it contains a single <tt>MimiMessageAad</tt> TLS struct as defined
+below.</t>
+
+<sourcecode type="tls"><![CDATA[enum {
+    unspecified(0),
+    message(1),
+    status(2),
+    ephemeral(3)
+} Handling;
+
+struct {
+    opaque localPart<V>;
+    opaque domain<V>;
+} MimiMessageId;
+
+struct {
+    MimiMessageId message_id;
+    uint64 timestamp;
+    Handling handling;
+} MimiMessageAad;
+]]>
+</sourcecode>
+</section>
+
+<section anchor="support-for-specific-media-types"><name>Support for Specific Media Types</name>
+
+<section anchor="mimi-required-and-recommended-media-types"><name>MIMI Required and Recommended media types</name>
+<t>As the MIMI Content container is just a container, the plain text or rich
+text messages sent inside, and any image or other formats needs to be specified.
+Clients compliant with MIMI MUST be able to receive the following media types:</t>
+
+<ul spacing="compact">
+<li>application/mimi-content -- the MIMI Content container format (described in this document)</li>
+<li>text/plain;charset=utf-8</li>
+<li>text/markdown;variant=GFM -- Github Flavored Markdown <xref target="GFM"></xref>)</li>
+</ul>
+<t>Note that it is acceptable to render the contents of a received markdown
+document as plain text.</t>
+<t>The following MIME types are RECOMMENDED:</t>
+
+<ul spacing="compact">
+<li>text/markdown;variant=CommonMark -- <eref target="https://spec.commonmark.org/0.30">CommonMark</eref></li>
+<li>text/html</li>
+<li>application/mimi-message-status -- (described in this document)</li>
+<li>image/jpeg</li>
+<li>image/png</li>
+</ul>
+<t>Clients compliant with this specification must be able to download
+ExternalParts with <tt>http</tt> and <tt>https</tt> URLs, and decrypt downloaded content
+encrypted with the AES-128-GCM AEAD algorithm.</t>
+</section>
+
+<section anchor="use-of-proprietary-media-types"><name>Use of proprietary media types</name>
+<t>As most messaging systems are proprietary, standalone systems, it is useful to allow
+clients to send and receive proprietary formats among themselves. Using the
+functionality in the MIMI Content container, clients can send a message using the basic
+functionality described in this document AND a proprietary format for
+same-vendor clients simultaneously over the same group with end-to-end
+encryption. An example is given in the Appendix.</t>
+</section>
+</section>
+
+<section anchor="iana-considerations"><name>IANA Considerations</name>
+
+<section anchor="mime-subtype-registration-of-application-mimi-content"><name>MIME subtype registration of application/mimi-content</name>
+<t>This document proposes registration of a media subtype with IANA.</t>
+
+<artwork><![CDATA[Type name: application
+
+Subtype name: mimi-content
+
+Required parameters: none
+
+Optional parameters: none
+
+Encoding considerations:
+   This message type should be encoded as binary data
+
+Security considerations:
+   See Section A of RFC XXXX
+
+Interoperability considerations:
+   See Section Y.Z of RFC XXXX
+
+Published specification: RFC XXXX
+
+Applications that use this media type:
+   Instant Messaging Applications
+
+Fragment identifier considerations: N/A
+
+Additional information:
+
+   Deprecated alias names for this type: N/A
+   Magic number(s): N/A
+   File extension(s): N/A
+   Macintosh file type code(s): N/A
+
+Person & email address to contact for further information:
+   IETF MIMI Working Group mimi@ietf.org
+
+
+]]>
+</artwork>
+</section>
+
+<section anchor="mime-subtype-registration-of-application-mimi-message-status"><name>MIME subtype registration of application/mimi-message-status</name>
+<t>This document proposes registration of a media subtype with IANA.</t>
+
+<artwork><![CDATA[Type name: application
+
+Subtype name: mimi-message-status
+
+Required parameters: none
+
+Optional parameters: none
+
+Encoding considerations:
+   This message type should be encoded as binary data
+
+Security considerations:
+   See Section A of RFC XXXX
+
+Interoperability considerations:
+   See Section Y.Z of RFC XXXX
+
+Published specification: RFC XXXX
+
+Applications that use this media type:
+   Instant Messaging Applications
+
+Fragment identifier considerations: N/A
+
+Additional information:
+
+   Deprecated alias names for this type: N/A
+   Magic number(s): N/A
+   File extension(s): N/A
+   Macintosh file type code(s): N/A
+
+Person & email address to contact for further information:
+   IETF MIMI Working Group mimi@ietf.org
+
+]]>
+</artwork>
+</section>
+</section>
+
+<section anchor="security-considerations"><name>Security Considerations</name>
+
+<section anchor="general-handling"><name>General handling</name>
+<t>The following cases are examples of nonsensical values that most likely
+represent malicious messages. These should be logged and discarded.</t>
+
+<ul spacing="compact">
+<li><t>sender of the message</t>
+
+<ul spacing="compact">
+<li>where the apparent sender is not a member of the target MLS group</li>
+</ul></li>
+<li><t>message IDs</t>
+
+<ul spacing="compact">
+<li>which are very long (greater than 4096 octets)</li>
+<li>where the sender domain and the <tt>messageId</tt> domain are different</li>
+<li>where the <tt>messageId</tt> in this format is expected to match a similar
+field in the enclosing transfer protocol, but does not</li>
+<li>which duplicate another message ID already encountered</li>
+</ul></li>
+<li><t>timestamps</t>
+
+<ul spacing="compact">
+<li>received more than a few minutes in the future, or</li>
+<li>before the first concrete syntax of this document is published</li>
+<li>before the room containing them was created</li>
+</ul></li>
+<li><t>inReplyTo</t>
+
+<ul spacing="compact">
+<li><tt>inReplyTo.hash-alg</tt> is <tt>none</tt> even when the <tt>inReplyTo.message</tt> is present</li>
+<li><tt>inReplyTo.hash-alg</tt> is an unknown value</li>
+<li>the length of <tt>inReplyTo.replyToHash</tt> does not correspond to the algorithm
+specified in <tt>inReplyTo.hash-alg</tt></li>
+</ul></li>
+<li><t>topicId</t>
+
+<ul spacing="compact">
+<li>the <tt>topicId</tt> is very long (greater than 4096 octets)</li>
+<li>a topic is specified, but an <tt>inReplyTo</tt> or <tt>replaces</tt> field refers to a
+message outside of the topic</li>
+</ul></li>
+<li><t>expires</t>
+
+<ul spacing="compact">
+<li>refers to a date more than a year in the past</li>
+<li>refers to a date more than a year in the future</li>
+</ul></li>
+<li><t>lastSeen</t>
+
+<ul spacing="compact">
+<li>is empty, but the sender has previously sent messages in the room</li>
+<li>results in a loop</li>
+<li>refers to an excessive number of lastSeen messages simultaneously
+(contains more than 65535 message IDs). (Note that a popular
+message sent in a large group can result in thousands of reactions in
+a few hundred milliseconds.)</li>
+</ul></li>
+<li><t>body</t>
+
+<ul spacing="compact">
+<li>has too many body parts (more than 1024)</li>
+<li>is nested too deeply (more than 4 levels deep)</li>
+<li>is too large (according to local policy)</li>
+<li>has an unknown PartSemantics value</li>
+<li>contains <tt>partIndex</tt> values which are not continuous from zero</li>
+</ul></li>
+</ul>
+<t>For the avoidance of doubt, the following cases may be examples of legitimate use
+cases, and should not be considered the result of a malicious sender.</t>
+
+<ul spacing="compact">
+<li><t>message IDs</t>
+
+<ul spacing="compact">
+<li>where <tt>inReplyTo.message</tt> or <tt>replaces</tt> refer to an unknown message.
+Such a message could have been sent before the local client joined.</li>
+</ul></li>
+<li><t>lastSeen</t>
+
+<ul spacing="compact">
+<li>refers to an unknown message</li>
+<li>is empty for the sender's first message sent in the room</li>
+</ul></li>
+<li><t>body</t>
+
+<ul spacing="compact">
+<li>where a body part contains an unrecognized Disposition value. The
+unknown value should be treated as if it where <tt>render</tt>.</li>
+<li>where a contentType is unrecognized or unsupported.</li>
+<li>where a language tag is unrecognized or unsupported.</li>
+</ul></li>
+</ul>
+</section>
+
+<section anchor="provider-validation-of-message-id-and-timestamp"><name>Provider validation of Message ID and timestamp</name>
+<t>This document describes a way to communicate a copy of the message ID and
+timestamp field in the MLS additional authenticated data of the message.
+This information will be available to intermediaries. These intermediaries
+can perform limited validation on these two fields.</t>
+<t>The message ID consists of a local part (typically a UUID) and a domain.
+The provider of the sending client and the owning provider of the MLS group
+MAY reject messages where the domain in the message ID does not match the
+domain of the sending client's provider. The sending client's provider MAY
+also reject messages where the message ID matches its domain and the UUID
+is the duplicate of another previously seen message. Note that an exhaustive
+search for duplicate message IDs is not feasible on high-traffic highly
+available systems.</t>
+<t>The provider of the sending client and the owning provider of the MLS group
+MAY reject messages where the timestamp is excessive (ex: more than two
+hours ahead or behind the correct time). A receiving provider may receive
+messages which are days or weeks old, but may still reject messages with a
+timestamp which is far in the future.</t>
+</section>
+
+<section anchor="alternate-content-rendering"><name>Alternate content rendering</name>
+<t>This document includes a mechanism where the sender can offer alternate
+versions of content in a single message. For example, the sender could
+send:</t>
+
+<ul spacing="compact">
+<li>an plain text and an HTML version of a text message</li>
+<li>a thumbnail preview and link to a high-resolution image or video</li>
+<li>versions of the same message in multiple languages</li>
+<li>an PNG image and a scalable vector graphics version of a line drawing</li>
+</ul>
+<t>A malicious client could use this mechanism to send content that will appear
+different to a subset of the members of a group and possibly elicit an
+incorrect or misleading response.</t>
+
+<artwork><![CDATA[Message as seen by Alice (manager)
+Xavier: Do you want me to reserve a room for the review meeting?
+
+Message as seen by Bob (Alice's assistant)
+Xavier: @Bob I need to pickup Alice's Ferarri keys. She'll confirm
+
+Reply sent by Alice
+Alice: Yes please.
+]]>
+</artwork>
+</section>
+
+<section anchor="link-and-mention-handling"><name>Link and Mention handling</name>
+<t>Both Markdown and HTML support links. Using the example of an <tt>https</tt> link,
+if the rendered text and the link target match exactly or are canonically
+equivalent, there is no need for confirmation if the end user selects the link.</t>
+
+<artwork><![CDATA[[example.com/foobar](https://example.com/foobar)
+[https://example.com/foobar](https://example.com/foobar)
+[https://example.com:443/foobar](https://example.com/foobar)
+]]>
+</artwork>
+<t>However, if the link text is different, or the scheme is downgraded
+from https to http, the user should be presented with
+an alert warning that the text is not the same.</t>
+
+<artwork><![CDATA[[https://example.com/foobar](https://spearphishers.example/foobar)
+[https://example.com/foobar](http://example.com/foobar)
+]]>
+</artwork>
+<t>An IM URI link to a user who has a member client in the MLS
+group in which the message was sent is considered a mention. Clients may
+support special rendering of mentions instead of treating them like any
+other type of link. In Markdown and HTML, the display text portion of a
+link is considered a rendering hint from the sender to the receiver of
+the message. The receiver should use local policy to decide if the hint
+is an acceptable local representation of the user represented by the link
+itself. If the hint is not an acceptable representation, the client should
+instead display its canonical representation for the user.</t>
+<t>For example, in the first examples, the sender expresses no preference
+about how to render the mention. In the second example, the sender requests
+that the mention is rendered as the literal URI. In the third example, the
+sender requests the canonical handle for Alice. In the fourth example, the
+sender requests Alice's first name.</t>
+
+<artwork><![CDATA[<im:alice-smith@example.com>
+[im:alice-smith@example.com](im:alice-smith@example.com)
+[@AliceSmith](im:alice-smith@example.com)
+[Alice](im:alice-smith@example.com)
+]]>
+</artwork>
+<t>Note that in some clients, presence of a mention for the local user may
+result in a different notification policy.</t>
+<t>If the client does not support special rendering of mentions, the
+application, should render the text like any other link.</t>
+</section>
+
+<section anchor="delivery-and-read-receipts"><name>Delivery and Read Receipts</name>
+<t>Delivery and Read Receipts can provide useful information inside a group,
+or they can reveal sensitive private information. In many IM systems
+there is are per-group policies for and/or delivery read receipts:</t>
+
+<ul spacing="compact">
+<li>they are required</li>
+<li>they are permitted, but optional</li>
+<li>they are forbidden</li>
+</ul>
+<t>In the first case, everyone in the group would have to claim to support
+read receipts to be in the group and agree to the policy of sending them
+whenever a message was read. A user who did not wish to send read receipts could
+review the policy (automatically or manually) and choose not to join
+the group. Of course, requiring read receipts is a cooperative effort
+just like using self-deleting messages. A malicious client could obviously
+read a message and not send a read receipt, or send a read receipt for a
+message that was never rendered. However, cooperating clients have a way to
+agree that they will send read receipts when a message is read in a specific
+group.</t>
+<t>In the second case, sending a read receipt would be at the discretion
+of each receiver of the message (via local preferences).</t>
+</section>
+</section>
+
+</middle>
+
+<back>
+<references><name>Normative References</name>
+<reference anchor="GFM" target="https://github.github.com/gfm/">
+  <front>
+    <title>GitHub Flavored Markdown Spec, Version 0.29-gfm</title>
+    <author>
+      <organization>GitHub</organization>
+    </author>
+    <date year="2019" month="March" day="6"></date>
+  </front>
+</reference>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.ietf-mls-extensions.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.mahy-mimi-problem-outline.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3862.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5116.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5646.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6234.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7763.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-w3c/reference.W3C.CR-html52-20170808.xml"/>
+</references>
+<references><name>Informative References</name>
+<reference anchor="DoubleRatchet" target="https://signal.org/docs/specifications/doubleratchet/">
+  <front>
+    <title>The Double Ratchet Algorithm</title>
+    <author fullname="Trevor Perrin">
+      <organization>Signal</organization>
+    </author>
+    <author fullname="Moxie Marlinspike">
+      <organization>Signal</organization>
+    </author>
+    <date year="2016" month="November" day="20"></date>
+  </front>
+</reference>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.barnes-mimi-arch.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.ietf-mls-protocol.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.mahy-mimi-identity.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.ralston-mimi-terminology.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2046.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2183.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3156.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3261.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6120.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8098.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8551.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9078.xml"/>
+</references>
+
+<section anchor="multipart-examples"><name>Multipart examples</name>
+
+<section anchor="proprietary-and-common-formats-sent-as-alternatives"><name>Proprietary and Common formats sent as alternatives</name>
+<t>Example of body needed to send this profile and a proprietary
+messaging protocol simultaneously.</t>
+
+<artwork><![CDATA[body = new NestablePart();
+body.disposition = render;
+body.language = "";
+body.partIndex = 0;
+body.partSemantics = chooseOne;
+
+s = new SinglePart();
+s.contentType = "application/mimi-content";
+s.content = "\xabcdef0123456789....";
+
+standardPart = new NestablePart()
+standardPart.disposition = render;
+standardPart.language = "";
+standardPart.partIndex = 1;
+standardPart.partSemantics = singlePart;
+standardPart.part = s;
+
+p = new SinglePart();
+p.contentType = 
+  "application/vnd.examplevendor-fancy-im-message";
+p.content = "\x0123456789abcdef....";
+
+proprietaryPart = new NestablePart()
+proprietaryPart.disposition = render;
+proprietaryPart.language = "";
+proprietaryPart.partIndex = 2;
+proprietaryPart.partSemantics = singlePart;
+proprietaryPart.part = p;
+
+body.part = new MultiParts();
+body.part.push(standardPart);
+body.part.push(proprietaryPart);
+]]>
+</artwork>
+</section>
+
+<section anchor="mulitple-reactions-example"><name>Mulitple Reactions Example</name>
+<t>This shows sending a reaction with multiple separate emojis.</t>
+<t>TBC</t>
+</section>
+
+<section anchor="complicated-nested-example"><name>Complicated Nested Example</name>
+<t>This example shows separate English and French versions of HTML message with
+inline images. Each of the images is presented in alternate formats: an animated GIF,
+and a single PNG.</t>
+<t>TBC</t>
+</section>
+
+<section anchor="tls-presentation-language-multipart-container-format"><name>TLS Presentation Language multipart container format</name>
+<t>In a heterogenous group of IM clients, it is often desirable to send more than one
+media type as alternatives, such that IM clients have a choice of which media
+type to render. For example, imagine an IM group containing a set of clients
+which support a common video format and a subset which only support animated GIFs.
+The sender could use a <tt>MultiParts</tt> NestablePart with <tt>chooseOne</tt> semantics
+containing both media types. Every client in the group chat could render something
+resembling the media sent. This is analogous to the <tt>multipart/alternative</tt> <xref target="RFC2046"></xref>
+media type.</t>
+<t>Likewise it is often desirable to send more than one media type intended to be
+rendered together as in (for example a rich text document with embedded images),
+which can be represented using a <tt>MultiParts</tt> NestablePart with <tt>processAll</tt>
+semantics. This is analogous to the <tt>multipart/mixed</tt> <xref target="RFC2046"></xref> media type.</t>
+<t>Some implementors complain that the multipart types are unnatural to use inside a
+binary protocol which requires explicit lengths such as MLS
+<xref target="I-D.ietf-mls-protocol"></xref>. Concretely, an implementation has to scan through the
+entire content to construct a boundary token which is not contained in the content.</t>
+<t>Note that there is a minor semantic difference between multipart/alternative and
+<tt>MultiParts</tt> with <tt>chooseOne</tt> semantics. In multipart/alternative, the parts are
+presented in preference order by the sender. With <tt>MultiParts</tt> the receiver
+chooses its &quot;best&quot; format to render according to its own preferences.</t>
+</section>
+</section>
+
+<section anchor="changelog"><name>Changelog</name>
+
+<section anchor="changes-between-draft-mahy-mimi-content-01-and-draft-mahy-mimi-content-02"><name>Changes between draft-mahy-mimi-content-01 and draft-mahy-mimi-content-02</name>
+
+<ul spacing="compact">
+<li>made semantics abstract (C++ structs) instead of using CPIM or MIME headers</li>
+</ul>
+</section>
+
+<section anchor="changes-between-draft-mahy-mimi-content-02-and-draft-ietf-mimi-content-00"><name>Changes between draft-mahy-mimi-content-02 and draft-ietf-mimi-content-00</name>
+
+<ul spacing="compact">
+<li>replaced threadId with topicId</li>
+<li>inReplyTo now has a hash of the referenced message</li>
+<li>clarified that replies are always to a specific version of a modified message</li>
+<li>changed timestamp to a whole number of milliseconds since the epoch
+to avoid confusion</li>
+<li>added Security Considerations section</li>
+<li>added IANA Considerations section</li>
+<li>added change log</li>
+</ul>
+</section>
+
+<section anchor="changes-between-draft-ietf-mimi-content-00-and-draft-ietf-mimi-content-01"><name>Changes between draft-ietf-mimi-content-00 and draft-ietf-mimi-content-01</name>
+
+<ul spacing="compact">
+<li>created new abstract format for attachment information, instead of using
+message/external-body</li>
+<li>added discussion of encrypting external content</li>
+<li>clarified the difference between <tt>render</tt> and <tt>inline</tt> dispositions</li>
+<li>created a way for the messageId and timestamp to be shared in the MLS
+additional authenticated data field</li>
+<li>expanded discussion of what can and should be rendered when a mention is
+encountered; discussed how to prevent confusion attacks with mentions.</li>
+<li>added a lastSeen field used to ensure a more consistent sort order of
+messages in a room.</li>
+</ul>
+</section>
+</section>
+
+</back>
+
+</rfc>
