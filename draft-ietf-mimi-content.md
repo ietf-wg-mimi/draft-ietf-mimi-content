@@ -37,7 +37,8 @@ document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] wh
 and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS group, and KeyPackage have the same meanings as in
-the MLS protocol [@!I-D.ietf-mls-protocol].
+the MLS protocol [@!I-D.ietf-mls-protocol]. Other relevant terminology may be
+found in [@?I-D.barnes-mimi-arch] and [@?I-D.ralston-mimi-terminology].
 
 # Introduction
 
@@ -630,6 +631,8 @@ body.content = "Right on! _Congratulations_ y'all!";
 Note that replies and reactions always refer to a specific message id,
 and therefore a specific "version" of a message, which could have been
 edited before and/or after the message id referenced in the reply or reaction.
+It is a matter of local policy how to render (if at all) a reaction to
+a subsequently edited message.
 
 ## Delete
 
