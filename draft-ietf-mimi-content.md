@@ -843,35 +843,6 @@ statuses[3].messageId = "\x5c95a4dfddab...";
 statuses[3].status = expired;
 ~~~~~~~
 
-# Additional Authenticated Data
-
-This document defines some additional data that should be
-conveyed end-to-end, but still visible to intermediaries.
-In MLS this information is conveyed inside application messages in the
-`authenticated_data` field. If that field is non-empty and the
-media type of the MLS application message is application/mimi-content,
-then it contains a single `MimiMessageAad` TLS struct as defined
-below.
-
-~~~~~ tls
-enum {
-    unspecified(0),
-    message(1),
-    status(2),
-    ephemeral(3)
-} Handling;
-
-struct {
-    opaque localPart<V>;
-    opaque domain<V>;
-} MimiMessageId;
-
-struct {
-    MimiMessageId message_id;
-    uint64 timestamp;
-    Handling handling;
-} MimiMessageAad;
-~~~~~
 
 # Support for Specific Media Types
 
