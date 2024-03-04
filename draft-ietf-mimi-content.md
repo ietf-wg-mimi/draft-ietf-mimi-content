@@ -484,15 +484,20 @@ derived from the client:
   im:%40alice-smith@example.com
 * MLS group ID:
   7u4NEqe1tbeBFa0aHdsTgRyD/XOHxD5meZpZS+7aJr8=
-* The MLS group URL:
+* The MLS room URL:
   im:#engineering_team@example.com
 * The MLS group name: "Engineering Team"
+
+In addition, the messageId and timestamp are:
+
+~~~ c++
+messageId = "\x28fd19857ad7...";
+timestamp = 1644387225019;  // 2022-02-08T22:13:45-00:00
+~~~
 
 Below are the relevant data fields set by the sender:
 
 ~~~~~~~ c++
-messageId = "28fd19857ad7@example.com";
-timestamp = 1644387225019;  // 2022-02-08T22:13:45-00:00
 expires = 0;
 body.disposition = render;
 body.partIndex = 0;
@@ -511,13 +516,13 @@ all but the user handle URL will be omitted.
 
 * Sender user handle URL:
   im:%40bob-jones@example.com
+* messageId = "\xe701beee59f9...";
+* timestamp = 1644387237492;  // 2022-02-08T22:13:57-00:00
 
 The data fields needed:
 
 ~~~~~~~ c++
-messageId = "e701beee59f9@example.com";
-timestamp = 1644387237492;   // 2022-02-08T22:13:57-00:00
-inReplyTo.message: "28fd19857ad7@example.com";
+inReplyTo.message: "\x28fd19857ad7...";
 inReplyTo.hash-alg: sha256;
 inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
                        "\x7668174ba385af066011e43bd7e51501";
@@ -547,11 +552,11 @@ Note that many systems allow mutiple independent reactions per sender.
 
 * Sender user handle URL:
   im:cathy-washington@example.com
+* messageId = "\x1a771ca1d84f...";
+* timestamp = 1644387237728;   // 2022-02-08T22:13:57-00:00
 
 ~~~~~~~ c++
-messageId = "1a771ca1d84f@example.com";
-timestamp = 1644387237728;   // 2022-02-08T22:13:57-00:00
-inReplyTo.message: "28fd19857ad7@example.com";
+inReplyTo.message: "\x28fd19857ad7...";
 inReplyTo.hash-alg: sha256;
 inReplyTo.replyToHash: "\xd3c14744d1791d02548232c23d35efa9" +
                        "\x7668174ba385af066011e43bd7e51501";
@@ -576,10 +581,11 @@ or HTML rich content. For example, a mention using Markdown is indicated below.
 
 * Sender user handle URL:
   im:cathy-washington@example.com
+* messageId = "\x4dcab7711a77...";
+* timestamp = 1644387243008;   // 2022-02-08T22:14:03-00:00
+
 
 ~~~~~~~ c++
-messageId = "4dcab7711a77@example.com";
-timestamp = 1644387243008;   // 2022-02-08T22:14:03-00:00
 expires = 0;
 body.disposition = render;
 body.partIndex = 0;
@@ -611,11 +617,12 @@ Here Bob Jones corrects a typo in his original message:
 
 * Sender user handle URL:
   im:%40bob-jones@example.com
+* messageId = "\x89d3472622a4...";
+* timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
+
 
 ~~~~~~~ c++
-messageId = "89d3472622a4@example.com";
-timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
-replaces: "e701beee59f9@example.com";
+replaces: "\xe701beee59f9...";
 expires = 0;
 body.disposition = render;
 body.partIndex = 0;
@@ -642,10 +649,13 @@ If Bob deleted his message instead of modifying it, we would represent it
 using the `replaces` data field, and using an empty body (NullPart),
 as shown below.
 
+* Sender user handle URL:
+  im:%40bob-jones@example.com
+* messageId = "\x89d3472622a4...";
+* timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
+
 ~~~~~~~
-messageId = "89d3472622a4@example.com";
-timestamp = 1644387248621;   // 2022-02-08T22:14:08-00:00
-replaces: "e701beee59f9@example.com";
+replaces: "\xe701beee59f9...";
 expires = 0;
 body.disposition = render;
 body.partSemantics = nullPart;
@@ -664,11 +674,11 @@ created the reaction, as shown below.
 
 * Sender user handle URL:
   im:cathy-washington@example.com
+* messageId = "\xd052cace46f8...";
+* timestamp = 1644387250389;   // 2022-02-08T22:14:10-00:00
 
 ~~~~~~~ c++
-messageId = "d052cace46f8@example.com";
-timestamp = 1644387250389;   // 2022-02-08T22:14:10-00:00
-replaces: "1a771ca1d84f@example.com";
+replaces: "\x1a771ca1d84f...";
 expires = 0;
 body.disposition = reaction;
 body.partIndex = 0;
@@ -692,10 +702,10 @@ network connectivity necessary.
 
 * Sender user handle URL:
   im:alice-smith@example.com
-  
+* messageId = "\x5c95a4dfddab...";
+* timestamp = 1644389403227;   // 2022-02-08T22:49:06-00:00
+
 ~~~~~~~ c++
-messageId = "5c95a4dfddab@example.com";
-timestamp = 1644389403227;   // 2022-02-08T22:49:06-00:00
 expires = 1644390004;         // ~10 minutes later
 body.disposition = render;
 body.partIndex = 0;
@@ -823,13 +833,13 @@ struct MessageStatusReport {
 
 ~~~~~~~ c++
 timestamp = 1644284703227;
-statuses[0].messageId = "4dcab7711a77@example.com";
+statuses[0].messageId = "\x4dcab7711a77...";
 statuses[0].status = read;
-statuses[1].messageId = "285f75c46430@example.com";
+statuses[1].messageId = "\x285f75c46430...";
 statuses[1].status = read;
-statuses[2].messageId = "c5e0cd6140e6@example.com";
+statuses[2].messageId = "\xc5e0cd6140e6...";
 statuses[2].status = unread;
-statuses[3].messageId = "5c95a4dfddab@example.com";
+statuses[3].messageId = "\x5c95a4dfddab...";
 statuses[3].status = expired;
 ~~~~~~~
 
