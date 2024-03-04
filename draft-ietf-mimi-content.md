@@ -9,16 +9,16 @@ keyword = ["mimi","content","mls","mime"]
 [seriesInfo]
 status = "informational"
 name = "Internet-Draft"
-value = "draft-ietf-mimi-content-01"
+value = "draft-ietf-mimi-content-02"
 stream = "IETF"
 
 [[author]]
 initials="R."
 surname="Mahy"
 fullname="Rohan Mahy"
-organization = "Wire"
+organization = "Unaffiliated"
   [author.address]
-  email = "rohan.mahy@wire.com"
+  email = "rohan.ietf@gmail.com"
 %%%
 
 .# Abstract
@@ -37,7 +37,7 @@ document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] wh
 and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS group, and KeyPackage have the same meanings as in
-the MLS protocol [@!I-D.ietf-mls-protocol]. Other relevant terminology may be
+the MLS protocol [@!RFC9420]. Other relevant terminology may be
 found in [@?I-D.barnes-mimi-arch] and [@?I-D.ralston-mimi-terminology].
 
 # Introduction
@@ -48,7 +48,7 @@ submitted as pull requests at https://github.com/ietf-wg-mimi/draft-ietf-mimi-co
 Editorial changes can be managed in GitHub, but any substantive 
 change should be discussed on the MIMI mailing list (mimi@ietf.org).
 
-MLS [@!I-D.ietf-mls-protocol] is a group key establishment protocol
+MLS [@!RFC9420] is a group key establishment protocol
 motivated by the desire for group chat with efficient end-to-end encryption.
 While one of the motivations of MLS is interoperable standards-based secure
 messaging, the MLS protocol does not define or prescribe any format for the
@@ -1289,7 +1289,7 @@ semantics. This is analogous to the `multipart/mixed` [@?RFC2046] media type.
 
 Some implementors complain that the multipart types are unnatural to use inside a
 binary protocol which requires explicit lengths such as MLS
-[@?I-D.ietf-mls-protocol]. Concretely, an implementation has to scan through the
+[@?RFC9420]. Concretely, an implementation has to scan through the
 entire content to construct a boundary token which is not contained in the content.
 
 Note that there is a minor semantic difference between multipart/alternative and
@@ -1326,3 +1326,11 @@ to avoid confusion
   encountered; discussed how to prevent confusion attacks with mentions.
 * added a lastSeen field used to ensure a more consistent sort order of
   messages in a room.
+
+## Changes between draft-ietf-mimi-content-01 and draft-ietf-mimi-content-02
+
+* consensus at IETF 118 was to use a hash of the ciphertext in lieu of the
+  message ID
+* consensus at IETF 118 was to use the hub accepted timestamp for protocol
+  actions like sorting
+* Updated author's address
