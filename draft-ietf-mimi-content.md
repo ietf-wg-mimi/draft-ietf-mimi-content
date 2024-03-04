@@ -976,10 +976,6 @@ represent malicious messages. These should be logged and discarded.
 * sender of the message
   - where the apparent sender is not a member of the target MLS group
 * message IDs
-  - which are very long (greater than 4096 octets)
-  - where the sender domain and the `messageId` domain are different
-  - where the `messageId` in this format is expected to match a similar
-    field in the enclosing transfer protocol, but does not
   - which duplicate another message ID already encountered
 * timestamps
   - received more than a few minutes in the future, or 
@@ -1026,27 +1022,15 @@ cases, and should not be considered the result of a malicious sender.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
 
-## Provider validation of Message ID and timestamp
+## Validation of timestamp
 
-This document describes a way to communicate a copy of the message ID and
-timestamp field in the MLS additional authenticated data of the message.
-This information will be available to intermediaries. These intermediaries
-can perform limited validation on these two fields.
+The timestamp is the time a message is accepted by the hub provider. As such,
+the hub provider can manipulate the timestamp, and the sending provider
+can delay sending messages selectively to cause the timestamp on a hub to
+be later.
 
-The message ID consists of a local part (typically a UUID) and a domain.
-The provider of the sending client and the owning provider of the MLS group
-MAY reject messages where the domain in the message ID does not match the
-domain of the sending client's provider. The sending client's provider MAY
-also reject messages where the message ID matches its domain and the UUID
-is the duplicate of another previously seen message. Note that an exhaustive
-search for duplicate message IDs is not feasible on high-traffic highly
-available systems.
-
-The provider of the sending client and the owning provider of the MLS group
-MAY reject messages where the timestamp is excessive (ex: more than two
-hours ahead or behind the correct time). A receiving provider may receive
-messages which are days or weeks old, but may still reject messages with a
-timestamp which is far in the future.
+> **TODO**: Discuss how to sanity check lastSeen, timestamp and the MLS
+> epoch and generation, and the limitations of this approach.
 
 ## Alternate content rendering
 
