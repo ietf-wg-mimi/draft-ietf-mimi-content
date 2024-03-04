@@ -68,10 +68,6 @@ There are now several instant messaging vendors implementing MLS, and the
 MIMI (More Instant Messaging Interoperability) Working Group is chartered
 to standardize an extensible interoperable messaging format for common
 features to be conveyed "inside" MLS application messages.
-Most of these features can reuse the semantics of
-previously-defined URIs, message headers, and media types.
-This document represents a solution to one part of the
-MIMI problem outline [@!I-D.mahy-mimi-problem-outline].
 
 This document assumes that MLS clients advertise media types they support
 and can determine what media types are required to join a
