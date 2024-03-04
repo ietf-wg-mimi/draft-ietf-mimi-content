@@ -112,6 +112,21 @@ This proposal relies on URIs for naming and identifiers. All the example use
 the `im:` URI scheme (defined in [@!RFC3862]), but any instant messaging scheme
 could be used.
 
+## Message ID and Accepted Timestamp
+
+Every MIMI content message has a message ID which is calculated from the
+hash of the ciphertext of the message. When the content is end-to-encrypted
+with MLS for a specific MLS group, the cipher suite for the group specifies a hash algorithm. The message ID is the first 32 octets of the hash of the `MLSMessage` struct using that hash algorithm.
+
+As described in the the MIMI architecture {{?I-D.barnes-mimi-arch}}, one
+provider, called the hub, is responsible for ordering messages. The hub is
+also responsible for recording the time that any application message is
+accepted, and conveying it to any "follower" providers which receive messages
+from the group. It is represented as the whole number of milliseconds since
+the start of the UNIX epoch (01-Jan-1970 00:00:00 UTC). To the extent that
+the accepted timestamp is available to a MIMI client, the client can use it
+for fine grain sorting of messages into a consistent order.
+
 ## Message Container
 
 Most common instant messaging features are expressed as individual messages.
@@ -119,8 +134,8 @@ A plain or rich text message is obviously a message, but a reaction (ex: like),
 a reply, editing a previous message, deleting an earlier message, and read
 receipts are all typically modeled as another message with different properties. 
 
-This document describes the semantics of a message container, which contains a
-message ID and timestamp and represents most of these previously mentioned messages.
+This document describes the semantics of a message container, which
+can represent most of these previously mentioned message types.
 The container typically carries one or more body parts with the actual message
 content (for example, an emoji used in a reaction, a plain text or rich text
 message or reply, a link, or an inline image).
@@ -128,7 +143,6 @@ message or reply, a link, or an inline image).
 ## Message Status Report
 
 This document also describes the semantics of a status report of other messages.
-The status report has a timestamp, but does not have a message ID of its own.
 Because some messaging systems deliver messages in batches and allow a user to
 mark several messages read at a time, the report format allows a single report
 to convey the read/delivered status of multiple messages (by message ID) within
@@ -136,10 +150,9 @@ the same MLS group at a time.
 
 # MIMI Content Container Message Semantics
 
-Each MIMI Content message is a container format with three categories
+Each MIMI Content message is a container format with two categories
 of information: 
 
-* the required message ID and timestamp fields, 
 * the message behavior fields (which can have default or empty values), and
 * the body part(s) and associated parameters
 
@@ -153,40 +166,22 @@ collisions. This rules out using multipart MIME types.
 * we do not want to base64 encode body parts with binary media
 types (ex: images). This rules out using JSON to carry the binary data.
 
-## Required Fields
-
-Every MIMI content message has a message ID {1}. The message ID
-has a local part and a domain part. The domain part corresponds to the
-domain of the sender of the message. The local part must be unique
-among all messages sent in the domain. Using a UUID for the local part
-is RECOMMENDED.
-
-``` c++
-struct MessageId {
-    Octets localPart;
-    String domain;
-};
-
-struct MimiContent {
-    MessageId messageId;     // required value {1}
-    uint64 timestamp;        // milliseconds since 01-Jan-1970 {2}
-    MessageId replaces;      // {3}
-    Octets topicId;          // {4}
-    uint32 expires;          // 0 = does not expire {5}
-    ReplyToInfo inReplyTo;   // {6}
-    std::vector<MessageId> lastSeen; // {7}
-    NestablePart body;               // {8}
-};
-```
-
-Every MIMI content message has a timestamp {2} when the message was
-encrypted. It is represented as
-the whole number of milliseconds since the start of the UNIX epoch
-(01-Jan-1970 00:00:00 UTC).
-
 ## Message Behavior Fields 
 
-The `replaces` {3} data field indicates that the current message
+``` c++
+typedef Octets[32] MessageId;
+typedef uint64 Timestamp; // milliseconds since 01-Jan-1970
+
+struct MimiContent {
+    MessageId replaces;      // {1}
+    Octets topicId;          // {2}
+    uint32 expires;          // 0 = does not expire {3}
+    ReplyToInfo inReplyTo;   // {4}
+    std::vector<MessageId> lastSeen; // {5}
+    NestablePart body;               // {6}
+};
+```
+The `replaces` {1} data field indicates that the current message
 is a replacement or update to a previous message whose message ID
 is in the `replaces` data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
@@ -196,12 +191,12 @@ messages to which the client previously reacted.
 assumes that the current message has not identified any special
 relationship with another previous message. 
 
-The `topicId` {4} data field indicates that the current message is
+The `topicId` {2} data field indicates that the current message is
 part of a logical grouping of messages which all share the same
 value in the `topicId` data field. If the `topicId` is zero length,
 there is no such grouping.
 
-The `expires` {5} data field is a hint from the sender to the receiver
+The `expires` {3} data field is a hint from the sender to the receiver
 that the message should be locally deleted and disregarded at a specific
 timestamp in the future. Indicate a message with no specific expiration
 time with the value zero. The data field is an unsigned integer number of
@@ -211,7 +206,7 @@ specifying an expiration time provides no assurance that the client
 actually honors or can honor the expiration time, nor that the end user
 didn't otherwise save the expiring message (ex: via a screenshot).
 
-The `inReplyTo` {6} data field indicates that the current message is
+The `inReplyTo` {4} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
 It contains the message ID of the referenced message and the SHA-256
 hash [@!RFC6234] of its `MimiContent` structure. If the `message` field is
@@ -252,7 +247,7 @@ time the reply is sent.
 
 ## Message Ordering
 
-The `lastSeen` {7} data field indicates the latest message the sender
+The `lastSeen` {5} data field indicates the latest message the sender
 was aware of in the group.  It is a list of message ids.
 
 If the sender recently joined the group and has not yet seen any messages,
@@ -277,22 +272,22 @@ only the message id of Doug's message.
 
 ## Message Bodies
 
-Every MIMI content message has a body {8} which can have multiple,
+Every MIMI content message has a body {6} which can have multiple,
 possibly nested parts. A body with zero parts is permitted when
-deleting or unliking {9}. When there is a single body, its IANA
+deleting or unliking {7}. When there is a single body, its IANA
 media type, subtype, and parameters are included in the
-contentType field {10}. 
+contentType field {8}. 
 
 ```c++
-typedef std::monostate NullPart; // {9}
+typedef std::monostate NullPart; // {7}
 
 struct SinglePart {
-    String contentType;   // An IANA media type {10}
+    String contentType;   // An IANA media type {8}
     Octets content;       // The actual content
 };
 
 struct ExternalPart {
-    String contentType;   // An IANA media type {10}
+    String contentType;   // An IANA media type {8}
     String url;           // A URL where the content can be fetched
     uint32 expires;       // 0 = does not expire
     uint64 size;          // size of content in octets
@@ -305,7 +300,7 @@ struct ExternalPart {
 
 typedef std::vector<NestablePart> MultiParts; 
 
-enum PartSemantics { // {11}
+enum PartSemantics { // {9}
     nullPart = 0,    
     singlePart = 1, // the bodyParts is a single part
     chooseOne = 2,  // receiver picks exactly one part to process
@@ -326,9 +321,9 @@ enum Disposition {
 };
 
 struct NestablePart {
-    Disposition disposition;  // {12}
-    String language;          // {13}
-    uint16 partIndex;         // {14}
+    Disposition disposition;  // {10}
+    String language;          // {11}
+    uint16 partIndex;         // {12}
     PartSemantics partSemantics;
     std::variant<NullPart,SinglePart,ExternalPart,MultiParts> part;
 };
@@ -341,7 +336,7 @@ for example a rich-text message with an inline image. With other
 messages, there are multiple choices available for the same content,
 for example a choice among multiple languages, or between two
 different image formats. The relationship semantics among the parts
-is specified as an enumeration {11}. 
+is specified as an enumeration {9}. 
 
 The `nullPart` part semantic is used when there is no body part--for
 deleting and unliking. The `singlePart` part semantic is used when
@@ -368,7 +363,7 @@ could be expressed using this semantic. Processing the preview image
 is not strictly necessary for the correct rendering of the rich text
 part.
 
-The disposition {12} and language {13} of each part can be specified
+The disposition {10} and language {11} of each part can be specified
 for any part, including for nested parts. The disposition represents
 the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
@@ -392,7 +387,7 @@ The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
 in [@!RFC5646]. 
 
-Each part also has an part index {14}, which is a zero-indexed,
+Each part also has an part index {12}, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
 {Nested body examples} for an example of how the part index is
@@ -440,18 +435,20 @@ algorithm.
 
 In addition to fields which are contained in a MIMI content message,
 there are also two fields which the implementation can definitely derive
-(the MLS group ID {15}, and the leaf index of the sender {16}). Many
-implementations could also determine one or more of: the senders client
-identifier URL {17}, the user identifier URL of the credential associated with
-the sender {18}, and the identifier URL for the MLS group {19}.
+(the MLS group ID {13}, and the leaf index of the sender {14}). Many
+implementations could also determine one or more of: the sender's client
+identifier URL {15}, the user identifier URL of the credential associated with
+the sender {16}, and the identifier URL for the MIMI room {17}.
 
 ~~~~~~~ c++
 struct MessageDerivedValues {
-    Octets mlsGroupId;       // value always available {15}
-    uint32 senderLeafIndex;  // value always available {16}
-    ImUrl senderClientUrl;   // {17}
-    ImUrl senderUserUrl;     // "From" {18}
-    ImUrl mlsGroupUrl;       // "To" {19}
+    MessageId messageId;
+    Timestamp hubAcceptedTimestamp;
+    Octets mlsGroupId;       // value always available {13}
+    uint32 senderLeafIndex;  // value always available {14}
+    IdUrl senderClientUrl;   // {15}
+    IdUrl senderUserUrl;     // "From" {16}
+    IdUrl roomUrl;       // "To" {17}
 };
 ~~~~~~~
 
@@ -464,12 +461,14 @@ following is known to every member of the group:
 * The membership of the group (via MLS).
 * The identity of any MLS client which sends an application message (via MLS).
 * The MLS group ID (via MLS)
-* The human readable name(s) of the MLS group, if any (out-of-band or extension).
+* The human readable name(s) of the MIMI room, if any (out-of-band or extension).
 * Which media types are mandatory to implement (MLS content advertisement extensions).
 * For each member, the media types each supports (MLS content advertisement extensions).
 
 Messages sent to an MLS group are delivered to every member of the group active during
 the epoch in which the message was sent.
+
+For the sake of readability, all message IDs will be shown using only the first six octets of 32, for example: `"\xe701beee59f9..."`.
 
 
 ## Original Message
