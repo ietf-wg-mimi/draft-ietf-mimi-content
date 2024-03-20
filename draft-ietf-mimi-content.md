@@ -173,10 +173,10 @@ typedef Octets[32] MessageId;
 typedef uint64 Timestamp; // milliseconds since 01-Jan-1970
 
 struct MimiContent {
-    MessageId replaces;      // {1}
-    Octets topicId;          // {2}
-    uint32 expires;          // 0 = does not expire {3}
-    ReplyToInfo inReplyTo;   // {4}
+    std::optional<MessageId> replaces;      // {1}
+    std::optional<Octets> topicId;          // {2}
+    std::optional<uint32> expires;          // {3}
+    std::optional<ReplyToInfo> inReplyTo;   // {4}
     std::vector<MessageId> lastSeen; // {5}
     NestablePart body;               // {6}
 };
@@ -186,20 +186,18 @@ is a replacement or update to a previous message whose message ID
 is in the `replaces` data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
- If the `replaces` field is empty (i.e. both the message ID
-`localPart` and the `domain` are zero length), the receiver
+ If the `replaces` field is not present, the receiver
 assumes that the current message has not identified any special
 relationship with another previous message. 
 
 The `topicId` {2} data field indicates that the current message is
 part of a logical grouping of messages which all share the same
-value in the `topicId` data field. If the `topicId` is zero length,
+value in the `topicId` data field. If the `topicId` is not present,
 there is no such grouping.
 
-The `expires` {3} data field is a hint from the sender to the receiver
+The `expires` {3} data field, if present, is a hint from the sender to the receiver
 that the message should be locally deleted and disregarded at a specific
-timestamp in the future. Indicate a message with no specific expiration
-time with the value zero. The data field is an unsigned integer number of
+timestamp in the future. The data field is an unsigned integer number of
 seconds after the start of the UNIX epoch. Using an 32-bit unsigned
 integer allows expiration dates until the year 2106. Note that
 specifying an expiration time provides no assurance that the client
@@ -210,8 +208,7 @@ The `inReplyTo` {4} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
 It contains the message ID of the referenced message and the SHA-256
 hash [@!RFC6234] of its `MimiContent` structure. If the `message` field is
-empty (i.e. both the message ID `localPart` and the `domain` are
-zero length), the receiver assumes that the current message has not
+absent, the receiver assumes that the current message has not
 identified any special relationship with another previous message;
 in that case the `hash-alg` is `none` and the `replyToHash` is zero
 length. 
@@ -289,12 +286,12 @@ struct SinglePart {
 struct ExternalPart {
     String contentType;   // An IANA media type {8}
     String url;           // A URL where the content can be fetched
-    uint32 expires;       // 0 = does not expire
+    std::optional<uint32> expires;
     uint64 size;          // size of content in octets
-    uint16 encAlg;        // An IANA AEAD Algorithm number, or zero
-    Octets key;           // AEAD key
-    Octets nonce;         // AEAD nonce
-    Octets aad;           // AEAD additional authentiation data
+    std::optional<uint16> encAlg;        // An IANA AEAD Algorithm number
+    std::optional<Octets> key;           // AEAD key
+    std::optional<Octets> nonce;         // AEAD nonce
+    std::optional<Octets> aad;           // AEAD additional authentiation data
     String description;   // an optional text description
 };
 
@@ -425,8 +422,8 @@ authenticated data (aad) values are set to the values used during the
 encryption. Unless modified by an extension, the default value of the
 `aad` is empty.
 
-If the external URL is a service, the `encAlg` is set to zero, and the
-`key`, `nonce`, and `aad` fields are zero length. 
+If the external URL is a service, the `encAlg`
+`key`, `nonce`, and `aad` fields are omitted. 
 
 Implementations of this specification MUST implement the AES-128-GCM
 algorithm.
@@ -446,9 +443,9 @@ struct MessageDerivedValues {
     Timestamp hubAcceptedTimestamp;
     Octets mlsGroupId;       // value always available {13}
     uint32 senderLeafIndex;  // value always available {14}
-    IdUrl senderClientUrl;   // {15}
-    IdUrl senderUserUrl;     // "From" {16}
-    IdUrl roomUrl;       // "To" {17}
+    std::optional<IdUrl> senderClientUrl;   // {15}
+    std::optional<IdUrl> senderUserUrl;     // "From" {16}
+    std::optional<IdUrl> roomUrl;       // "To" {17}
 };
 ~~~~~~~
 
