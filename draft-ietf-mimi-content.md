@@ -118,7 +118,7 @@ Every MIMI content message has a message ID which is calculated from the
 hash of the ciphertext of the message. When the content is end-to-encrypted
 with MLS for a specific MLS group, the cipher suite for the group specifies a hash algorithm. The message ID is the first 32 octets of the hash of the `MLSMessage` struct using that hash algorithm.
 
-As described in the the MIMI architecture {{?I-D.barnes-mimi-arch}}, one
+As described in the the MIMI architecture [@?I-D.barnes-mimi-arch], one
 provider, called the hub, is responsible for ordering messages. The hub is
 also responsible for recording the time that any application message is
 accepted, and conveying it to any "follower" providers which receive messages
