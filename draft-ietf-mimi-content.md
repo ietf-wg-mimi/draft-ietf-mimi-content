@@ -280,6 +280,22 @@ of messages.
 The next message after Doug's message contains a `lastSeen` containing
 only the message id of Doug's message.
 
+## Extension Fields
+
+In order to add additional functionality to MIMI, senders can include
+extension fields in the message format {6}. Each extension has a name, which contains between 1 and 255 octets of UTF-8, and an opaque value. The value
+of each extension can be between 0 and 65535 octets. 
+The message content `extensions` field MUST NOT include more than one
+extension field with the same name.
+
+``` tls
+struct {
+    Utf8 name<V>;
+    opaque value<V>;
+} Extension;
+
+```
+
 ## Message Bodies
 
 Every MIMI content message has a body {7} which can have multiple,
