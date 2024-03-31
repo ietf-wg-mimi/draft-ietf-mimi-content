@@ -481,20 +481,20 @@ In addition to fields which are contained in a MIMI content message,
 there are also two fields which the implementation can definitely derive
 (the MLS group ID {13}, and the leaf index of the sender {14}). Many
 implementations could also determine one or more of: the sender's client
-identifier URL {15}, the user identifier URL of the credential associated with
-the sender {16}, and the identifier URL for the MIMI room {17}.
+identifier URL {15}, the user identifier URL of the credential associated
+with the sender {16}, and the identifier URL for the MIMI room {17}.
 
-~~~~~~~ c++
-struct MessageDerivedValues {
+``` tls
+struct {
     MessageId messageId;
     Timestamp hubAcceptedTimestamp;
-    Octets mlsGroupId;       // value always available {13}
-    uint32 senderLeafIndex;  // value always available {14}
-    IdUrl senderClientUrl;   // {15}
-    IdUrl senderUserUrl;     // "From" {16}
-    IdUrl roomUrl;       // "To" {17}
-};
-~~~~~~~
+    opaque mlsGroupId<V>;      /* value always available {13} */
+    uint32 senderLeafIndex;    /* value always available {14} */
+    IdUrl senderClientUrl<V>;  /* {15} */
+    IdUrl senderUserUrl<V>;    /* "From" {16} */
+    IdUrl roomUrl<V>;          /* "To" {17} */
+} MessageDerivedValues;
+```
 
 # Examples
 
