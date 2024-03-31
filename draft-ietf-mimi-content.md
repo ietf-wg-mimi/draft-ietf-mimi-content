@@ -326,19 +326,6 @@ enum {             /* {9} */
     (255)
 } MultiplePartSemantics;
 
-enum {
-    unspecified(0),
-    render(1),
-    reaction(2),
-    profile(3),
-    inline(4),
-    icon(5),
-    attachment(6),
-    session(7),
-    preview(8),
-    (255)
-} Disposition;
-
 struct {
     Disposition disposition;  /* {10} */
     Utf8 language<V>;         /* {11} */
@@ -392,6 +379,22 @@ for any part, including for nested parts. The disposition represents
 the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
 [@?RFC2183].
+
+``` tls
+enum {
+    unspecified(0),
+    render(1),
+    reaction(2),
+    profile(3),
+    inline(4),
+    icon(5),
+    attachment(6),
+    session(7),
+    preview(8),
+    (255)
+} Disposition;
+```
+
 The `render` disposition means that the content should be rendered
 according to local policy. The  `inline` dispositions means that the
 content should be rendered "inline" directly in the chat interface.
