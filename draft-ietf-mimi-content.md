@@ -290,10 +290,9 @@ extension field with the same name.
 
 ``` tls
 struct {
-    Utf8 name<V>;
-    opaque value<V>;
+    Utf8 name<1..255>;
+    opaque value<0..65535>;
 } Extension;
-
 ```
 
 ## Message Bodies
