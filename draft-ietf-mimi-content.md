@@ -156,38 +156,49 @@ of information:
 * the message behavior fields (which can have default or empty values), and
 * the body part(s) and associated parameters
 
-To focus on the semantics of a MIMI Content message, we use C/C++ struct
-notation to describe its data fields. These fields are numbered in
-curly braces for reference in the text. We do not propose any specific syntax
-for the format, but two reasonable constraints are:
+> **NOTE**: The choice of a concrete binary syntax for MIMI Content messages
+> is currently an open issue in the Working Group with the respondents of a
+> poll split roughly 50/50 between using TLS Presentation Language (defined
+> in Section 3 of [@!RFC8446]) vs. Concise Binary Object Representation
+> (CBOR) [@!RFC8949]. This document will present the examples in the TLS
+> Presentation Language and provide the same contents in CBOR in an Appendix.
+
+The choice of a binary format was constrained in part because:
 
 * we do not want to scan body parts to check for boundary marker
 collisions. This rules out using multipart MIME types.
 * we do not want to base64 encode body parts with binary media
 types (ex: images). This rules out using JSON to carry the binary data.
 
+The object fields in the structure defined below are numbered in
+curly braces for reference in the text.
+
+
 ## Message Behavior Fields 
 
-``` c++
-typedef Octets[32] MessageId;
-typedef uint64 Timestamp; // milliseconds since 01-Jan-1970
+``` tls
+uint8  MessageId[32];
+uint64 Timestamp;  /* milliseconds since 01-Jan-1970 */
+uint8  Utf8;       /* a UTF-8 character */
+uint8  IdUrl;      /* an identifier URL character */
 
-struct MimiContent {
-    MessageId replaces;      // {1}
-    Octets topicId;          // {2}
-    uint32 expires;          // 0 = does not expire {3}
-    ReplyToInfo inReplyTo;   // {4}
-    std::vector<MessageId> lastSeen; // {5}
-    NestablePart body;               // {6}
-};
+struct {
+    optional MessageId replaces;    /* {1} */
+    opaque topicId<V>;              /* {2} */
+    uint32 expires;                 /* 0 = does not expire {3} */
+    optional ReplyToInfo inReplyTo; /* {4} */
+    MessageId lastSeen<V>;          /* {5} */
+    Extension extensions<V>;        /* {6} */
+    NestablePart body;              /* {7} */
+} MimiContent;
 ```
+
 The `replaces` {1} data field indicates that the current message
 is a replacement or update to a previous message whose message ID
 is in the `replaces` data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
- If the `replaces` field is empty (i.e. both the message ID
-`localPart` and the `domain` are zero length), the receiver
+ If the `replaces` field is absent, the receiver
 assumes that the current message has not identified any special
 relationship with another previous message. 
 
@@ -208,18 +219,15 @@ didn't otherwise save the expiring message (ex: via a screenshot).
 
 The `inReplyTo` {4} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
-It contains the message ID of the referenced message and the SHA-256
-hash [@!RFC6234] of its `MimiContent` structure. If the `message` field is
-empty (i.e. both the message ID `localPart` and the `domain` are
-zero length), the receiver assumes that the current message has not
-identified any special relationship with another previous message;
-in that case the `hash-alg` is `none` and the `replyToHash` is zero
-length. 
+If present, it contains the message ID of the referenced message and the
+SHA-256 hash [@!RFC6234] of its `MimiContent` structure. Otherwise,
+the receiver assumes that the current message has not
+identified any special relationship with another previous message. 
 
 The `inReplyTo` hash is a message digest used to make sure that a MIMI
 message cannot refer to a sequence of referred messages which refers
-back to itself. When replying a client checks if the referenced message
-is itself a Reply. It compares the hash
+back to itself. When replying, a client MUST NOT knowingly create a sequence
+of replies which create a loop.
 
 When receiving a message, the client verifies that the hash is correct. Next
 it checks if the referenced message is itself a Reply. If so, it continues
@@ -227,18 +235,20 @@ following the referenced messages, checking that neither the messageId nor
 the hash of any of referenced messages indicates a Reply which "loops" back
 to a message later in the inReplyTo chain.
 
-``` c++
-enum HashAlgorithm {
-    none = 0,
-    sha256 = 1
-};
+``` tls
+enum {
+    none(0),
+    sha256(1),
+    (255)
+} HashAlgorithm;
 
-struct ReplyToInfo {
+struct {
     MessageId message;
     HashAlgorithm hashAlg;
-    Octets replyToHash;      // empty or hash of body.content
-};
+    opaque replyToHash<V>;  /* hash of content format */
+} inReplyTo;
 ```
+
 Note that a `inReplyTo`
 always references a specific message ID. Even if the original message
 was edited several times, a reply always refers to a specific version
@@ -272,62 +282,64 @@ only the message id of Doug's message.
 
 ## Message Bodies
 
-Every MIMI content message has a body {6} which can have multiple,
+Every MIMI content message has a body {7} which can have multiple,
 possibly nested parts. A body with zero parts is permitted when
-deleting or unliking {7}. When there is a single body, its IANA
-media type, subtype, and parameters are included in the
+deleting or unliking. External body parts(#external) are also supported.
+When there is a single (inline) part or a (single) externally reference
+part, its IANA media type, subtype, and parameters are included in the
 contentType field {8}. 
 
-```c++
-typedef std::monostate NullPart; // {7}
+``` tls
+enum {
+    null(0),
+    single(1),
+    external(2),
+    multi(3),
+    (255)
+} PartCardinality;
 
-struct SinglePart {
-    String contentType;   // An IANA media type {8}
-    Octets content;       // The actual content
-};
+struct {
+    Utf8 contentType<V>; /* An IANA media type {8} */
+    opaque content<V>;
+} SinglePart;
 
-struct ExternalPart {
-    String contentType;   // An IANA media type {8}
-    String url;           // A URL where the content can be fetched
-    uint32 expires;       // 0 = does not expire
-    uint64 size;          // size of content in octets
-    uint16 encAlg;        // An IANA AEAD Algorithm number, or zero
-    Octets key;           // AEAD key
-    Octets nonce;         // AEAD nonce
-    Octets aad;           // AEAD additional authentiation data
-    String description;   // an optional text description
-};
+enum {             /* {9} */
+    chooseOne(0),  /* receiver picks exactly one part to process */
+    singleUnit(1), /* receiver processes all parts as single unit */
+    processAll(2), /* receiver processes all parts individually */
+    (255)
+} MultiplePartSemantics;
 
-typedef std::vector<NestablePart> MultiParts; 
+enum {
+    unspecified(0),
+    render(1),
+    reaction(2),
+    profile(3),
+    inline(4),
+    icon(5),
+    attachment(6),
+    session(7),
+    preview(8),
+    (255)
+} Disposition;
 
-enum PartSemantics { // {9}
-    nullPart = 0,    
-    singlePart = 1, // the bodyParts is a single part
-    chooseOne = 2,  // receiver picks exactly one part to process
-    singleUnit = 3  // receiver processes all parts as single unit
-    processAll = 4  // receiver processes all parts individually
-};
-
-enum Disposition {
-    unspecified = 0,
-    render = 1,
-    reaction = 2,
-    profile = 3,
-    inline = 4,
-    icon = 5,
-    attachment = 6,
-    session = 7,
-    preview = 8
-};
-
-struct NestablePart {
-    Disposition disposition;  // {10}
-    String language;          // {11}
-    uint16 partIndex;         // {12}
-    PartSemantics partSemantics;
-    std::variant<NullPart,SinglePart,ExternalPart,MultiParts> part;
-};
-
+struct {
+    Disposition disposition;  /* {10} */
+    Utf8 language<V>;         /* {11} */
+    uint16 partIndex;         /* {12} */
+    PartCardinality cardinality;
+    select(cardinality) {
+        case null:
+            struct {};
+        case single:
+            SinglePart part;
+        case external:
+            ExternalPart part;
+        case multi:
+            MultiplePartSemantics partSemantics;
+            NestablePart parts<V>;
+    };
+} NestablePart;
 ```
 
 With some types of message content, there are multiple media types
@@ -337,10 +349,6 @@ messages, there are multiple choices available for the same content,
 for example a choice among multiple languages, or between two
 different image formats. The relationship semantics among the parts
 is specified as an enumeration {9}. 
-
-The `nullPart` part semantic is used when there is no body part--for
-deleting and unliking. The `singlePart` part semantic is used when
-there is a single body part.
 
 The `chooseOne` part semantic is roughly analogous to the semantics of the
 `multipart/alternative` media type, except that the ordering of the
@@ -383,6 +391,7 @@ The `session` disposition means that the content is a description of
 a multimedia session, or a URI used to join one.
 The `preview` disposition means that the content is a sender-generated
 preview of something, such as the contents of a link. 
+
 The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
 in [@!RFC5646]. 
@@ -393,13 +402,13 @@ body part (for example, an inline image) within another part. See
 {Nested body examples} for an example of how the part index is
 calculated.
 
-## External content
+## External content {#external}
 
 It is common in Instant Messaging systems to reference external
 content via URI that will be processed automatically, either to
 store bulky content (ex: videos, images, recorded sounds) outside the
 the messaging infrastructure, or to access a specific service URI,
-for example, a media forwarding service for conferencing. 
+for example, a media forwarding service for conferencing.
 
 An `ExternalPart` is a convenient way to reference this content. It
 provides a similar function to the `message/external-body` media type.
@@ -408,6 +417,22 @@ the length is not provided). It also includes an optional timestamp
 after which the external content is invalid, expressed as seconds
 since the start of the UNIX epoch (01-Jan-1970), or zero if the
 content does not expire.
+
+``` tls
+struct {
+  Utf8 contentType<V>;   /* An IANA media type {8} */
+  Utf8 url<V>;           /* A URL where the content can be fetched */
+  uint32 expires;        /* 0 = does not expire */
+  uint64 size;           /* size of content in octets */
+  uint16 encAlg;         /* An IANA AEAD Algorithm number, or zero */
+  opaque key<V>;         /* AEAD key */
+  opaque nonce<V>;       /* AEAD nonce */
+  opaque aad<V>;         /* AEAD additional authentiation data */
+  HashAlgorithm hashAlg;
+  opaque contentHash<V>; /* hash of the content at the target url */
+  Utf8 description<V>;   /* an optional text description */
+} ExternalPart;
+```
 
 Typically, external content is encrypted with an ephemeral symmetric
 key before it is uploaded, and whatever is necessary for decryption
@@ -426,7 +451,7 @@ encryption. Unless modified by an extension, the default value of the
 `aad` is empty.
 
 If the external URL is a service, the `encAlg` is set to zero, and the
-`key`, `nonce`, and `aad` fields are zero length. 
+`key`, `nonce`, and `aad` fields are zero length.
 
 Implementations of this specification MUST implement the AES-128-GCM
 algorithm.
