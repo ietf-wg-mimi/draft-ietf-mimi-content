@@ -299,7 +299,7 @@ struct {
 
 Every MIMI content message has a body {7} which can have multiple,
 possibly nested parts. A body with zero parts is permitted when
-deleting or unliking. External body parts(#external) are also supported.
+deleting or unliking. External body parts (#external) are also supported.
 When there is a single (inline) part or a (single) externally reference
 part, its IANA media type, subtype, and parameters are included in the
 contentType field {8}. 
@@ -424,7 +424,7 @@ calculated.
 
 It is common in Instant Messaging systems to reference external
 content via URI that will be processed automatically, either to
-store bulky content (ex: videos, images, recorded sounds) outside the
+store bulky content (ex: videos, images, recorded sounds) outside
 the messaging infrastructure, or to access a specific service URI,
 for example, a media forwarding service for conferencing.
 
@@ -456,20 +456,21 @@ Typically, external content is encrypted with an ephemeral symmetric
 key before it is uploaded, and whatever is necessary for decryption
 is shared over the message channel.
 
-It is a matter of local policy where the content is uploaded. Often
+It is a matter of local policy to where the content is uploaded. Often
 in federated messaging systems, the sender of the content stores the
 external content in their own domain, but in some systems the content
 is stored in the "owning" or "hub" domain of the MLS group.
 
-Before being uploaded, external content is encrypted with an
+Before being uploaded, private external content is encrypted with an
 IANA-registered Authenticated Encryption with Additional Data (AEAD)
 algorithm as described in [@!RFC5116]. The key, nonce, and additional
 authenticated data (aad) values are set to the values used during the
 encryption. Unless modified by an extension, the default value of the
 `aad` is empty.
 
-If the external URL is a service, the `encAlg` is set to zero, and the
-`key`, `nonce`, and `aad` fields are zero length.
+If the external URL is a service, or the external content is not considered
+private, the `encAlg` is set to zero, and the `key`, `nonce`, and `aad`
+fields are zero length.
 
 Implementations of this specification MUST implement the AES-128-GCM
 algorithm.
