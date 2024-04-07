@@ -536,9 +536,9 @@ derived from the client:
   im:%40alice-smith@example.com
 * MLS group ID:
   7u4NEqe1tbeBFa0aHdsTgRyD/XOHxD5meZpZS+7aJr8=
-* The MLS room URL:
+* The MIMI room URL:
   im:#engineering_team@example.com
-* The MLS group name: "Engineering Team"
+* The MIMI group name: "Engineering Team"
 
 In addition, the messageId and timestamp are:
 
