@@ -177,19 +177,27 @@ curly braces for reference in the text.
 ## Message Behavior Fields 
 
 ``` tls
+struct {
+    uint8 present;
+    select (present) {
+        case 0: struct{};
+        case 1: T value;
+    };
+} optional<T>;
+
 uint8  MessageId[32];
 uint64 Timestamp;  /* milliseconds since 01-Jan-1970 */
 uint8  Utf8;       /* a UTF-8 character */
 uint8  IdUrl;      /* an identifier URL character */
 
 struct {
-    optional MessageId replaces;    /* {1} */
-    opaque topicId<V>;              /* {2} */
-    uint32 expires;                 /* 0 = does not expire {3} */
-    optional ReplyToInfo inReplyTo; /* {4} */
-    MessageId lastSeen<V>;          /* {5} */
-    Extension extensions<V>;        /* {6} */
-    NestablePart body;              /* {7} */
+    optional<MessageId> replaces;    /* {1} */
+    opaque topicId<V>;               /* {2} */
+    uint32 expires;                  /* 0 = does not expire {3} */
+    optional<ReplyToInfo> inReplyTo; /* {4} */
+    MessageId lastSeen<V>;           /* {5} */
+    Extension extensions<V>;         /* {6} */
+    NestablePart body;               /* {7} */
 } MimiContent;
 ```
 
