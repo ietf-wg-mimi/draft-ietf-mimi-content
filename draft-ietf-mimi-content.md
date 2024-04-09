@@ -116,7 +116,9 @@ could be used.
 
 Every MIMI content message has a message ID which is calculated from the
 hash of the ciphertext of the message. When the content is end-to-encrypted
-with MLS for a specific MLS group, the cipher suite for the group specifies a hash algorithm. The message ID is the first 32 octets of the hash of the `MLSMessage` struct using that hash algorithm.
+with MLS for a specific MLS group, the cipher suite for the group specifies
+a hash algorithm. The message ID is the first 32 octets of the hash of the
+`MLSMessage` struct using that hash algorithm.
 
 As described in the the MIMI architecture [@?I-D.barnes-mimi-arch], one
 provider, called the hub, is responsible for ordering messages. The hub is
@@ -291,8 +293,9 @@ only the message id of Doug's message.
 ## Extension Fields
 
 In order to add additional functionality to MIMI, senders can include
-extension fields in the message format {6}. Each extension has a name, which contains between 1 and 255 octets of UTF-8, and an opaque value. The value
-of each extension can be between 0 and 65535 octets. 
+extension fields in the message format {6}. Each extension has a name, which
+contains between 1 and 255 octets of UTF-8, and an opaque value. The value
+of each extension can be between 0 and 65535 octets.
 The message content `extensions` field MUST NOT include more than one
 extension field with the same name.
 
