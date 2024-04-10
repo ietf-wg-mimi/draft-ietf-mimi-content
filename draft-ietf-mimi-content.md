@@ -523,9 +523,6 @@ following is known to every member of the group:
 Messages sent to an MLS group are delivered to every member of the group active during
 the epoch in which the message was sent.
 
-For the sake of readability, all message IDs will be shown using only the first six octets of 32, for example: `"\xe701beee59f9..."`.
-
-
 ## Original Message
 
 In this example, Alice Smith sends a rich-text (Markdown) [@!RFC7763]
