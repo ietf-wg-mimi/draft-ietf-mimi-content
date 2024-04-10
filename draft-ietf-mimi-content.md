@@ -688,7 +688,7 @@ or HTML rich content. For example, a mention using Markdown is indicated below.
 
 * Sender user handle URL:
   im:cathy-washington@example.com
-* Message ID: 0x4dcab7711a774b75a91effb51266d44e
+* Message ID: 0x6b50bfdd71edc83554ae21380080f4a3
                 ba77985da34528a515fac3c38e4998b8
 * Timestamp: 1644387243008 = 2022-02-08T22:14:03.008-00:00
 
@@ -769,7 +769,7 @@ Here Bob Jones corrects a typo in his original message:
 0x40       length of lastSeen vector (2 items)
     0x4dcab7711a77ea1dd025a6a1a7fe01ab  // Reaction
       3b0d690f82417663cb752dfcc37779a1
-    0x4dcab7711a774b75a91effb51266d44e  // Mention
+    0x6b50bfdd71edc83554ae21380080f4a3  // Mention
       ba77985da34528a515fac3c38e4998b8
 0x00       length of extensions vector
   /* NestablePart struct (body)*/
@@ -1065,43 +1065,73 @@ by one member of an MLS group to the entire group and can refer to multiple mess
 The format contains its own timestamp, and a list of message ID / status pairs. As
 the status at the recipient changes, the status can be updated in a subsequent notification.
 
-~~~~~~~ c++
-enum MessageStatus {
-    unread = 0,
-    delivered = 1,
-    read = 2,
-    expired = 3,
-    deleted = 4,
-    hidden = 5,
-    error = 6
-};
+``` tls
+enum {
+    unread(0),
+    delivered(1),
+    read(2),
+    expired(3),
+    deleted(4),
+    hidden(5),
+    error(6),
+    (255)
+} MessageStatus;
 
-struct PerMessageStatus {
+struct {
     MessageId messageId;
     MessageStatus status;
-};
+} PerMessageStatus;
 
 struct MessageStatusReport {
-    unit64 timestamp;
-    // a vector of message statuses in the same MLS group
-    std::vector<PerMessageStatus> statuses;
-};
-~~~~~~~
+    Timestamp timestamp;
+    PerMessageStatus statuses<V>;
+} MessageStatusReport;
+```
 
 * Sender user handle URL:
   im:bob-jones@example.com
 
-~~~~~~~ c++
-timestamp = 1644284703227;
-statuses[0].messageId = "\x4dcab7711a77...";
-statuses[0].status = read;
-statuses[1].messageId = "\x285f75c46430...";
-statuses[1].status = read;
-statuses[2].messageId = "\xc5e0cd6140e6...";
-statuses[2].status = unread;
-statuses[3].messageId = "\x5c95a4dfddab...";
-statuses[3].status = expired;
-~~~~~~~
+### TLS Presentation Language Encoding
+
+```
+0x0000017ed70171fb  timestamp is 1644284703227 ms since UNIX epoch 
+0x84 length of 4 statuses (expressed as two bytes)
+  0xd3c14744d1791d02548232c23d35efa9  // Original
+    7668174ba385af066011e43bd7e51501
+  0x02 status 2 = read
+  0xe701beee59f9376282f39092e1041b2a  // Reply
+    c2e3aad1776570c1a28de244979c71ed
+  0x02 status 2 = read
+  0x6b50bfdd71edc83554ae21380080f4a3  // Mention
+    ba77985da34528a515fac3c38e4998b8
+  0x00 status 0 = unread
+  0x5c95a4dfddab84348bcc265a479299fb  // Expiring
+    d3a2eecfa3d490985da5113e5480c7f1
+  0x03 status 3 = expired
+```
+
+### CBOR Encoding
+
+```
+0x1b 0x0000017ed70171fb  timestamp is 1644284703227 ms since epoch
+0x84 array of 4 statuses
+  0x58 0x20 messageId is bytes of 20 octets
+    0xd3c14744d1791d02548232c23d35efa9  // Original
+      7668174ba385af066011e43bd7e51501
+  0x02 status 2 = read
+  0x58 0x20 messageId is bytes of 20 octets
+    0xe701beee59f9376282f39092e1041b2a  // Reply
+      c2e3aad1776570c1a28de244979c71ed
+  0x02 status 2 = read
+  0x58 0x20 messageId is bytes of 20 octets
+    0x6b50bfdd71edc83554ae21380080f4a3  // Mention
+      ba77985da34528a515fac3c38e4998b8
+  0x00 status 0 = unread
+  0x58 0x20 messageId is bytes of 20 octets
+    0x5c95a4dfddab84348bcc265a479299fb  // Expiring
+      d3a2eecfa3d490985da5113e5480c7f1
+  0x03 status 3 = expired
+```
 
 
 # Support for Specific Media Types
@@ -1577,7 +1607,7 @@ message ID
         6e21                              "n!"
 
 message ID
-  0x4dcab7711a774b75a91effb51266d44e
+  0x6b50bfdd71edc83554ae21380080f4a3
     ba77985da34528a515fac3c38e4998b8
 ```
 
@@ -1602,7 +1632,7 @@ message ID
     0x4dcab7711a77ea1dd025a6a1a7fe01ab  // Reaction
       3b0d690f82417663cb752dfcc37779a1
   0x58 0x20 
-    0x4dcab7711a774b75a91effb51266d44e  // Mention
+    0x6b50bfdd71edc83554ae21380080f4a3  // Mention
       ba77985da34528a515fac3c38e4998b8
 0xa0 extensions is an empty map
 
