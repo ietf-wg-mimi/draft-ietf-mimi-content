@@ -1,0 +1,58 @@
+mimiContent = [
+  replaces: null / MessageId,
+  topicId: bstr,
+  expires: uint .size 4,
+  inReplyTo: null / ~InReplyTo,
+  lastSeen: [* MessageId],
+  extensions: {* name => value },
+  nestedPart: NestedPart
+]
+
+NestedPart = [
+  disposition: uint .size 1,
+  language: tstr,
+  partIndex: uint .size 2,
+  (  cardinality: nullpart  )  /
+  (  cardinality: single,
+     contentType: tstr,
+     content: bstr          )  /
+  (  cardinality: external,
+     ~ExternalPart        )  /
+  (  cardinality: multi,
+     partSemantics: chooseOne / singleUnit / processAll,
+     parts: [2* NestedPart]
+  )
+]
+
+ExternalPart = (
+    contentType: tstr,
+    url: tstr #6.32,
+    expires: uint .size 4,
+    encAlg: uint .size 2,
+    key: bstr,
+    nonce: bstr,
+    aad: bstr,
+    hashAlg: uint .size 1,
+    contentHash: bstr,
+    description: tstr
+)
+
+InReplyTo = (
+  message: MessageId,
+  hashAlg: uint .size 8,
+  hash: bstr
+)
+
+MessageId = bstr .size 32
+Timestamp = uint .size 8
+name = tstr .size (1..255)
+value = bstr .size (0..4095)
+
+nullpart = 0
+single   = 1
+external = 2
+multi    = 3
+
+chooseOne  = 0
+singleUnit = 1
+processAll = 2
