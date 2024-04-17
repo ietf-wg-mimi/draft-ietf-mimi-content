@@ -1,0 +1,13 @@
+MessageDerivedValues = [
+    messageId: MessageId,               ; sha256 hash of message ciphertext
+    hubAcceptedTimestamp: Timestamp,
+    mlsGroupId: bstr,
+    senderLeafIndex: uint .size 4,
+    senderClientUrl: uri,
+    senderUserUrl: uri,
+    roomUrl: uri
+]
+
+MessageId = bstr .size 32
+Timestamp = #6.62(uint .size 8)    ; milliseconds since start of UNIX epoch
+

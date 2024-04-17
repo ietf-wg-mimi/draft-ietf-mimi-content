@@ -1,0 +1,17 @@
+87                                      # array(7)
+   58 20                                # bytes(32)
+      d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501 # "\xD3\xC1GD\xD1y\u001D\u0002T\x822\xC2=5\xEF\xA9vh\u0017K\xA3\x85\xAF\u0006`\u0011\xE4;\xD7\xE5\u0015\u0001"
+   d8 3e                                # tag(62)
+      1b 0000017edd1dcdbb               # unsigned(1644387225019)
+   58 20                                # bytes(32)
+      eeee0d12a7b5b5b78115ad1a1ddb13811c83fd7387c43e66799a594beeda26bf # "\xEE\xEE\r\u0012\xA7\xB5\xB5\xB7\x81\u0015\xAD\u001A\u001D\xDB\u0013\x81\u001C\x83\xFDs\x87\xC4>fy\x9AYK\xEE\xDA&\xBF"
+   04                                   # unsigned(4)
+   d8 20                                # tag(32)
+      78 39                             # text(57)
+         6d696d693a6578616d706c652e636f6d33623532323439642d363866392d343563652d386266352d6337393966336361643765632f30303033 # "mimi:example.com3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003"
+   d8 20                                # tag(32)
+      78 1b                             # text(27)
+         6d696d693a6578616d706c652e636f6d616c6963652d736d697468 # "mimi:example.comalice-smith"
+   d8 20                                # tag(32)
+      78 20                             # text(32)
+         6d696d693a6578616d706c652e636f6d656e67696e656572696e675f7465616d # "mimi:example.comengineering_team"
