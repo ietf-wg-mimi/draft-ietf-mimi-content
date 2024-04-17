@@ -1,4 +1,4 @@
 *.html
 *.xml
 *.txt
-
+.DS_Store
