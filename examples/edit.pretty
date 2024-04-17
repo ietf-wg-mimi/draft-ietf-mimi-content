@@ -1,0 +1,28 @@
+87                                      # array(7)
+   58 20                                # bytes(32)
+      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed # "\xE7\u0001\xBE\xEEY\xF97b\x82\xF3\x90\x92\xE1\u0004\e*\xC2\xE3\xAA\xD1wep\xC1\xA2\x8D\xE2D\x97\x9Cq\xED"
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501 # "\xD3\xC1GD\xD1y\u001D\u0002T\x822\xC2=5\xEF\xA9vh\u0017K\xA3\x85\xAF\u0006`\u0011\xE4;\xD7\xE5\u0015\u0001"
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5 # "kD\u0005<\xB6\x8E?\f\xDD!\x9D\xA8\xD7\u0010J\xFC*\xE5\xFF\xFFx!TRL\xEF\t=\xE3\x93E\xA5"
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1 # "Mʷq\u001Aw\xEA\u001D\xD0%\xA6\xA1\xA7\xFE\u0001\xAB;\ri\u000F\x82Avc\xCBu-\xFC\xC3wy\xA1"
+      58 20                             # bytes(32)
+         6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8 # "kP\xBF\xDDq\xED\xC85T\xAE!8\u0000\x80\xF4\xA3\xBAw\x98]\xA3E(\xA5\u0015\xFA\xC3ÎI\x98\xB8"
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
+      58 22                             # bytes(34)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f207927616c6c21 # "Right on! _Congratulations_ y'all!"

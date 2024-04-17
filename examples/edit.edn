@@ -1,0 +1,32 @@
+[
+  / replaces = Reply message                                  /
+  h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed',
+  h'',                                 / topicId              /
+  0,                                   / expires = never      /
+  [                                      / InReplyTo          /
+     /  message = Original message                            /
+     h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',
+     1,                                  /  hashAlg = sha256  /
+     /  hash                /
+     h'6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5'
+  ],
+  [                                      / lastSeen (2 items)   /
+    /  Reaction message /
+    h'4dcab7711a77ea1dd025a6a1a7fe01ab
+      3b0d690f82417663cb752dfcc37779a1',
+    /  Mention message  /
+    h'6b50bfdd71edc83554ae21380080f4a3
+      ba77985da34528a515fac3c38e4998b8'  
+  ],
+  {},                                  / extensions             /
+  [                                    / body (NestedPart)      /
+    1,                                   / dispostion = render  /
+    "",                                  / language             /
+    0,                                   / partIndex = 1st part /
+    1,                                   / cardinality = single /
+    "text/markdown;charset=utf-8",       / contentType          /
+    / content = Right on! _Congratulations_ y%27all             /
+    h'5269676874206f6e21205f436f6e67726174756c6174696f6e735f207927616c6c21'
+  ]
+]
+

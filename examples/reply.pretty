@@ -1,0 +1,25 @@
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501 # "\xD3\xC1GD\xD1y\u001D\u0002T\x822\xC2=5\xEF\xA9vh\u0017K\xA3\x85\xAF\u0006`\u0011\xE4;\xD7\xE5\u0015\u0001"
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5 # "kD\u0005<\xB6\x8E?\f\xDD!\x9D\xA8\xD7\u0010J\xFC*\xE5\xFF\xFFx!TRL\xEF\t=\xE3\x93E\xA5"
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501 # "\xD3\xC1GD\xD1y\u001D\u0002T\x822\xC2=5\xEF\xA9vh\u0017K\xA3\x85\xAF\u0006`\u0011\xE4;\xD7\xE5\u0015\u0001"
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
+      58 21                             # bytes(33)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f2027616c6c21 # "Right on! _Congratulations_ 'all!"

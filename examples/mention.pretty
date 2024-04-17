@@ -1,0 +1,20 @@
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed # "\xE7\u0001\xBE\xEEY\xF97b\x82\xF3\x90\x92\xE1\u0004\e*\xC2\xE3\xAA\xD1wep\xC1\xA2\x8D\xE2D\x97\x9Cq\xED"
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
+      58 52                             # bytes(82)
+         4b75646f7320746f205b40416c69636520536d6974685d28696d3a616c6963652d736d697468406578616d706c652e636f6d2920666f72206d616b696e67207468652072656c656173652068617070656e21 # "Kudos to [@Alice Smith](im:alice-smith@example.com) for making the release happen!"

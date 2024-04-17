@@ -1,0 +1,28 @@
+[
+  null,                             / replaces                 /
+  h'466f6f20313138',                / topicId = Foo 118        /
+  0,                                / expires                  /
+  null,                             / inReplyTo                /
+  [                                 / lastSeen (1 item)        /
+     /  Attachment message                                        /
+     h'b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e'
+  ],
+  {},                               / extensions               /
+  [                                 / body (NestedPart)        /
+    7,                                / dispostion = session      /
+    "",                               / language                  /
+    0,                                / partIndex = 1st part      /
+    2,                                / cardinality = external part /
+    "",                               / contentType               /
+    32("https://example.com/join/12345"),  / url                  /
+    0,                                / expires                   /
+    0,                                / size                      /
+    0,                                / encAlg = none             /
+    h'',                              / key                       /
+    h'',                              / nonce                     /
+    h'',                              / aad                       /
+    0,                                / hashAlg = none            /
+    h'',                              / content hash              /
+    "Join the Foo 118 conference"     / description               /
+  ]
+]

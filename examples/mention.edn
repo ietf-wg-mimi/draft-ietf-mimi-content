@@ -1,0 +1,23 @@
+[
+  null,                                / replaces             / 
+  h'',                                 / topicId              /
+  0,                                   / expires = never      /
+  null,                                / InReplyTo            /
+  [                                      / lastSeen (1 item)   /
+     /  Reply message                                          /
+     h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed'
+  ],
+  {},                                  / extensions              /
+  [                                    / body (NestedPart)       /
+    1,                                   / dispostion = render   /
+    "",                                  / language              /
+    0,                                   / partIndex = 1st part  /
+    1,                                   / cardinality = single  /
+    "text/markdown;charset=utf-8",       / contentType           /
+    / content =  Kudos to [@Alice Smith](im:alice-smith@example.com) /
+    /            for making the release happen!                      /
+    h'4b75646f7320746f205b40416c69636520536d6974685d28696d3a616c696365
+      2d736d697468406578616d706c652e636f6d2920666f72206d616b696e672074
+      68652072656c656173652068617070656e21'
+  ]
+]

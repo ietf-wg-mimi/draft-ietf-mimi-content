@@ -1,0 +1,29 @@
+[
+  null,                             / replaces                 /
+  h'',                              / topicId                  /
+  0,                                / expires = never          /
+  null,                             / inReplyTo                /
+  [                                 / lastSeen (1 item)        /
+     /  Expiring message                                          /
+     h'5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1'
+  ],
+  {},                               / extensions        /
+  [                                 / body (NestedPart) /
+    6,                                / dispostion = attachment   /
+    "en",                             / language = en             /
+    0,                                / partIndex = 1st part      /
+    2,                                / cardinality = external part /
+    "video/mp4",                      / contentType               /
+    32("https://example.com/storage/bigfile.mp4"), / url          /
+    0,                                / expires                   /
+    708234961,                        / size                      /
+    1,                                / encAlg = AES-128-GCM      /
+    h'21399320958a6f4c745dde670d95e0d8',   / key                  /
+    h'c86cf2c33f21527d1dd76f5b',      / nonce                     /
+    h'',                              / aad                       /
+    1,                                / hashAlg = sha256          /
+    /  content hash                                               /
+    h'9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163',
+    "2 hours of key signing video"    / description               /
+  ]
+]
