@@ -1,0 +1,25 @@
+[
+  62(1644284703227),   / Timestamp of the report /
+  [
+    [
+      /  Original message     /
+      h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',
+      2    / status = read    / 
+    ],
+    [
+      /  Reply message        /
+      h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed',
+      2    / status = read    /     
+    ],
+    [
+      /  Mention message      /
+      h'6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8',
+      0    / status = unread  / 
+    ],
+    [
+      /  Expiring message     /
+      h'5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1',
+      3    / status = expired / 
+    ]
+  ]
+]

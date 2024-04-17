@@ -1,0 +1,23 @@
+MessageStatusReport = [
+    timestamp: Timestamp,
+    statuses: [ * PerMessageStatus ]
+]
+
+PerMessageStatus = [
+    messageId: MessageId,
+    status: baseStatus / $extStatus / unknownStatus
+]
+
+baseStatus = &(
+    unread: 0,
+    delivered: 1,
+    read: 2,
+    expired: 3,
+    deleted: 4,
+    hidden: 5,
+    error: 6
+)
+unknownStatus = &( unknown: 7..255 )
+
+MessageId = bstr .size 32
+Timestamp = #6.62(uint .size 8)    ; milliseconds since start of UNIX epoch
