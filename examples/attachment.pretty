@@ -2,7 +2,7 @@
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   1a 62036674                          # unsigned(1644390004)
+   00                                   # unsigned(0)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
