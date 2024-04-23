@@ -12,11 +12,11 @@
   4,
   
   / senderClientUrl /
-  32("mimi:example.com/d/3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003"),
+  32("mimi://example.com/d/3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003"),
 
   / senderUserUrl /
-  32("mimi:example.com/u/alice-smith"),
+  32("mimi://example.com/u/alice-smith"),
   
   / roomUrl /
-  32("mimi:example.com/r/engineering_team")
+  32("mimi://example.com/r/engineering_team")
 ]

@@ -12,11 +12,11 @@
   4,
   
   
-  32("mimi:example.com3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003"),
+  32("mimi://example.com3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003"),
 
   
-  32("mimi:example.comalice-smith"),
+  32("mimi://example.comalice-smith"),
   
   
-  32("mimi:example.comengineering_team")
+  32("mimi://example.comengineering_team")
 ]
