@@ -9,7 +9,7 @@ keyword = ["mimi","content","mls","mime"]
 [seriesInfo]
 status = "informational"
 name = "Internet-Draft"
-value = "draft-ietf-mimi-content-02"
+value = "draft-ietf-mimi-content-03"
 stream = "IETF"
 
 [[author]]
@@ -1091,7 +1091,7 @@ struct MessageStatusReport {
 * Sender user handle URL:
   im:bob-jones@example.com
 
-### TLS Presentation Language Encoding
+### TLS Presentation Language Example
 
 ```
 0x0000017ed70171fb  timestamp is 1644284703227 ms since UNIX epoch 
@@ -1109,30 +1109,6 @@ struct MessageStatusReport {
     d3a2eecfa3d490985da5113e5480c7f1
   0x03 status 3 = expired
 ```
-
-### CBOR Encoding
-
-```
-0x1b 0x0000017ed70171fb  timestamp is 1644284703227 ms since epoch
-0x84 array of 4 statuses
-  0x58 0x20 messageId is bytes of 20 octets
-    0xd3c14744d1791d02548232c23d35efa9  // Original
-      7668174ba385af066011e43bd7e51501
-  0x02 status 2 = read
-  0x58 0x20 messageId is bytes of 20 octets
-    0xe701beee59f9376282f39092e1041b2a  // Reply
-      c2e3aad1776570c1a28de244979c71ed
-  0x02 status 2 = read
-  0x58 0x20 messageId is bytes of 20 octets
-    0x6b50bfdd71edc83554ae21380080f4a3  // Mention
-      ba77985da34528a515fac3c38e4998b8
-  0x00 status 0 = unread
-  0x58 0x20 messageId is bytes of 20 octets
-    0x5c95a4dfddab84348bcc265a479299fb  // Expiring
-      d3a2eecfa3d490985da5113e5480c7f1
-  0x03 status 3 = expired
-```
-
 
 # Support for Specific Media Types
 
