@@ -17,7 +17,7 @@ NestedPart = [
 
 NullPart = ( cardinality: nullpart )
 
-SinglePart = (  
+SinglePart = (
     cardinality: single,
     contentType: tstr,
     content: bstr
