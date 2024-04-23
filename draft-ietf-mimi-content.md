@@ -1470,7 +1470,8 @@ All CBOR examples start with an instance document annotated in the
 Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
 rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
 hex dump of the CBOR data in the pretty printed format popularized by the
-CBOR playground website (https://cbor.me).
+CBOR playground website (https://cbor.me) with some minor whitespace
+reformatting. Finally a message ID for the message is included.
 
 All the instance documents validate using the CDDL schemas in Appendix B and
 are included in the examples directory in the github repo for this document.
@@ -1504,75 +1505,59 @@ are included in the examples directory in the github repo for this document.
 ```
 
 ```
-0xf6 replaces is null
-0x40 topicId is zero length bytes
-0x00 expires is zero 
-0xf6 inReplyTo is null
-0x80 lastSeen is an empty array
-0xa0 extensions is an empty map
-
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x78 0x1b contentType is string of 0x1b octets
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x58 0x38 content is bytes of 0x38 octets
-      0x48692065766572796f6e652c20776520  "Hi everyone, we "
-        6a75737420736869707065642072656c  "just shipped rel"
-        6561736520322e302e205f5f476f6f64  "ease 2.0. __Good"
-        20776f726b5f5f21                  " work__!"
-
 message ID
   0xd3c14744d1791d02548232c23d35efa9
     7668174ba385af066011e43bd7e51501
 ```
 
+Below are the rest of the implied values for this message:
+
+<{{examples/implied-original.edn}}
+
+
 ## Reply
 
+<{{examples/reply.edn}}
+
 ```
-0xf6 replaces is null
-0x40 topicId is zero length bytes
-0x00 expires is zero 
-  /* inReplyTo */
-  0x58 0x20 messageId is 0x20 bytes
-    0xd3c14744d1791d02548232c23d35efa9  // Original message
-      7668174ba385af066011e43bd7e51501
-  0x01 hashAlg = sha256
-  0x58 0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x81 lastSeen is an array of 1 item
-  0x58 0x20 
-    0xd3c14744d1791d02548232c23d35efa9  // Original message
-      7668174ba385af066011e43bd7e51501
-0xa0 extensions is an empty map
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 21                             # bytes(33)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f2027616c6c21
+         # "Right on! _Congratulations_ 'all!"
+```
 
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x78 0x1b contentType is string of 0x1b octets
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x58 0x21 content is bytes of 0x21 octets
-      0x5269676874206f6e21205f436f6e6772  "Right on! _Congr"
-        6174756c6174696f6e735f2027616c6c  "atulations_ 'all"
-        21                                "!"
-
+```
 message ID
   0xe701beee59f9376282f39092e1041b2a
     c2e3aad1776570c1a28de244979c71ed
 ```
 
 ## Reaction
+
+<{{examples/reaction.edn}}
 
 ```
 0xf6 replaces is null
@@ -1612,6 +1597,8 @@ message ID
 
 ## Mention
 
+<{{examples/mention.edn}}
+
 ```
 0xf6 replaces is null
 0x40 topicId is zero length bytes
@@ -1647,6 +1634,8 @@ message ID
 ```
 
 ## Edit
+
+<{{examples/edit.edn}}
 
 ```
 0x58 0x20 replaces is bytes of 0x20 octets
@@ -1693,6 +1682,8 @@ message ID
 
 ## Delete
 
+<{{examples/delete.edn}}
+
 ```
 0x58 0x20 replaces is bytes of 0x20 octets
   0xe701beee59f9376282f39092e1041b2a    // Reply
@@ -1726,6 +1717,8 @@ message ID
 
 ## Unlike
 
+<{{examples/unlike.edn}}
+
 ```
 0x58 0x20 replace is bytes of 0x20 octets
   0x4dcab7711a77ea1dd025a6a1a7fe01ab    // Reaction
@@ -1758,6 +1751,8 @@ message ID
 ```
 
 ## Expiring
+
+<{{examples/expiring.edn}}
 
 ```
 0xf6 replaces is null
@@ -1794,6 +1789,8 @@ message ID
 ```
 
 ## Attachments
+
+<{{examples/attachment.edn}}
 
 ```
 0xf6 replaces is null
@@ -1844,6 +1841,8 @@ message ID
 
 ## Conferencing
 
+<{{examples/conferencing.edn}}
+
 ```
 0xf6 replaces is null
 0x47 topicId is bytes of 0x07 octets
@@ -1878,6 +1877,33 @@ message ID
 message ID
   0xb267614d43e7676d28ef5b15e8676f23
     679fe365c78849d83e2ba0ae8196ec4e
+```
+
+## Delivery Report
+
+<{{examples/report.edn}}
+
+```
+82                                      # array(2)
+   d8 3e                                # tag(62)
+      1b 0000017ed70171fb               # unsigned(1644284703227)
+   84                                   # array(4)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+         02                             # unsigned(2)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+         02                             # unsigned(2)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
+         00                             # unsigned(0)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
+         03                             # unsigned(3)
 ```
 
 # CDDL Schemas
