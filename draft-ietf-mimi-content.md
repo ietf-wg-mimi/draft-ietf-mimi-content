@@ -1470,8 +1470,9 @@ All CBOR examples start with an instance document annotated in the
 Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
 rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
 hex dump of the CBOR data in the pretty printed format popularized by the
-CBOR playground website (https://cbor.me) with some minor whitespace
-reformatting. Finally a message ID for the message is included.
+CBOR playground website (https://cbor.me) with some minor whitespace and
+comment reformatting. Finally a message ID for the message is included for
+most messages.
 
 All the instance documents validate using the CDDL schemas in Appendix B and
 are included in the examples directory in the github repo for this document.
@@ -1560,36 +1561,35 @@ message ID
 <{{examples/reaction.edn}}
 
 ```
-0xf6 replaces is null
-0x40 topicId is zero length bytes
-0x00 expires is zero 
-  /* inReplyTo */
-  0x58 0x20 messageId is 0x20 bytes
-    0xd3c14744d1791d02548232c23d35efa9  // Original message
-      7668174ba385af066011e43bd7e51501
-  0x01 hashAlg = sha256
-  0x58 0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x81 lastSeen is an array of 1 item
-  0x58 0x20 
-    0xe701beee59f9376282f39092e1041b2a  // Reply (above)
-      c2e3aad1776570c1a28de244979c71ed
-0xa0 extensions is an empty map
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   a0                                   # map(0)
+   86                                   # array(6)
+      02                                # unsigned(2)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 18                             # text(24)
+         746578742f706c61696e3b636861727365743d7574662d38
+         # "text/plain;charset=utf-8"
+      43                                # bytes(3)
+         e299a5                         # "♥"
+```
 
-  /* NestablePart */
-  0x02 disposition = reaction
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x78 0x18 contentType is string of 0x18 octets
-      0x746578742f706c61696e3b6368617273  "text/plain;charse"
-        65743d7574662d38                  "t=utf-8"
-    0x43 content is bytes of 0x03 octets
-      0xe299a5                            "♥"
-
+```
 message ID
   0x4dcab7711a77ea1dd025a6a1a7fe01ab
     3b0d690f82417663cb752dfcc37779a1
@@ -1600,34 +1600,34 @@ message ID
 <{{examples/mention.edn}}
 
 ```
-0xf6 replaces is null
-0x40 topicId is zero length bytes
-0x00 expires is zero 
-0xf6 inReplyTo is null
-0x81 lastSeen is an array of 1 item
-  0x58 0x20 
-    0xe701beee59f9376282f39092e1041b2a  // Reply (above)
-      c2e3aad1776570c1a28de244979c71ed  // (didn't see Reaction yet)
-0xa0 extensions is an empty map
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 52                             # bytes(82)
+         4b75646f7320746f205b40416c69636520536d6974685d28696d3a
+         616c6963652d736d697468406578616d706c652e636f6d2920666f
+         72206d616b696e67207468652072656c656173652068617070656e21
+         # "Kudos to [@Alice Smith](im:alice-smith@example.com)
+         # for making the release happen!"
+```
 
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x78 0x1b contentType is string of 0x1b octets
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x58 0x52 content is bytes of 0x52 octets
-      0x4b75646f7320746f205b40416c696365  "Kudos to [@Alice"
-        20536d6974685d28696d3a616c696365  " Smith](im:alice"
-        2d736d697468406578616d706c652e63  "-smith@example.c"
-        6f6d2920666f72206d616b696e672074  "om) for making t"
-        68652072656c65617365206861707065  "he release happe"
-        6e21                              "n!"
-
+```
 message ID
   0x6b50bfdd71edc83554ae21380080f4a3
     ba77985da34528a515fac3c38e4998b8
@@ -1638,43 +1638,39 @@ message ID
 <{{examples/edit.edn}}
 
 ```
-0x58 0x20 replaces is bytes of 0x20 octets
-  0xe701beee59f9376282f39092e1041b2a    // Reply
-    c2e3aad1776570c1a28de244979c71ed
-0x40 topicId is zero length bytes
-0x00 expires is zero
-  /* inReplyTo */
-  0x58 0x20 messageId is 0x20 bytes
-    0xd3c14744d1791d02548232c23d35efa9  // Original message
-      7668174ba385af066011e43bd7e51501
-  0x01 hashAlg = sha256
-  0x58 0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x82 lastSeen is an array of 2 items
-  0x58 0x20 
-    0x4dcab7711a77ea1dd025a6a1a7fe01ab  // Reaction
-      3b0d690f82417663cb752dfcc37779a1
-  0x58 0x20 
-    0x6b50bfdd71edc83554ae21380080f4a3  // Mention
-      ba77985da34528a515fac3c38e4998b8
-0xa0 extensions is an empty map
+87                                      # array(7)
+   58 20                                # bytes(32)
+      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
+      58 20                             # bytes(32)
+         6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
+      58 22                             # bytes(34)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f
+         207927616c6c21
+         # "Right on! _Congratulations_ y'all!"
+```
 
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x78 0x1b contentType is string of 0x1b octets
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x58 0x22 content is bytes of 0x21 octets
-      0x5269676874206f6e21205f436f6e6772  "Right on! _Congr"
-        6174756c6174696f6e735f207927616c  "atulations_ y'al"
-        6c21                              "l!"
-
+```
 message ID
   0x89d3472622a4d9de526742bcd00b09dc
     78fa4edceaf2720e17b730c6dfba8be4
@@ -1685,31 +1681,31 @@ message ID
 <{{examples/delete.edn}}
 
 ```
-0x58 0x20 replaces is bytes of 0x20 octets
-  0xe701beee59f9376282f39092e1041b2a    // Reply
-    c2e3aad1776570c1a28de244979c71ed
-0x40 topicId is zero length bytes
-0x00 expires is zero
-  /* inReplyTo */
-  0x58 0x20 messageId is 0x20 bytes
-    0xd3c14744d1791d02548232c23d35efa9  // Original message
-      7668174ba385af066011e43bd7e51501
-  0x01 hashAlg = sha256
-  0x58 0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x81 lastSeen is an array of 1 item
-  0x58 0x20 
-    0x89d3472622a4d9de526742bcd00b09dc  // Edit
-      78fa4edceaf2720e17b730c6dfba8be4
-0xa0 extensions is an empty map
+87                                      # array(7)
+   58 20                                # bytes(32)
+      4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         89d3472622a40d6ceeb27c42490fdc64c0e9c20c598f9d7c8e81640dae8db0fb
+   a0                                   # map(0)
+   84                                   # array(4)
+      02                                # unsigned(2)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      00                                # unsigned(0)
+```
 
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x00 cardinality = null (zero parts)
-
+```
 message ID
   0x89d3472622a40d6ceeb27c42490fdc64
     c0e9c20c598f9d7c8e81640dae8db0fb
@@ -1720,31 +1716,31 @@ message ID
 <{{examples/unlike.edn}}
 
 ```
-0x58 0x20 replace is bytes of 0x20 octets
-  0x4dcab7711a77ea1dd025a6a1a7fe01ab    // Reaction
-    3b0d690f82417663cb752dfcc37779a1
-0x40 topicId is zero length bytes
-0x00 expires is zero 
-  /* inReplyTo */
-  0x58 0x20 messageId is 0x20 bytes
-    0xd3c14744d1791d02548232c23d35efa9  // Original message
-      7668174ba385af066011e43bd7e51501
-  0x01 hashAlg = sha256
-  0x58 0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x81 lastSeen is an array of 1 item
-  0x58 0x20 
-    0x89d3472622a40d6ceeb27c42490fdc64  // Delete
-      c0e9c20c598f9d7c8e81640dae8db0fb
-0xa0 extensions is an empty map
+87                                      # array(7)
+   58 20                                # bytes(32)
+      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         89d3472622a4d9de526742bcd00b09dc78fa4edceaf2720e17b730c6dfba8be4
+   a0                                   # map(0)
+   84                                   # array(4)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      00                                # unsigned(0)
+```
 
-  /* NestablePart */
-  0x02 disposition = reaction
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x00 cardinality = null (zero parts)
-
+```
 message ID
   0x1a771ca1d84f8fda4184a1e02a549e20
     1bf434c6bfcf1237fa45463c6861853b
@@ -1755,34 +1751,34 @@ message ID
 <{{examples/expiring.edn}}
 
 ```
-0xf6 replaces is null
-0x40 topicId is zero length bytes
-0x1a expires on 1644390004 
-  0x62036674  // 10 minutes later
-0xf6 inReplyTo is null
-0x81 lastSeen is an array of 1 item
-  0x58 0x20 
-    0x1a771ca1d84f8fda4184a1e02a549e20  // Unlike
-      1bf434c6bfcf1237fa45463c6861853b
-0xa0 extensions is an empty map
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   1a 62036674                          # unsigned(1644390004)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         1a771ca1d84f8fda4184a1e02a549e201bf434c6bfcf1237fa45463c6861853b
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 50                             # bytes(80)
+         5f5f2a56504e20474f494e4720444f574e2a5f5f0a49276d207265
+         626f6f74696e67207468652056504e20696e2074656e206d696e75
+         74657320756e6c65737320616e796f6e65206f626a656374732e
+         # "__*VPN GOING DOWN*__\nI'm rebooting the VPN in ten
+         #  minutes unless anyone objects."
+```
 
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x78 0x1b contentType is string of 0x1b octets
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x58 0x50 content is bytes of 0x50 octets
-      0x5f5f2a56504e20474f494e4720444f57  "__*VPN GOING DOW"
-        4e2a5f5f0a49276d207265626f6f7469  "N*__ I'm rebooti"
-        6e67207468652056504e20696e207465  "ng the VPN in te"
-        6e206d696e7574657320756e6c657373  "n minutes unless"
-        20616e796f6e65206f626a656374732e  " anyone objects."
-
+```
 message ID
   0x5c95a4dfddab84348bcc265a479299fb
     d3a2eecfa3d490985da5113e5480c7f1
@@ -1793,47 +1789,46 @@ message ID
 <{{examples/attachment.edn}}
 
 ```
-0xf6 replaces is null
-0x40 topicId is zero length bytes
-0x00 expires is zero
-0xf6 inReplyTo is null
-0x81 lastSeen is an array of 1 item
-  0x58 0x20
-    0x5c95a4dfddab84348bcc265a479299fb  // Expiring
-      d3a2eecfa3d490985da5113e5480c7f1
-0xa0 extensions is an empty map
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
+   a0                                   # map(0)
+   8f                                   # array(15)
+      06                                # unsigned(6)
+      62                                # text(2)
+         656e                           # "en"
+      00                                # unsigned(0)
+      02                                # unsigned(2)
+      69                                # text(9)
+         766964656f2f6d7034             # "video/mp4"
+      d8 20                             # tag(32)
+         78 1c                          # text(28)
+            68747470733a6578616d706c652e636f6d62696766696c652e6d7034
+            # "https:example.combigfile.mp4"
+      00                                # unsigned(0)
+      1a 2a36ced1                       # unsigned(708234961)
+      01                                # unsigned(1)
+      50                                # bytes(16)
+         21399320958a6f4c745dde670d95e0d8
+      4c                                # bytes(12)
+         c86cf2c33f21527d1dd76f5b
+      40                                # bytes(0)
+                                        # ""
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163
+      78 1c                             # text(28)
+         3220686f757273206f66206b6579207369676e696e6720766964656f
+         # "2 hours of key signing video"
+```
 
-  /* NestablePart */
-  0x06 disposition = attachment
-  0x62 language is a string of 0x02 octets
-    0x656e                                "en"
-  0x00 partIndex = 0 (1st part)
-  0x02 cardinality = external part
-
-    /* External Part *
-    0x69 contentType is string of 0x09 octets
-      0x766964656f2f6d7034                "video/mp4"
-    0x78 0x27 url is string of 0x27 octets
-      0x68747470733a2f2f6578616d706c652e  "https://example."
-        636f6d2f73746f726167652f62696766  "com/storage/bigf"
-        696c652e6d7034                    "ile.mp4"
-    0x00 expires is zero
-    0x1a size is 708234961 octets
-      0x2a36ced1
-    0x01 encAlg is 0x0001 = AES-128-GCM
-    0x50 key is bytes of 16 octets
-      0x21399320958a6f4c745dde670d95e0d8
-    0x4c nonce is bytes of 12 octents
-      0xc86cf2c33f21527d1dd76f5b
-    0x40 aad is zero bytes
-    0x01 hashAlg = sha256
-    0x58 0x20 content hash is bytes of 32 octets
-      0x9ab17a8cf0890baaae7ee016c7312fcc
-        080ba46498389458ee44f0276e783163
-    0x78 0x1c  description is string of 0x1c octets
-      0x3220686f757273206f66206b65792073  "2 hours of key s"
-        69676e696e6720766964656f          "igning video"
-
+```
 message ID
   0xb267614d43e7676d28ef5b15e8676f23
     679fe365c78849d83e2ba0ae8196ec4e
@@ -1844,36 +1839,46 @@ message ID
 <{{examples/conferencing.edn}}
 
 ```
-0xf6 replaces is null
-0x47 topicId is bytes of 0x07 octets
-  0x466f6f20313138                        "Foo 118"
-0x00 expires is zero
-0xf6 inReplyTo is null
-0x81 lastSeen is an array of 1 item
-  0x58 0x20
-    0xb267614d43e7676d28ef5b15e8676f23  // Attachment
-      679fe365c78849d83e2ba0ae8196ec4e
-0xa0 extensions is an empty map
+87                                      # array(7)
+   f6                                   # primitive(22)
+   47                                   # bytes(7)
+      466f6f20313138                    # "Foo 118"
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e
+   a0                                   # map(0)
+   8f                                   # array(15)
+      07                                # unsigned(7)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      02                                # unsigned(2)
+      60                                # text(0)
+                                        # ""
+      d8 20                             # tag(32)
+         76                             # text(22)
+            68747470733a6578616d706c652e636f6d3132333435
+            # "https:example.com12345"
+      00                                # unsigned(0)
+      00                                # unsigned(0)
+      00                                # unsigned(0)
+      40                                # bytes(0)
+                                        # ""
+      40                                # bytes(0)
+                                        # ""
+      40                                # bytes(0)
+                                        # ""
+      00                                # unsigned(0)
+      40                                # bytes(0)
+                                        # ""
+      78 1b                             # text(27)
+         4a6f696e2074686520466f6f2031313820636f6e666572656e6365
+         # "Join the Foo 118 conference"
+```
 
-  /* NestablePart */
-  0x07 disposition = session
-  0x60 language is an empty string
-  0x00 partIndex = 0 (1st part)
-  0x02 cardinality = external part
-
-    /* External Part *
-    0x60 contentType is an empty
-    0x78 0x1e url is string of 0x1e octets
-      0x68747470733a2f2f6578616d706c652e  "https://example."
-        636f6d2f6a6f696e2f3132333435      "com/join/12345"
-    0x00 expires is zero
-    0xf6 size is null
-    0xf6 encryption is null
-    0xf6 hashing is null
-    0x78 0x1b  description is string of 0x1b octets
-      0x4a6f696e2074686520466f6f20313138  "Join the Foo 118"
-        20636f6e666572656e6365            " conference"
-
+```
 message ID
   0xb267614d43e7676d28ef5b15e8676f23
     679fe365c78849d83e2ba0ae8196ec4e
