@@ -2047,3 +2047,8 @@ to avoid confusion
 * consensus at IETF 118 was to use the hub accepted timestamp for protocol
   actions like sorting
 * Updated author's address
+
+## Changes between draft-ietf-mimi-content-02 and draft-ietf-mimi-content-03
+
+* added hash of content to external content
+* replaced abstract syntax with concrete TLS Presentation Language and CBOR syntaxes
