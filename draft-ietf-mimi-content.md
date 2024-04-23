@@ -1466,7 +1466,42 @@ of each receiver of the message (via local preferences).
 
 # CBOR Encoding of Examples
 
+All CBOR examples start with an instance document annotated in the
+Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
+rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
+hex dump of the CBOR data in the pretty printed format popularized by the
+CBOR playground website (https://cbor.me).
+
+All the instance documents validate using the CDDL schemas in Appendix B and
+are included in the examples directory in the github repo for this document.
+
 ## Original message
+
+<{{examples/original.edn}}
+
+```
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   80                                   # array(0)
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 38                             # bytes(56)
+         48692065766572796f6e652c207765206a757374207368697070656420
+         72656c6561736520322e302e205f5f476f6f6420776f726b5f5f21
+         # "Hi everyone, we just shipped release 2.0. __Good work__!"
+```
 
 ```
 0xf6 replaces is null
@@ -1844,6 +1879,23 @@ message ID
   0xb267614d43e7676d28ef5b15e8676f23
     679fe365c78849d83e2ba0ae8196ec4e
 ```
+
+# CDDL Schemas
+
+Below are Concise Data Definition Language (CDDL) [@!RFC8610] schemas for
+the formats described in the body of the document.
+
+## Message Format
+
+<{{mimi-content.cddl}}
+
+## Implied Message Fields
+
+<{{implied.cddl}}
+
+## Delivery Report Format
+
+<{{delivery-report.cddl}}
 
 # Multipart examples
 
