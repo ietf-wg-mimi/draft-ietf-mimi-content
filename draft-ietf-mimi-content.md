@@ -106,12 +106,12 @@ collisions. This rules out using multipart MIME types.
 types (ex: images). This rules out using JSON to carry the binary data.
 
 All examples start with an instance document annotated in the CBOR
-Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
-rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
-hex dump of the CBOR data in the pretty printed format popularized by the
-CBOR playground website (https://cbor.me) with some minor whitespace and
-comment reformatting. Finally a message ID for the message is included for
-most messages.
+Extended Diagnostic Notation (described in [Appendix G of @!RFC8610] and
+more rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then
+include a hex dump of the CBOR data in the pretty printed format popularized
+by the CBOR playground website (https://cbor.me) with some minor whitespace
+and comment reformatting. Finally a message ID for the message is included
+for most messages.
 
 All the instance documents validate using the CDDL schemas in Appendix B and
 are included in the examples directory in the github repo for this document.
@@ -182,10 +182,9 @@ of information:
 The object fields in the structure defined below are numbered in
 curly braces for reference in the text.
 
-**TODO FIX**: 
-Below are Concise Data Definition Language (CDDL) [@!RFC8610] schemas for
-the formats described in the body of the document.
-
+The subsections that follow contain snippets of Concise Data Definition
+Language (CDDL) [@!RFC8610] schemas for the MIMI Content Container. The complete collected CDDL schema for MIMI Content Container is available in
+(#full-schema).
 
 ## Message Behavior Fields 
 
@@ -1114,10 +1113,10 @@ Instead we would like to be able to include status changes about multiple
 messages in each report, the ability to mark a message delivered, then read, then unread, then expired
 for example.
 
-The proposed format below, application/mimi-message-status is sent
+The format below, application/mimi-message-status is sent
 by one member of an MLS group to the entire group and can refer to multiple messages in that group. 
 The format contains its own timestamp, and a list of message ID / status pairs. As
-the status at the recipient changes, the status can be updated in a subsequent notification.
+the status at the recipient changes, the status can be updated in a subsequent notification. Below is the CDDL schema for message status.
 
 <{{delivery-report.cddl}}
 
@@ -1488,11 +1487,13 @@ of each receiver of the message (via local preferences).
 Below are Concise Data Definition Language (CDDL) [@!RFC8610] schemas for
 the formats described in the body of the document.
 
-## Complete Message Format Schema
+## Complete Message Format Schema {#full-schema}
 
 <{{mimi-content.cddl}}
 
 ## Implied Message Fields
+
+Below is a CDDL schema for the implied message fields.
 
 <{{implied.cddl}}
 
