@@ -38,7 +38,7 @@ and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS group, and KeyPackage have the same meanings as in
 the MLS protocol [@!RFC9420]. Other relevant terminology may be
-found in [@?I-D.barnes-mimi-arch] and [@?I-D.ralston-mimi-terminology].
+found in [@?I-D.ietf-mimi-arch] and [@?I-D.ralston-mimi-terminology].
 
 # Introduction
 
@@ -95,6 +95,27 @@ Below is a list of some features commonly found in IM group chat systems:
 
 # Overview
 
+## Binary encoding
+
+The MIMI Content format is encoded in Concise Binary Object Representation
+(CBOR) [@!RFC8949]. The Working Group chose a binary format in part because:
+
+* we do not want to scan body parts to check for boundary marker
+collisions. This rules out using multipart MIME types.
+* we do not want to base64 encode body parts with binary media
+types (ex: images). This rules out using JSON to carry the binary data.
+
+All examples start with an instance document annotated in the CBOR
+Extended Diagnostic Notation (described in [Appendix G of @!RFC8610] and
+more rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then
+include a hex dump of the CBOR data in the pretty printed format popularized
+by the CBOR playground website (https://cbor.me) with some minor whitespace
+and comment reformatting. Finally a message ID for the message is included
+for most messages.
+
+All the instance documents validate using the CDDL schemas in Appendix B and
+are included in the examples directory in the github repo for this document.
+
 ## Naming schemes
 
 IM systems have a number of types of identifiers. These are described in detail
@@ -120,7 +141,7 @@ with MLS for a specific MLS group, the cipher suite for the group specifies
 a hash algorithm. The message ID is the first 32 octets of the hash of the
 `MLSMessage` struct using that hash algorithm.
 
-As described in the the MIMI architecture [@?I-D.barnes-mimi-arch], one
+As described in the the MIMI architecture [@?I-D.ietf-mimi-arch], one
 provider, called the hub, is responsible for ordering messages. The hub is
 also responsible for recording the time that any application message is
 accepted, and conveying it to any "follower" providers which receive messages
@@ -158,49 +179,27 @@ of information:
 * the message behavior fields (which can have default or empty values), and
 * the body part(s) and associated parameters
 
-> **NOTE**: The choice of a concrete binary syntax for MIMI Content messages
-> is currently an open issue in the Working Group with the respondents of a
-> poll split roughly 50/50 between using TLS Presentation Language (defined
-> in Section 3 of [@!RFC8446]) vs. Concise Binary Object Representation
-> (CBOR) [@!RFC8949]. This document will present the examples in the TLS
-> Presentation Language and provide the same contents in CBOR in an Appendix.
-
-The choice of a binary format was constrained in part because:
-
-* we do not want to scan body parts to check for boundary marker
-collisions. This rules out using multipart MIME types.
-* we do not want to base64 encode body parts with binary media
-types (ex: images). This rules out using JSON to carry the binary data.
-
 The object fields in the structure defined below are numbered in
 curly braces for reference in the text.
 
+The subsections that follow contain snippets of Concise Data Definition
+Language (CDDL) [@!RFC8610] schemas for the MIMI Content Container. The complete collected CDDL schema for MIMI Content Container is available in
+(#full-schema).
 
 ## Message Behavior Fields 
 
-``` tls
-struct {
-    uint8 present;
-    select (present) {
-        case 0: struct{};
-        case 1: T value;
-    };
-} optional<T>;
+``` cddl
+mimiContent = [
+  replaces: null / MessageId,       ; {1}
+  topicId: bstr,                    ; {2}
+  expires: uint .size 4,            ; {3}
+  inReplyTo: null / InReplyTo,      ; {4}
+  lastSeen: [* MessageId],          ; {5}
+  extensions: {* name => value },   ; {6}
+  nestedPart: NestedPart            ; {7}
+]
 
-uint8  MessageId[32];
-uint64 Timestamp;  /* milliseconds since 01-Jan-1970 */
-uint8  Utf8;       /* a UTF-8 character */
-uint8  IdUrl;      /* an identifier URL character */
-
-struct {
-    optional<MessageId> replaces;    /* {1} */
-    opaque topicId<V>;               /* {2} */
-    uint32 expires;                  /* 0 = does not expire {3} */
-    optional<ReplyToInfo> inReplyTo; /* {4} */
-    MessageId lastSeen<V>;           /* {5} */
-    Extension extensions<V>;         /* {6} */
-    NestablePart body;               /* {7} */
-} MimiContent;
+MessageId = bstr .size 32          ; MessageId is derived from SHA256 hash
 ```
 
 The `replaces` {1} data field indicates that the current message
@@ -234,7 +233,8 @@ SHA-256 hash [@!RFC6234] of its `MimiContent` structure. Otherwise,
 the receiver assumes that the current message has not
 identified any special relationship with another previous message. 
 
-The `inReplyTo` hash is a message digest used to make sure that a MIMI
+The `inReplyTo` hash is a message digest from the
+[IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg), used to make sure that a MIMI
 message cannot refer to a sequence of referred messages which refers
 back to itself. When replying, a client MUST NOT knowingly create a sequence
 of replies which create a loop.
@@ -245,18 +245,13 @@ following the referenced messages, checking that neither the messageId nor
 the hash of any of referenced messages indicates a Reply which "loops" back
 to a message later in the inReplyTo chain.
 
-``` tls
-enum {
-    none(0),
-    sha256(1),
-    (255)
-} HashAlgorithm;
-
-struct {
-    MessageId message;
-    HashAlgorithm hashAlg;
-    opaque replyToHash<V>;  /* hash of content format */
-} inReplyTo;
+``` cddl
+InReplyTo = [
+  message: MessageId,
+  hashAlg: uint .size 8,   ; a value from the IANA Named Information Hash
+                           ; Algorithm Registry. Default: SHA-256 = 1
+  hash: bstr
+]
 ```
 
 Note that a `inReplyTo`
@@ -299,11 +294,9 @@ of each extension can be between 0 and 65535 octets.
 The message content `extensions` field MUST NOT include more than one
 extension field with the same name.
 
-``` tls
-struct {
-    Utf8 name<1..255>;
-    opaque value<0..65535>;
-} Extension;
+``` cddl
+name = tstr .size (1..255)
+value = bstr .size (0..4095)
 ```
 
 ## Message Bodies
@@ -315,44 +308,53 @@ When there is a single (inline) part or a (single) externally reference
 part, its IANA media type, subtype, and parameters are included in the
 contentType field {8}. 
 
-``` tls
-enum {
-    null(0),
-    single(1),
-    external(2),
-    multi(3),
-    (255)
-} PartCardinality;
+``` cddl
+NestedPart = [
+  disposition: baseDispos / $extDispos / unknownDispos,  ; {10}
+  language: tstr,                                        ; {11}
+  partIndex: uint .size 2,                               ; {12}
+  ( NullPart // SinglePart // ExternalPart // MultiPart)
+]
 
-struct {
-    Utf8 contentType<V>; /* An IANA media type {8} */
-    opaque content<V>;
-} SinglePart;
+NullPart = ( cardinality: nullpart )
 
-enum {             /* {9} */
-    chooseOne(0),  /* receiver picks exactly one part to process */
-    singleUnit(1), /* receiver processes all parts as single unit */
-    processAll(2), /* receiver processes all parts individually */
-    (255)
-} MultiplePartSemantics;
+SinglePart = (
+    cardinality: single,
+    contentType: tstr,        ; {8}
+    content: bstr
+)
 
-struct {
-    Disposition disposition;  /* {10} */
-    Utf8 language<V>;         /* {11} */
-    uint16 partIndex;         /* {12} */
-    PartCardinality cardinality;
-    select(cardinality) {
-        case null:
-            struct {};
-        case single:
-            SinglePart part;
-        case external:
-            ExternalPart part;
-        case multi:
-            MultiplePartSemantics partSemantics;
-            NestablePart parts<V>;
-    };
-} NestablePart;
+ExternalPart = (
+    cardinality: external,
+    contentType: tstr,
+    url: uri,
+    expires: uint .size 4,
+    size: uint .size 8,
+    encAlg: uint .size 2,
+    key: bstr,
+    nonce: bstr,
+    aad: bstr,
+    hashAlg: uint .size 1,
+    contentHash: bstr,
+    description: tstr
+)
+
+MultiPart = (
+    cardinality: multi,
+    partSemantics: chooseOne / singleUnit / processAll,
+    parts: [2* NestedPart]
+)
+
+; cardinality
+nullpart = 0
+single   = 1
+external = 2
+multi    = 3
+
+; part semantics {9}
+chooseOne  = 0  ; receiver picks exactly one part to process
+singleUnit = 1  ; receiver processes all parts as single unit
+processAll = 2  ; receiver processes all parts individually
 ```
 
 With some types of message content, there are multiple media types
@@ -390,19 +392,19 @@ the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
 [@?RFC2183].
 
-``` tls
-enum {
-    unspecified(0),
-    render(1),
-    reaction(2),
-    profile(3),
-    inline(4),
-    icon(5),
-    attachment(6),
-    session(7),
-    preview(8),
-    (255)
-} Disposition;
+``` cddl
+baseDispos = &(
+    unspecified: 0,
+    render: 1,
+    reaction: 2,
+    profile: 3,
+    inline: 4,
+    icon: 5,
+    attachment: 6,
+    session: 7,
+    preview: 8
+)
+unknownDispos = &( unknown: 9..255 ) ; Note: any ext_dispos take precedence
 ```
 
 The `render` disposition means that the content should be rendered
@@ -447,20 +449,21 @@ after which the external content is invalid, expressed as seconds
 since the start of the UNIX epoch (01-Jan-1970), or zero if the
 content does not expire.
 
-``` tls
-struct {
-  Utf8 contentType<V>;   /* An IANA media type {8} */
-  Utf8 url<V>;           /* A URL where the content can be fetched */
-  uint32 expires;        /* 0 = does not expire */
-  uint64 size;           /* size of content in octets */
-  uint16 encAlg;         /* An IANA AEAD Algorithm number, or zero */
-  opaque key<V>;         /* AEAD key */
-  opaque nonce<V>;       /* AEAD nonce */
-  opaque aad<V>;         /* AEAD additional authentiation data */
-  HashAlgorithm hashAlg;
-  opaque contentHash<V>; /* hash of the content at the target url */
-  Utf8 description<V>;   /* an optional text description */
-} ExternalPart;
+``` cddl
+ExternalPart = (
+    cardinality: external,
+    contentType: tstr,     ; An IANA media type {8}
+    url: uri,              ; A URL where the content can be fetched
+    expires: uint .size 4, ; expiration in seconds since UNIX epoch
+    size: uint .size 8,    ; size of content in octets
+    encAlg: uint .size 2,  ; An IANA AEAD Algorithm number, or zero
+    key: bstr,             ; AEAD key
+    nonce: bstr,           ; AEAD nonce
+    aad: bstr,             ; AEAD additional authentiation data
+    hashAlg: uint .size 1, ; An IANA Named Information Hash Algorithm
+    contentHash: bstr,     ; hash of the content at the target url
+    description: tstr      ; an optional text description
+)
 ```
 
 Typically, external content is encrypted with an ephemeral symmetric
@@ -495,23 +498,27 @@ implementations could also determine one or more of: the sender's client
 identifier URL {15}, the user identifier URL of the credential associated
 with the sender {16}, and the identifier URL for the MIMI room {17}.
 
-``` tls
-struct {
-    MessageId messageId;
-    Timestamp hubAcceptedTimestamp;
-    opaque mlsGroupId<V>;      /* value always available {13} */
-    uint32 senderLeafIndex;    /* value always available {14} */
-    IdUrl senderClientUrl<V>;  /* {15} */
-    IdUrl senderUserUrl<V>;    /* "From" {16} */
-    IdUrl roomUrl<V>;          /* "To" {17} */
-} MessageDerivedValues;
+``` cddl
+MessageDerivedValues = [
+    messageId: MessageId,              ; sha256 hash of message ciphertext
+    hubAcceptedTimestamp: Timestamp,
+    mlsGroupId: bstr,                  ; value always available {13}
+    senderLeafIndex: uint .size 4,     ; value always available {14}
+    senderClientUrl: uri               ; {15},
+    senderUserUrl: uri,                ; "From" {16}
+    roomUrl: uri                       ; "To"   {17}
+]
+
+MessageId = bstr .size 32
+Timestamp = #6.62(uint .size 8)    ; milliseconds since start of UNIX epoch
 ```
 
 # Examples
 
 In the following examples, we assume that an MLS group is already established and
-that either out-of-band or using the MLS protocol or MLS extensions that the
-following is known to every member of the group:
+that either out-of-band or using the MLS protocol or MLS extensions, or
+their client to provider protocol that the following is known to every
+member of the group:
 
 * The membership of the group (via MLS).
 * The identity of any MLS client which sends an application message (via MLS).
@@ -520,8 +527,19 @@ following is known to every member of the group:
 * Which media types are mandatory to implement (MLS content advertisement extensions).
 * For each member, the media types each supports (MLS content advertisement extensions).
 
-Messages sent to an MLS group are delivered to every member of the group active during
-the epoch in which the message was sent.
+Messages sent to an MLS group are delivered to every member of the group
+active during the epoch in which the message was sent.
+
+All the examples start with a CBOR instance document annotated in the
+Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
+rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
+hex dump of the CBOR data in the pretty printed format popularized by the
+CBOR playground website (https://cbor.me) with some minor whitespace and
+comment reformatting. Finally a message ID for the message is included for
+most messages.
+
+All the instance documents validate using the CDDL schemas in Appendix B and
+are included in the examples directory in the github repo for this document.
 
 ## Original Message
 
@@ -544,32 +562,38 @@ might be available for the client from its provider:
                 7668174ba385af066011e43bd7e51501
 * Timestamp: 1644387225019 = 2022-02-08T22:13:45.019-00:00
 
-Below is the annotated MimiContent struct encoded using the TLS
-Presentation Language by the sender:
+Below is the message in annotated Extended Diagnostic Notation, and pretty
+printed CBOR.
+
+<{{examples/original.edn}}
 
 ```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x00       length of topicId
-0x00000000 expires
-0x00       optional inReplyTo (present = 0)
-0x00       length of lastSeen vector
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x01     disposition = render
-  0x00     length of language
-  0x0000   partIndex = 0 (1st part)
-  0x01     cardinality = single part
-  /* SinglePart struct (part) */
-    0x1b   length of contentType
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x38   length of content
-      0x48692065766572796f6e652c20776520  "Hi everyone, we "
-        6a75737420736869707065642072656c  "just shipped rel"
-        6561736520322e302e205f5f476f6f64  "ease 2.0. __Good"
-        20776f726b5f5f21                  " work__!"
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   80                                   # array(0)
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 38                             # bytes(56)
+         48692065766572796f6e652c207765206a757374207368697070656420
+         72656c6561736520322e302e205f5f476f6f6420776f726b5f5f21
+         # "Hi everyone, we just shipped release 2.0. __Good work__!"
 ```
+
+Below are the rest of the implied values for this message:
+
+<{{examples/implied-original.edn}}
 
 ## Reply
 
@@ -586,38 +610,38 @@ will be omitted.
                c2e3aad1776570c1a28de244979c71ed
 * Timestamp = 1644387237492 = 2022-02-08T22:13:57.492-00:00
 
-The annotated TLS Presentation Language:
+Below is the annotated message in EDN and pretty printed CBOR:
+
+<{{examples/reply.edn}}
 
 ```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x00       length of topicId
-0x00000000 expires
-/* inReplyTo */
-  0x01       optional inReplyTo (present = 1)
-  0xd3c14744d1791d02548232c23d35efa9  // 0x20 octet message ID
-    7668174ba385af066011e43bd7e51501  // Original message
-  0x01 hashAlg = sha256
-  0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x20       length of lastSeen vector (1 item)
-  0xd3c14744d1791d02548232c23d35efa9  // Original message
-    7668174ba385af066011e43bd7e51501  
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x01     disposition = render
-  0x00     length of language
-  0x0000   partIndex = 0 (1st part)
-  0x01     cardinality = single part
-  /* SinglePart struct (part) */
-    0x1b   length of contentType
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x21   length of content
-      0x5269676874206f6e21205f436f6e6772  "Right on! _Congr"
-        6174756c6174696f6e735f2027616c6c  "atulations_ 'all"
-        21                                "!"
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 21                             # bytes(33)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f2027616c6c21
+         # "Right on! _Congratulations_ 'all!"
 ```
 
 ## Reaction
@@ -643,35 +667,37 @@ Note that many systems allow mutiple independent reactions per sender.
                 3b0d690f82417663cb752dfcc37779a1
 * Timestamp: 1644387237728 = 2022-02-08T22:13:57.728-00:00
 
-```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x00       length of topicId
-0x00000000 expires
-/* inReplyTo */
-  0x01       optional inReplyTo (present = 1)
-  0xd3c14744d1791d02548232c23d35efa9  // 0x20 octet message ID
-    7668174ba385af066011e43bd7e51501  // Original message
-  0x01 hashAlg = sha256
-  0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x20       length of lastSeen vector (1 item)
-    0xe701beee59f9376282f39092e1041b2a  // Reply (above)
-      c2e3aad1776570c1a28de244979c71ed
-0x00       length of extensions vector
-  /* NestablePart */
-  0x02   disposition = reaction
-  0x00   length of language is zero
-  0x0000 partIndex = 0 (1st part)
-  0x01   cardinality = single part
+Below is the annotated message in EDN and pretty printed CBOR:
 
-    /* SinglePart */
-    0x18 contentType is 0x18 octets
-      0x746578742f706c61696e3b6368617273  "text/plain;charse"
-        65743d7574662d38                  "t=utf-8"
-    0x03 content is 0x03 octets
-      0xe299a5                            "♥"
+<{{examples/reaction.edn}}
+
+```
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   a0                                   # map(0)
+   86                                   # array(6)
+      02                                # unsigned(2)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 18                             # text(24)
+         746578742f706c61696e3b636861727365743d7574662d38
+         # "text/plain;charset=utf-8"
+      43                                # bytes(3)
+         e299a5                         # "♥"
 ```
 
 ## Mentions
@@ -692,45 +718,46 @@ or HTML rich content. For example, a mention using Markdown is indicated below.
                 ba77985da34528a515fac3c38e4998b8
 * Timestamp: 1644387243008 = 2022-02-08T22:14:03.008-00:00
 
+Below is the annotated message in EDN and pretty printed CBOR:
+
+<{{examples/mention.edn}}
+
 ```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x00       length of topicId
-0x00000000 expires
-0x00       optional inReplyTo (present = 0)
-0x20       length of lastSeen vector (1 item)
-  0x58 0x20 
-    0xe701beee59f9376282f39092e1041b2a  // Reply (above)
-      c2e3aad1776570c1a28de244979c71ed  // (didn't see Reaction yet)
-0x00       length of extensions vector
-
-  /* NestablePart */
-  0x01 disposition = render
-  0x60 language is empty sting
-  0x00 partIndex = 0 (1st part)
-  0x01 cardinality = single part
-
-    /* SinglePart */
-    0x1b contentType is 0x1b octets
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x52 content is 0x52 octets
-      0x4b75646f7320746f205b40416c696365  "Kudos to [@Alice"
-        20536d6974685d28696d3a616c696365  " Smith](im:alice"
-        2d736d697468406578616d706c652e63  "-smith@example.c"
-        6f6d2920666f72206d616b696e672074  "om) for making t"
-        68652072656c65617365206861707065  "he release happe"
-        6e21                              "n!"
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 52                             # bytes(82)
+         4b75646f7320746f205b40416c69636520536d6974685d28696d3a
+         616c6963652d736d697468406578616d706c652e636f6d2920666f
+         72206d616b696e67207468652072656c656173652068617070656e21
+         # "Kudos to [@Alice Smith](im:alice-smith@example.com)
+         # for making the release happen!"
 ```
 
 The same mention using HTML [@!W3C.CR-html52-20170808] would instead
-use the contentType and content indicated below.
+replace in the EDN the contentType and content indicated below.
 
-~~~~~~~
-contentType: "text/html;charset=utf-8";
-content:  "<p>Kudos to <a href='im:alice-smith@example.com'>" +
-               "@Alice Smith</a> for making the release happen!</p>"
-~~~~~~~
+``` edn
+  / ... /
+  "text/html;charset=utf-8",
+  '<p>Kudos to <a href="im:alice-smith@example.com">@Alice Smith</a> for making the release happen!</p>'
+```
 
 ## Edit
 
@@ -751,40 +778,40 @@ Here Bob Jones corrects a typo in his original message:
                78fa4edceaf2720e17b730c6dfba8be4
 * Timestamp: 1644387248621 = 2022-02-08T22:14:08.621-00:00
 
+<{{examples/edit.edn}}
+
 ```
-/* MimiContent struct */
-0x01       optional replaces (present = 1)
-  0xe701beee59f9376282f39092e1041b2a  // Reply
-    c2e3aad1776570c1a28de244979c71ed
-0x00       length of topicId
-0x00000000 expires
-/* inReplyTo */
-  0x01       optional inReplyTo (present = 1)
-  0xd3c14744d1791d02548232c23d35efa9  // 0x20 octet message ID
-    7668174ba385af066011e43bd7e51501  // Original message
-  0x01 hashAlg = sha256
-  0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x40       length of lastSeen vector (2 items)
-    0x4dcab7711a77ea1dd025a6a1a7fe01ab  // Reaction
-      3b0d690f82417663cb752dfcc37779a1
-    0x6b50bfdd71edc83554ae21380080f4a3  // Mention
-      ba77985da34528a515fac3c38e4998b8
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x01     disposition = render
-  0x00     length of language
-  0x0000   partIndex = 0 (1st part)
-  0x01     cardinality = single part
-  /* SinglePart struct (part) */
-    0x1b   length of contentType
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x21   length of content
-      0x5269676874206f6e21205f436f6e6772  "Right on! _Congr"
-        6174756c6174696f6e735f2027616c6c  "atulations_ 'all"
-        21                                "!"
+87                                      # array(7)
+   58 20                                # bytes(32)
+      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
+      58 20                             # bytes(32)
+         6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 22                             # bytes(34)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f
+         207927616c6c21
+         # "Right on! _Congratulations_ y'all!"
 ```
 
 Note that replies and reactions always refer to a specific message id,
@@ -812,30 +839,31 @@ as shown below.
     c0e9c20c598f9d7c8e81640dae8db0fb
 * Timestamp: 1644387248621 = 2022-02-08T22:14:08.621-00:00
 
+<{{examples/delete.edn}}
+
 ```
-/* MimiContent struct */
-0x01       optional replaces (present = 1)
-  0xe701beee59f9376282f39092e1041b2a    // Reply
-    c2e3aad1776570c1a28de244979c71ed
-0x00       length of topicId
-0x00000000 expires
-/* inReplyTo */
-  0x01       optional inReplyTo (present = 1)
-  0xd3c14744d1791d02548232c23d35efa9  // 0x20 octet message ID
-    7668174ba385af066011e43bd7e51501  // Original message
-  0x01 hashAlg = sha256
-  0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x20       length of lastSeen vector (1 item)
-    0x89d3472622a4d9de526742bcd00b09dc  // Edit
-      78fa4edceaf2720e17b730c6dfba8be4
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x01     disposition = render
-  0x00     length of language
-  0x0000   partIndex = 0 (1st part)
-  0x00 cardinality = null (zero parts)
+87                                      # array(7)
+   58 20                                # bytes(32)
+      4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         89d3472622a40d6ceeb27c42490fdc64c0e9c20c598f9d7c8e81640dae8db0fb
+   a0                                   # map(0)
+   84                                   # array(4)
+      02                                # unsigned(2)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      00                                # unsigned(0)
 ```
 
 ## Unlike
@@ -854,30 +882,31 @@ created the reaction, as shown below.
                 1bf434c6bfcf1237fa45463c6861853b
 * Timestamp: 1644387250389 = 2022-02-08T22:14:10.389-00:00
 
+<{{examples/unlike.edn}}
+
 ```
-/* MimiContent struct */
-0x01       optional replaces (present = 1)
-  0x4dcab7711a77ea1dd025a6a1a7fe01ab  // Reaction
-    3b0d690f82417663cb752dfcc37779a1
-0x00       length of topicId
-0x00000000 expires is zero
-/* inReplyTo */
-  0x01       optional inReplyTo (present = 1)
-  0xd3c14744d1791d02548232c23d35efa9  // 0x20 octet message ID
-    7668174ba385af066011e43bd7e51501  // Original message
-  0x01 hashAlg = sha256
-  0x20 hash is 0x20 bytes
-    0x6b44053cb68e3f0cdd219da8d7104afc
-      2ae5ffff782154524cef093de39345a5
-0x20       length of lastSeen vector (1 item)
-    0x89d3472622a40d6ceeb27c42490fdc64  // Delete
-      c0e9c20c598f9d7c8e81640dae8db0fb
-0x00       length of extensions vector
-  /* NestablePart */
-  0x02   disposition = reaction
-  0x00   length of language is zero
-  0x0000 partIndex = 0 (1st part)
-  0x00 cardinality = null (zero parts)
+87                                      # array(7)
+   58 20                                # bytes(32)
+      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   83                                   # array(3)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         89d3472622a4d9de526742bcd00b09dc78fa4edceaf2720e17b730c6dfba8be4
+   a0                                   # map(0)
+   84                                   # array(4)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      00                                # unsigned(0)
 ```
 
 ## Expiring
@@ -899,31 +928,34 @@ network connectivity necessary.
     d3a2eecfa3d490985da5113e5480c7f1
 * Timestamp: 1644389403227 = 2022-02-08T22:49:06.227-00:00
 
+<{{examples/expiring.edn}}
+
 ```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x00       length of topicId
-0x62036674 expires on 1644390004  // 10 minutes later
-0x00       optional inReplyTo (present = 0)
-0x20       length of lastSeen vector
-    0x1a771ca1d84f8fda4184a1e02a549e20  // Unlike
-      1bf434c6bfcf1237fa45463c6861853b
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x01     disposition = render
-  0x00     length of language
-  0x0000   partIndex = 0 (1st part)
-  0x01     cardinality = single part
-  /* SinglePart struct (part) */
-    0x1b   length of contentType
-      0x746578742f6d61726b646f776e3b6368  "text/markdown;cha"
-        61727365743d7574662d38            "rset=utf-8"
-    0x50   length of content
-      0x5f5f2a56504e20474f494e4720444f57  "__*VPN GOING DOW"
-        4e2a5f5f0a49276d207265626f6f7469  "N*__ I'm rebooti"
-        6e67207468652056504e20696e207465  "ng the VPN in te"
-        6e206d696e7574657320756e6c657373  "n minutes unless"
-        20616e796f6e65206f626a656374732e  " anyone objects."
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   1a 62036674                          # unsigned(1644390004)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         1a771ca1d84f8fda4184a1e02a549e201bf434c6bfcf1237fa45463c6861853b
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      01                                # unsigned(1)
+      78 1b                             # text(27)
+         746578742f6d61726b646f776e3b636861727365743d7574662d38
+         # "text/markdown;charset=utf-8"
+      58 50                             # bytes(80)
+         5f5f2a56504e20474f494e4720444f574e2a5f5f0a49276d207265
+         626f6f74696e67207468652056504e20696e2074656e206d696e75
+         74657320756e6c65737320616e796f6e65206f626a656374732e
+         # "__*VPN GOING DOWN*__\nI'm rebooting the VPN in ten
+         #  minutes unless anyone objects."
 ```
 
 ## Attachments
@@ -935,44 +967,52 @@ field is set to inline if the sender recommends inline rendering, or
 attachment if the sender intends the content to be downloaded or
 rendered separately.
 
+<{{examples/attachment.edn}}
+
 ```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x00       length of topicId
-0x00000000 expires is zero
-0x00       optional inReplyTo (present = 0)
-0x20       length of lastSeen vector
-    0x5c95a4dfddab84348bcc265a479299fb  // Expiring
-      d3a2eecfa3d490985da5113e5480c7f1
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x06     disposition = attachment
-  0x02     length of language
-    0x656e                                "en"
-  0x0000   partIndex = 0 (1st part)
-  0x02     cardinality = external part
-    /* External Part *
-    0x09 length of contentType
-      0x766964656f2f6d7034                "video/mp4"
-    0x27 length of url
-      0x68747470733a2f2f6578616d706c652e  "https://example."
-        636f6d2f73746f726167652f62696766  "com/storage/bigf"
-        696c652e6d7034                    "ile.mp4"
-    0x00000000 expires is zero
-    0x000000002a36ced1 size is 708234961 octets
-    0x0001     encAlg is 0x0001 = AES-128-GCM
-    0x10       key is 16 octets
-      0x21399320958a6f4c745dde670d95e0d8
-    0x0c       nonce is 12 octets
-      0xc86cf2c33f21527d1dd76f5b
-    0x00       aad is zero octets
-    0x01       hashAlg = sha256
-    0x20       content hash is 32 octets
-      0x9ab17a8cf0890baaae7ee016c7312fcc
-        080ba46498389458ee44f0276e783163
-    0x1c       description is 0x1c octets
-      0x3220686f757273206f66206b65792073  "2 hours of key s"
-        69676e696e6720766964656f          "igning video"
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
+   a0                                   # map(0)
+   8f                                   # array(15)
+      06                                # unsigned(6)
+      62                                # text(2)
+         656e                           # "en"
+      00                                # unsigned(0)
+      02                                # unsigned(2)
+      69                                # text(9)
+         766964656f2f6d7034             # "video/mp4"
+      d8 20                             # tag(32)
+         78 1c                          # text(28)
+            68747470733a6578616d706c652e636f6d62696766696c652e6d7034
+            # "https:example.combigfile.mp4"
+      00                                # unsigned(0)
+      1a 2a36ced1                       # unsigned(708234961)
+      01                                # unsigned(1)
+      50                                # bytes(16)
+         21399320958a6f4c745dde670d95e0d8
+      4c                                # bytes(12)
+         c86cf2c33f21527d1dd76f5b
+      40                                # bytes(0)
+                                        # ""
+      01                                # unsigned(1)
+      58 20                             # bytes(32)
+         9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163
+      78 1c                             # text(28)
+         3220686f757273206f66206b6579207369676e696e6720766964656f
+         # "2 hours of key signing video"
+```
+
+```
+message ID
+  0xb267614d43e7676d28ef5b15e8676f23
+    679fe365c78849d83e2ba0ae8196ec4e
 ```
 
 Other dispositions of external content are also possible, for example
@@ -991,38 +1031,52 @@ a dialog box).
 Further discussion of calling and conferencing functionality is out-of-scope
 of this document.
 
+<{{examples/conferencing.edn}}
+
 ```
-/* MimiContent struct */
-0x00       optional replaces (present = 0)
-0x07       length of topicId
-  0x466f6f20313138                        "Foo 118"
-0x00000000 expires is zero
-0x00       optional inReplyTo (present = 0)
-0x20       length of lastSeen vector
-    0xb267614d43e7676d28ef5b15e8676f23  // Attachment
-      679fe365c78849d83e2ba0ae8196ec4e
-0x00       length of extensions vector
-  /* NestablePart struct (body)*/
-  0x07     disposition = session
-  0x00     length of language
-  0x0000   partIndex = 0 (1st part)
-  0x02     cardinality = external part
-    /* External Part *
-    0x00 length of contentType
-    0x1e length of url
-      0x68747470733a2f2f6578616d706c652e  "https://example."
-        636f6d2f6a6f696e2f3132333435      "com/join/12345"
-    0x00000000 expires is zero
-    0x0000000000000000 size is 0 octets // undetermined
-    0x0000     encAlg is 0x0000 = none
-    0x00       key is zero octets
-    0x00       nonce is zero octets
-    0x00       aad is zero octets
-    0x00       hashAlg = none
-    0x00       content hash is 32 octets
-    0x1b  description is 0x1b octets
-      0x4a6f696e2074686520466f6f20313138  "Join the Foo 118"
-        20636f6e666572656e6365            " conference"
+87                                      # array(7)
+   f6                                   # primitive(22)
+   47                                   # bytes(7)
+      466f6f20313138                    # "Foo 118"
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   81                                   # array(1)
+      58 20                             # bytes(32)
+         b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e
+   a0                                   # map(0)
+   8f                                   # array(15)
+      07                                # unsigned(7)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      02                                # unsigned(2)
+      60                                # text(0)
+                                        # ""
+      d8 20                             # tag(32)
+         76                             # text(22)
+            68747470733a6578616d706c652e636f6d3132333435
+            # "https:example.com12345"
+      00                                # unsigned(0)
+      00                                # unsigned(0)
+      00                                # unsigned(0)
+      40                                # bytes(0)
+                                        # ""
+      40                                # bytes(0)
+                                        # ""
+      40                                # bytes(0)
+                                        # ""
+      00                                # unsigned(0)
+      40                                # bytes(0)
+                                        # ""
+      78 1b                             # text(27)
+         4a6f696e2074686520466f6f2031313820636f6e666572656e6365
+         # "Join the Foo 118 conference"
+```
+
+```
+message ID
+  0xb267614d43e7676d28ef5b15e8676f23
+    679fe365c78849d83e2ba0ae8196ec4e
 ```
 
 ## Topics / Threading
@@ -1037,7 +1091,6 @@ sent related to the topic. Subsequent messages may include the same
 for messages within a thread uses the timestamp field. If more than
 one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
-
 
 ## Delivery Reporting and Read Receipts
 
@@ -1060,54 +1113,41 @@ Instead we would like to be able to include status changes about multiple
 messages in each report, the ability to mark a message delivered, then read, then unread, then expired
 for example.
 
-The proposed format below, application/mimi-message-status is sent
+The format below, application/mimi-message-status is sent
 by one member of an MLS group to the entire group and can refer to multiple messages in that group. 
 The format contains its own timestamp, and a list of message ID / status pairs. As
-the status at the recipient changes, the status can be updated in a subsequent notification.
+the status at the recipient changes, the status can be updated in a subsequent notification. Below is the CDDL schema for message status.
 
-``` tls
-enum {
-    unread(0),
-    delivered(1),
-    read(2),
-    expired(3),
-    deleted(4),
-    hidden(5),
-    error(6),
-    (255)
-} MessageStatus;
-
-struct {
-    MessageId messageId;
-    MessageStatus status;
-} PerMessageStatus;
-
-struct MessageStatusReport {
-    Timestamp timestamp;
-    PerMessageStatus statuses<V>;
-} MessageStatusReport;
-```
+<{{delivery-report.cddl}}
 
 * Sender user handle URL:
   im:bob-jones@example.com
 
-### TLS Presentation Language Example
+### Delivery Report Example
+
+<{{examples/report.edn}}
 
 ```
-0x0000017ed70171fb  timestamp is 1644284703227 ms since UNIX epoch 
-0x84 length of 4 statuses (expressed as two bytes)
-  0xd3c14744d1791d02548232c23d35efa9  // Original
-    7668174ba385af066011e43bd7e51501
-  0x02 status 2 = read
-  0xe701beee59f9376282f39092e1041b2a  // Reply
-    c2e3aad1776570c1a28de244979c71ed
-  0x02 status 2 = read
-  0x6b50bfdd71edc83554ae21380080f4a3  // Mention
-    ba77985da34528a515fac3c38e4998b8
-  0x00 status 0 = unread
-  0x5c95a4dfddab84348bcc265a479299fb  // Expiring
-    d3a2eecfa3d490985da5113e5480c7f1
-  0x03 status 3 = expired
+82                                      # array(2)
+   d8 3e                                # tag(62)
+      1b 0000017ed70171fb               # unsigned(1644284703227)
+   84                                   # array(4)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+         02                             # unsigned(2)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+         02                             # unsigned(2)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
+         00                             # unsigned(0)
+      82                                # array(2)
+         58 20                          # bytes(32)
+            5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
+         03                             # unsigned(3)
 ```
 
 # Support for Specific Media Types
@@ -1440,469 +1480,27 @@ of each receiver of the message (via local preferences).
   </front>
 </reference>
 
-# CBOR Encoding of Examples
 
-All CBOR examples start with an instance document annotated in the
-Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
-rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
-hex dump of the CBOR data in the pretty printed format popularized by the
-CBOR playground website (https://cbor.me) with some minor whitespace and
-comment reformatting. Finally a message ID for the message is included for
-most messages.
-
-All the instance documents validate using the CDDL schemas in Appendix B and
-are included in the examples directory in the github repo for this document.
-
-## Original message
-
-<{{examples/original.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   f6                                   # primitive(22)
-   80                                   # array(0)
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 38                             # bytes(56)
-         48692065766572796f6e652c207765206a757374207368697070656420
-         72656c6561736520322e302e205f5f476f6f6420776f726b5f5f21
-         # "Hi everyone, we just shipped release 2.0. __Good work__!"
-```
-
-```
-message ID
-  0xd3c14744d1791d02548232c23d35efa9
-    7668174ba385af066011e43bd7e51501
-```
-
-Below are the rest of the implied values for this message:
-
-<{{examples/implied-original.edn}}
-
-
-## Reply
-
-<{{examples/reply.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 21                             # bytes(33)
-         5269676874206f6e21205f436f6e67726174756c6174696f6e735f2027616c6c21
-         # "Right on! _Congratulations_ 'all!"
-```
-
-```
-message ID
-  0xe701beee59f9376282f39092e1041b2a
-    c2e3aad1776570c1a28de244979c71ed
-```
-
-## Reaction
-
-<{{examples/reaction.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   a0                                   # map(0)
-   86                                   # array(6)
-      02                                # unsigned(2)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 18                             # text(24)
-         746578742f706c61696e3b636861727365743d7574662d38
-         # "text/plain;charset=utf-8"
-      43                                # bytes(3)
-         e299a5                         # "♥"
-```
-
-```
-message ID
-  0x4dcab7711a77ea1dd025a6a1a7fe01ab
-    3b0d690f82417663cb752dfcc37779a1
-```
-
-## Mention
-
-<{{examples/mention.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 52                             # bytes(82)
-         4b75646f7320746f205b40416c69636520536d6974685d28696d3a
-         616c6963652d736d697468406578616d706c652e636f6d2920666f
-         72206d616b696e67207468652072656c656173652068617070656e21
-         # "Kudos to [@Alice Smith](im:alice-smith@example.com)
-         # for making the release happen!"
-```
-
-```
-message ID
-  0x6b50bfdd71edc83554ae21380080f4a3
-    ba77985da34528a515fac3c38e4998b8
-```
-
-## Edit
-
-<{{examples/edit.edn}}
-
-```
-87                                      # array(7)
-   58 20                                # bytes(32)
-      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   82                                   # array(2)
-      58 20                             # bytes(32)
-         4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
-      58 20                             # bytes(32)
-         6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
-      58 22                             # bytes(34)
-         5269676874206f6e21205f436f6e67726174756c6174696f6e735f
-         207927616c6c21
-         # "Right on! _Congratulations_ y'all!"
-```
-
-```
-message ID
-  0x89d3472622a4d9de526742bcd00b09dc
-    78fa4edceaf2720e17b730c6dfba8be4
-```
-
-## Delete
-
-<{{examples/delete.edn}}
-
-```
-87                                      # array(7)
-   58 20                                # bytes(32)
-      4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         89d3472622a40d6ceeb27c42490fdc64c0e9c20c598f9d7c8e81640dae8db0fb
-   a0                                   # map(0)
-   84                                   # array(4)
-      02                                # unsigned(2)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      00                                # unsigned(0)
-```
-
-```
-message ID
-  0x89d3472622a40d6ceeb27c42490fdc64
-    c0e9c20c598f9d7c8e81640dae8db0fb
-```
-
-## Unlike
-
-<{{examples/unlike.edn}}
-
-```
-87                                      # array(7)
-   58 20                                # bytes(32)
-      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         89d3472622a4d9de526742bcd00b09dc78fa4edceaf2720e17b730c6dfba8be4
-   a0                                   # map(0)
-   84                                   # array(4)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      00                                # unsigned(0)
-```
-
-```
-message ID
-  0x1a771ca1d84f8fda4184a1e02a549e20
-    1bf434c6bfcf1237fa45463c6861853b
-```
-
-## Expiring
-
-<{{examples/expiring.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   1a 62036674                          # unsigned(1644390004)
-   f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         1a771ca1d84f8fda4184a1e02a549e201bf434c6bfcf1237fa45463c6861853b
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 50                             # bytes(80)
-         5f5f2a56504e20474f494e4720444f574e2a5f5f0a49276d207265
-         626f6f74696e67207468652056504e20696e2074656e206d696e75
-         74657320756e6c65737320616e796f6e65206f626a656374732e
-         # "__*VPN GOING DOWN*__\nI'm rebooting the VPN in ten
-         #  minutes unless anyone objects."
-```
-
-```
-message ID
-  0x5c95a4dfddab84348bcc265a479299fb
-    d3a2eecfa3d490985da5113e5480c7f1
-```
-
-## Attachments
-
-<{{examples/attachment.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   00                                   # unsigned(0)
-   f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
-   a0                                   # map(0)
-   8f                                   # array(15)
-      06                                # unsigned(6)
-      62                                # text(2)
-         656e                           # "en"
-      00                                # unsigned(0)
-      02                                # unsigned(2)
-      69                                # text(9)
-         766964656f2f6d7034             # "video/mp4"
-      d8 20                             # tag(32)
-         78 1c                          # text(28)
-            68747470733a6578616d706c652e636f6d62696766696c652e6d7034
-            # "https:example.combigfile.mp4"
-      00                                # unsigned(0)
-      1a 2a36ced1                       # unsigned(708234961)
-      01                                # unsigned(1)
-      50                                # bytes(16)
-         21399320958a6f4c745dde670d95e0d8
-      4c                                # bytes(12)
-         c86cf2c33f21527d1dd76f5b
-      40                                # bytes(0)
-                                        # ""
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163
-      78 1c                             # text(28)
-         3220686f757273206f66206b6579207369676e696e6720766964656f
-         # "2 hours of key signing video"
-```
-
-```
-message ID
-  0xb267614d43e7676d28ef5b15e8676f23
-    679fe365c78849d83e2ba0ae8196ec4e
-```
-
-## Conferencing
-
-<{{examples/conferencing.edn}}
-
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   47                                   # bytes(7)
-      466f6f20313138                    # "Foo 118"
-   00                                   # unsigned(0)
-   f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e
-   a0                                   # map(0)
-   8f                                   # array(15)
-      07                                # unsigned(7)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      02                                # unsigned(2)
-      60                                # text(0)
-                                        # ""
-      d8 20                             # tag(32)
-         76                             # text(22)
-            68747470733a6578616d706c652e636f6d3132333435
-            # "https:example.com12345"
-      00                                # unsigned(0)
-      00                                # unsigned(0)
-      00                                # unsigned(0)
-      40                                # bytes(0)
-                                        # ""
-      40                                # bytes(0)
-                                        # ""
-      40                                # bytes(0)
-                                        # ""
-      00                                # unsigned(0)
-      40                                # bytes(0)
-                                        # ""
-      78 1b                             # text(27)
-         4a6f696e2074686520466f6f2031313820636f6e666572656e6365
-         # "Join the Foo 118 conference"
-```
-
-```
-message ID
-  0xb267614d43e7676d28ef5b15e8676f23
-    679fe365c78849d83e2ba0ae8196ec4e
-```
-
-## Delivery Report
-
-<{{examples/report.edn}}
-
-```
-82                                      # array(2)
-   d8 3e                                # tag(62)
-      1b 0000017ed70171fb               # unsigned(1644284703227)
-   84                                   # array(4)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-         02                             # unsigned(2)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-         02                             # unsigned(2)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
-         00                             # unsigned(0)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
-         03                             # unsigned(3)
-```
 
 # CDDL Schemas
 
 Below are Concise Data Definition Language (CDDL) [@!RFC8610] schemas for
 the formats described in the body of the document.
 
-## Message Format
+## Complete Message Format Schema {#full-schema}
 
 <{{mimi-content.cddl}}
 
 ## Implied Message Fields
+
+Below is a CDDL schema for the implied message fields.
 
 <{{implied.cddl}}
 
 ## Delivery Report Format
 
 <{{delivery-report.cddl}}
+
 
 # Multipart examples
 
@@ -2028,3 +1626,8 @@ to avoid confusion
 
 * added hash of content to external content
 * replaced abstract syntax with concrete TLS Presentation Language and CBOR syntaxes
+
+## Changes between draft-ietf-mimi-content-03 and draft-ietf-mimi-content-04
+
+* use CBOR as the binary encoding
+
