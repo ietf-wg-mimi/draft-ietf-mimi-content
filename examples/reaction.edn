@@ -20,6 +20,6 @@
     0,                                   / partIndex = 1st part  /
     1,                                   / cardinality = single  /
     "text/plain;charset=utf-8",          / contentType           /    
-    h'e299a5'                            / content = U+2665 (heart) /
+    '❤'                                  / content = U+2665 (heart) /
   ]
 ]

@@ -13,12 +13,9 @@
     "",                               / language                  /
     0,                                / partIndex = 1st part      /
     1,                                / cardinality = single part /
-    "text/markdown;charset=utf-8",    / contentType               /
-
-    / content = __*VPN GOING DOWN*__ I%27m rebootinging the VPN in /
-    /           ten minutes unless anyone objects.                 /
-    h'5f5f2a56504e20474f494e4720444f574e2a5f5f0a49276d207265626f6f7469
-      6e67207468652056504e20696e2074656e206d696e7574657320756e6c657373
-      20616e796f6e65206f626a656374732e'               
-    ]
+    "text/markdown;variant=GFM",      / contentType               /
+                                      / content                   /
+    '__*VPN GOING DOWN*__ I\'m rebootinging the VPN in ten minutes'
+    ' unless anyone objects.'
+  ]
 ]

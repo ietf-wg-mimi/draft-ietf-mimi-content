@@ -14,7 +14,7 @@
                                         # ""
       00                                # unsigned(0)
       01                                # unsigned(1)
-      78 19                             # text(25)
-         746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
-      58 52                             # bytes(82)
-         4b75646f7320746f205b40416c69636520536d6974685d28696d3a616c6963652d736d697468406578616d706c652e636f6d2920666f72206d616b696e67207468652072656c656173652068617070656e21 # "Kudos to [@Alice Smith](im:alice-smith@example.com) for making the release happen!"
+      77                                # text(23)
+         746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
+      58 64                             # bytes(100)
+         3c703e4b75646f7320746f203c6120687265663d22696d3a616c6963652d736d697468406578616d706c652e636f6d223e40416c69636520536d6974683c2f613e20666f72206d616b696e67207468652072656c656173652068617070656e213c2f703e # "<p>Kudos to <a href=\"im:alice-smith@example.com\">@Alice Smith</a> for making the release happen!</p>"

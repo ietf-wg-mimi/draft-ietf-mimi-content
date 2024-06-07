@@ -24,9 +24,8 @@
     "",                                  / language             /
     0,                                   / partIndex = 1st part /
     1,                                   / cardinality = single /
-    "text/markdown;charset=utf-8",       / contentType          /
-    / content = Right on! _Congratulations_ y%27all             /
-    h'5269676874206f6e21205f436f6e67726174756c6174696f6e735f207927616c6c21'
+    "text/markdown;variant=GFM",         / contentType          /
+                                         / content              /
+    'Right on! _Congratulations_ y\'all'
   ]
 ]
-

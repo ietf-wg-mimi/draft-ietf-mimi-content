@@ -22,7 +22,7 @@
                                         # ""
       00                                # unsigned(0)
       01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
-      58 22                             # bytes(34)
-         5269676874206f6e21205f436f6e67726174756c6174696f6e735f207927616c6c21 # "Right on! _Congratulations_ y'all!"
+      78 19                             # text(25)
+         746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
+      58 21                             # bytes(33)
+         5269676874206f6e21205f436f6e67726174756c6174696f6e735f207927616c6c # "Right on! _Congratulations_ y'all"
