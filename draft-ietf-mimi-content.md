@@ -1504,6 +1504,25 @@ Below is a CDDL schema for the implied message fields.
 
 # Multipart examples
 
+In a heterogenous group of IM clients, it is often desirable to send more than one
+media type as alternatives, such that IM clients have a choice of which media
+type to render. For example, imagine an IM group containing a set of clients
+which support a common video format and a subset which only support animated GIFs.
+The sender could use a `MultiParts` NestablePart with `chooseOne` semantics
+containing both media types. Every client in the group chat could render something
+resembling the media sent. This is analogous to the `multipart/alternative` [@?RFC2046]
+media type.
+
+Likewise it is often desirable to send more than one media type intended to be
+rendered together as in (for example a rich text document with embedded images),
+which can be represented using a `MultiParts` NestablePart with `processAll`
+semantics. This is analogous to the `multipart/mixed` [@?RFC2046] media type.
+
+Note that there is a minor semantic difference between multipart/alternative and
+`MultiParts` with `chooseOne` semantics. In multipart/alternative, the parts are 
+presented in preference order by the sender. With `MultiParts` the receiver
+chooses its "best" format to render according to its own preferences.
+
 ## Proprietary and Common formats sent as alternatives
 
 Example of body needed to send this profile and a proprietary
@@ -1557,32 +1576,6 @@ inline images. Each of the images is presented in alternate formats: an animated
 and a single PNG.
 
 TBC
-
-## TLS Presentation Language multipart container format
-
-In a heterogenous group of IM clients, it is often desirable to send more than one
-media type as alternatives, such that IM clients have a choice of which media
-type to render. For example, imagine an IM group containing a set of clients
-which support a common video format and a subset which only support animated GIFs.
-The sender could use a `MultiParts` NestablePart with `chooseOne` semantics
-containing both media types. Every client in the group chat could render something
-resembling the media sent. This is analogous to the `multipart/alternative` [@?RFC2046]
-media type.
-
-Likewise it is often desirable to send more than one media type intended to be
-rendered together as in (for example a rich text document with embedded images),
-which can be represented using a `MultiParts` NestablePart with `processAll`
-semantics. This is analogous to the `multipart/mixed` [@?RFC2046] media type.
-
-Some implementors complain that the multipart types are unnatural to use inside a
-binary protocol which requires explicit lengths such as MLS
-[@?RFC9420]. Concretely, an implementation has to scan through the
-entire content to construct a boundary token which is not contained in the content.
-
-Note that there is a minor semantic difference between multipart/alternative and
-`MultiParts` with `chooseOne` semantics. In multipart/alternative, the parts are 
-presented in preference order by the sender. With `MultiParts` the receiver
-chooses its "best" format to render according to its own preferences.
 
 # Changelog
 
