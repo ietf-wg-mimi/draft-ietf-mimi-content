@@ -1538,9 +1538,23 @@ This example shows sending a reaction with multiple separate emojis.
 
 ## Complicated Nested Example
 
-This example shows separate English and French versions of an HTML message
-with inline images. Each of the images is presented in alternate formats: an
-animated GIF, and an MP4 video.
+This example shows separate GIF and PNG inline images with English and
+French versions of an HTML message. A summary of the 11 parts are shown below.
+
+```
+Part  Description
+ 0    choose either GIF or PNG
+ 1      (with GIF) process all
+ 2        choose either English or French
+ 3          English
+ 4          French
+ 5        GIF
+ 6      (with PNG) process all
+ 7        choose either English or French
+ 8          English
+ 9          French
+10        PNG
+```
 
 <{{examples/multipart-3.edn}}
 
