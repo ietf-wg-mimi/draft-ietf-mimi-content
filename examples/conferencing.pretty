@@ -17,8 +17,8 @@
       60                                # text(0)
                                         # ""
       d8 20                             # tag(32)
-         76                             # text(22)
-            68747470733a6578616d706c652e636f6d3132333435 # "https:example.com12345"
+         78 1e                          # text(30)
+            68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435 # "https://example.com/join/12345"
       00                                # unsigned(0)
       00                                # unsigned(0)
       00                                # unsigned(0)
