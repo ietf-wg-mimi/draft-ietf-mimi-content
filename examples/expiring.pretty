@@ -14,7 +14,7 @@
                                         # ""
       00                                # unsigned(0)
       01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
-      58 50                             # bytes(80)
-         5f5f2a56504e20474f494e4720444f574e2a5f5f0a49276d207265626f6f74696e67207468652056504e20696e2074656e206d696e7574657320756e6c65737320616e796f6e65206f626a656374732e # "__*VPN GOING DOWN*__\nI'm rebooting the VPN in ten minutes unless anyone objects."
+      78 19                             # text(25)
+         746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
+      58 53                             # bytes(83)
+         5f5f2a56504e20474f494e4720444f574e2a5f5f2049276d207265626f6f74696e67696e67207468652056504e20696e2074656e206d696e7574657320756e6c65737320616e796f6e65206f626a656374732e # "__*VPN GOING DOWN*__ I'm rebootinging the VPN in ten minutes unless anyone objects."

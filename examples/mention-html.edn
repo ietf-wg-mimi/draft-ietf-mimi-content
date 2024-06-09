@@ -13,9 +13,9 @@
     "",                                  / language              /
     0,                                   / partIndex = 1st part  /
     1,                                   / cardinality = single  /
-    "text/markdown;variant=GFM",         / contentType           /
+    "text/html;charset=utf-8",           / contentType           /
                                          / content               /
-    'Kudos to [@Alice Smith](im:alice-smith@example.com)'
-    ' for making the release happen!'
+    '<p>Kudos to <a href="im:alice-smith@example.com">@Alice '
+    'Smith</a> for making the release happen!</p>'
   ]
 ]

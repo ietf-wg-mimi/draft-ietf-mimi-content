@@ -16,7 +16,7 @@ stream = "IETF"
 initials="R."
 surname="Mahy"
 fullname="Rohan Mahy"
-organization = "Unaffiliated"
+organization = "Rohan Mahy Consulting Services"
   [author.address]
   email = "rohan.ietf@gmail.com"
 %%%
@@ -1508,76 +1508,59 @@ In a heterogenous group of IM clients, it is often desirable to send more than o
 media type as alternatives, such that IM clients have a choice of which media
 type to render. For example, imagine an IM group containing a set of clients
 which support a common video format and a subset which only support animated GIFs.
-The sender could use a `MultiParts` NestablePart with `chooseOne` semantics
+The sender could use a `MultiPart` NestablePart with `chooseOne` semantics
 containing both media types. Every client in the group chat could render something
 resembling the media sent. This is analogous to the `multipart/alternative` [@?RFC2046]
 media type.
 
 Likewise it is often desirable to send more than one media type intended to be
 rendered together as in (for example a rich text document with embedded images),
-which can be represented using a `MultiParts` NestablePart with `processAll`
+which can be represented using a `MultiPart` NestablePart with `processAll`
 semantics. This is analogous to the `multipart/mixed` [@?RFC2046] media type.
 
 Note that there is a minor semantic difference between multipart/alternative and
-`MultiParts` with `chooseOne` semantics. In multipart/alternative, the parts are 
-presented in preference order by the sender. With `MultiParts` the receiver
+`MultiPart` with `chooseOne` semantics. In multipart/alternative, the parts are 
+presented in preference order by the sender. With `MultiPart` the receiver
 chooses its "best" format to render according to its own preferences.
 
 ## Proprietary and Common formats sent as alternatives
 
-Example of body needed to send this profile and a proprietary
-messaging protocol simultaneously.
+This shows sending a message containing both this profile and a proprietary
+messaging format simultaneously.
 
-~~~~~~~
-body = new NestablePart();
-body.disposition = render;
-body.language = "";
-body.partIndex = 0;
-body.partSemantics = chooseOne;
-
-s = new SinglePart();
-s.contentType = "application/mimi-content";
-s.content = "\xabcdef0123456789....";
-
-standardPart = new NestablePart()
-standardPart.disposition = render;
-standardPart.language = "";
-standardPart.partIndex = 1;
-standardPart.partSemantics = singlePart;
-standardPart.part = s;
-
-p = new SinglePart();
-p.contentType = 
-  "application/vnd.examplevendor-fancy-im-message";
-p.content = "\x0123456789abcdef....";
-
-proprietaryPart = new NestablePart()
-proprietaryPart.disposition = render;
-proprietaryPart.language = "";
-proprietaryPart.partIndex = 2;
-proprietaryPart.partSemantics = singlePart;
-proprietaryPart.part = p;
-
-body.part = new MultiParts();
-body.part.push(standardPart);
-body.part.push(proprietaryPart);
-~~~~~~~
+<{{examples/multipart-1.edn}}
 
 ## Mulitple Reactions Example
 
-This shows sending a reaction with multiple separate emojis.
+This example shows sending a reaction with multiple separate emojis.
 
-TBC
+<{{examples/multipart-2.edn}}
 
 ## Complicated Nested Example
 
-This example shows separate English and French versions of HTML message with
-inline images. Each of the images is presented in alternate formats: an animated GIF,
-and a single PNG.
+This example shows separate GIF and PNG inline images with English and
+French versions of an HTML message. A summary of the 11 parts are shown below.
 
-TBC
+```
+Part  Description
+ 0    choose either GIF or PNG
+ 1      (with GIF) process all
+ 2        choose either English or French
+ 3          English
+ 4          French
+ 5        GIF
+ 6      (with PNG) process all
+ 7        choose either English or French
+ 8          English
+ 9          French
+10        PNG
+```
+
+<{{examples/multipart-3.edn}}
 
 # Changelog
+
+RFC Editor, please remove this entire section.
 
 ## Changes between draft-mahy-mimi-content-01 and draft-mahy-mimi-content-02
 
@@ -1623,4 +1606,4 @@ to avoid confusion
 ## Changes between draft-ietf-mimi-content-03 and draft-ietf-mimi-content-04
 
 * use CBOR as the binary encoding
-
+* add multipart examples

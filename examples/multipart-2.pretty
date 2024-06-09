@@ -1,0 +1,46 @@
+87                                      # array(7)
+   f6                                   # primitive(22)
+   40                                   # bytes(0)
+                                        # ""
+   00                                   # unsigned(0)
+   f6                                   # primitive(22)
+   80                                   # array(0)
+   a0                                   # map(0)
+   86                                   # array(6)
+      01                                # unsigned(1)
+      60                                # text(0)
+                                        # ""
+      00                                # unsigned(0)
+      03                                # unsigned(3)
+      02                                # unsigned(2)
+      83                                # array(3)
+         86                             # array(6)
+            01                          # unsigned(1)
+            60                          # text(0)
+                                        # ""
+            01                          # unsigned(1)
+            01                          # unsigned(1)
+            78 18                       # text(24)
+               746578742f706c61696e3b636861727365743d7574662d38 # "text/plain;charset=utf-8"
+            43                          # bytes(3)
+               e29da4                   # "❤"
+         86                             # array(6)
+            01                          # unsigned(1)
+            60                          # text(0)
+                                        # ""
+            02                          # unsigned(2)
+            01                          # unsigned(1)
+            78 18                       # text(24)
+               746578742f706c61696e3b636861727365743d7574662d38 # "text/plain;charset=utf-8"
+            44                          # bytes(4)
+               f09fa5b3                 # "🥳"
+         86                             # array(6)
+            01                          # unsigned(1)
+            60                          # text(0)
+                                        # ""
+            03                          # unsigned(3)
+            01                          # unsigned(1)
+            78 18                       # text(24)
+               746578742f706c61696e3b636861727365743d7574662d38 # "text/plain;charset=utf-8"
+            44                          # bytes(4)
+               f09fa49e                 # "🤞"

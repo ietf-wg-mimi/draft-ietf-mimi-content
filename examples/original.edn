@@ -10,10 +10,8 @@
     "",                               / language                  /
     0,                                / partIndex = 1st part      /
     1,                                / cardinality = single part /
-    "text/markdown;charset=utf-8",    / contentType               /
-
-    / content = Hi everyone, we just shipped release 2.0. __Good  work__! /
-    h'48692065766572796f6e652c207765206a75737420736869707065642072656c
-      6561736520322e302e205f5f476f6f6420776f726b5f5f21'               
-    ]
+    "text/markdown;variant=GFM",      / contentType               /
+                                      / content                   /
+    'Hi everyone, we just shipped release 2.0. __Good  work__!'
+  ]
 ]

@@ -12,7 +12,7 @@
                                         # ""
       00                                # unsigned(0)
       01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38 # "text/markdown;charset=utf-8"
-      58 38                             # bytes(56)
-         48692065766572796f6e652c207765206a75737420736869707065642072656c6561736520322e302e205f5f476f6f6420776f726b5f5f21 # "Hi everyone, we just shipped release 2.0. __Good work__!"
+      78 19                             # text(25)
+         746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
+      58 39                             # bytes(57)
+         48692065766572796f6e652c207765206a75737420736869707065642072656c6561736520322e302e205f5f476f6f642020776f726b5f5f21 # "Hi everyone, we just shipped release 2.0. __Good  work__!"
