@@ -46,7 +46,7 @@ MultiPart = (
 
 InReplyTo = [
   message: MessageId,
-  hashAlg: uint .size 8,
+  hashAlg: uint .size 1,
   hash: bstr
 ]
 

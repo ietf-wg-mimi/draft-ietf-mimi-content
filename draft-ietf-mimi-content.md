@@ -248,7 +248,7 @@ to a message later in the inReplyTo chain.
 ``` cddl
 InReplyTo = [
   message: MessageId,
-  hashAlg: uint .size 8,   ; a value from the IANA Named Information Hash
+  hashAlg: uint .size 1,   ; a value from the IANA Named Information Hash
                            ; Algorithm Registry. Default: SHA-256 = 1
   hash: bstr
 ]
