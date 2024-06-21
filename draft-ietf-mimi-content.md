@@ -37,8 +37,8 @@ document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] wh
 and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS group, and KeyPackage have the same meanings as in
-the MLS protocol [@!RFC9420]. Other relevant terminology may be
-found in [@?I-D.ietf-mimi-arch] and [@?I-D.ralston-mimi-terminology].
+the MLS protocol [@!RFC9420]. Other relevant terminology cab be
+found in [@?I-D.ietf-mimi-arch].
 
 # Introduction
 
