@@ -14,7 +14,7 @@
     0,                                / partIndex = 1st part      /
     2,                                / cardinality = external part /
     "video/mp4",                      / contentType               /
-    32("https://example.com/storage/bigfile.mp4"), / url          /
+    32("https://example.com/storage/8ksB4bSrrRE.mp4"), / url      /
     0,                                / expires                   /
     708234961,                        / size                      /
     1,                                / encAlg = AES-128-GCM      /
@@ -24,6 +24,7 @@
     1,                                / hashAlg = sha256          /
     /  content hash                                               /
     h'9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163',
-    "2 hours of key signing video"    / description               /
+    "2 hours of key signing video",   / description               /
+    "bigfile.mp4"                     / filename                  /
   ]
 ]

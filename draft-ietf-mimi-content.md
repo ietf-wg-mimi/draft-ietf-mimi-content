@@ -336,7 +336,8 @@ ExternalPart = (
     aad: bstr,
     hashAlg: uint .size 1,
     contentHash: bstr,
-    description: tstr
+    description: tstr,
+    filename: tstr
 )
 
 MultiPart = (
@@ -462,7 +463,8 @@ ExternalPart = (
     aad: bstr,             ; AEAD additional authentiation data
     hashAlg: uint .size 1, ; An IANA Named Information Hash Algorithm
     contentHash: bstr,     ; hash of the content at the target url
-    description: tstr      ; an optional text description
+    description: tstr,     ; an optional text description
+    filename: tstr         ; an optional suggested filename
 )
 ```
 
@@ -980,7 +982,7 @@ rendered separately.
       58 20                             # bytes(32)
          5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
    a0                                   # map(0)
-   8f                                   # array(15)
+   90                                   # array(16)
       06                                # unsigned(6)
       62                                # text(2)
          656e                           # "en"
@@ -989,9 +991,10 @@ rendered separately.
       69                                # text(9)
          766964656f2f6d7034             # "video/mp4"
       d8 20                             # tag(32)
-         78 1c                          # text(28)
-            68747470733a6578616d706c652e636f6d62696766696c652e6d7034
-            # "https:example.combigfile.mp4"
+         78 2b                          # text(43)
+            68747470733a2f2f6578616d706c652e636f6d2f73746f72616
+            7652f386b7342346253727252452e6d7034
+            # "https://example.com/storage/8ksB4bSrrRE.mp4"
       00                                # unsigned(0)
       1a 2a36ced1                       # unsigned(708234961)
       01                                # unsigned(1)
@@ -1007,6 +1010,8 @@ rendered separately.
       78 1c                             # text(28)
          3220686f757273206f66206b6579207369676e696e6720766964656f
          # "2 hours of key signing video"
+      6b                                # text(11)
+         62696766696c652e6d7034         # "bigfile.mp4"
 ```
 
 ```
@@ -1044,7 +1049,7 @@ of this document.
       58 20                             # bytes(32)
          b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e
    a0                                   # map(0)
-   8f                                   # array(15)
+   90                                   # array(16)
       07                                # unsigned(7)
       60                                # text(0)
                                         # ""
@@ -1053,9 +1058,9 @@ of this document.
       60                                # text(0)
                                         # ""
       d8 20                             # tag(32)
-         76                             # text(22)
-            68747470733a6578616d706c652e636f6d3132333435
-            # "https:example.com12345"
+         78 1e                          # text(30)
+            68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435
+            # "https://example.com/join/12345"
       00                                # unsigned(0)
       00                                # unsigned(0)
       00                                # unsigned(0)
@@ -1071,6 +1076,8 @@ of this document.
       78 1b                             # text(27)
          4a6f696e2074686520466f6f2031313820636f6e666572656e6365
          # "Join the Foo 118 conference"
+      60                                # text(0)
+                                        # ""
 ```
 
 ```

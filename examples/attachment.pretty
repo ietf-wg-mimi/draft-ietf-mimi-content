@@ -8,7 +8,7 @@
       58 20                             # bytes(32)
          5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1 # "\\\x95\xA4\xDFݫ\x844\x8B\xCC&ZG\x92\x99\xFBӢ\xEEϣԐ\x98]\xA5\u0011>T\x80\xC7\xF1"
    a0                                   # map(0)
-   8f                                   # array(15)
+   90                                   # array(16)
       06                                # unsigned(6)
       62                                # text(2)
          656e                           # "en"
@@ -17,8 +17,8 @@
       69                                # text(9)
          766964656f2f6d7034             # "video/mp4"
       d8 20                             # tag(32)
-         78 1c                          # text(28)
-            68747470733a6578616d706c652e636f6d62696766696c652e6d7034 # "https:example.combigfile.mp4"
+         78 2b                          # text(43)
+            68747470733a2f2f6578616d706c652e636f6d2f73746f726167652f386b7342346253727252452e6d7034 # "https://example.com/storage/8ksB4bSrrRE.mp4"
       00                                # unsigned(0)
       1a 2a36ced1                       # unsigned(708234961)
       01                                # unsigned(1)
@@ -33,3 +33,5 @@
          9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163 # "\x9A\xB1z\x8C\xF0\x89\v\xAA\xAE~\xE0\u0016\xC71/\xCC\b\v\xA4d\x988\x94X\xEED\xF0'nx1c"
       78 1c                             # text(28)
          3220686f757273206f66206b6579207369676e696e6720766964656f # "2 hours of key signing video"
+      6b                                # text(11)
+         62696766696c652e6d7034         # "bigfile.mp4"

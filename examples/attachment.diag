@@ -14,7 +14,7 @@
     0,                                
     2,                                
     "video/mp4",                      
-    32("https:example.combigfile.mp4"), 
+    32("https://example.com/storage/8ksB4bSrrRE.mp4"),
     0,                                
     708234961,                        
     1,                                
@@ -24,6 +24,7 @@
     1,                                
     
     h'9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163',
-    "2 hours of key signing video"    
+    "2 hours of key signing video",
+    "bigfile.mp4"
   ]
 ]
