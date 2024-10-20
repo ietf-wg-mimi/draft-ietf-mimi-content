@@ -35,7 +35,8 @@ ExternalPart = (
     aad: bstr,
     hashAlg: uint .size 1,
     contentHash: bstr,
-    description: tstr
+    description: tstr,
+    filename: tstr
 )
 
 MultiPart = (

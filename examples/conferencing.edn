@@ -23,6 +23,7 @@
     h'',                              / aad                       /
     0,                                / hashAlg = none            /
     h'',                              / content hash              /
-    "Join the Foo 118 conference"     / description               /
+    "Join the Foo 118 conference",    / description               /
+    ""                                / filename                  /
   ]
 ]
