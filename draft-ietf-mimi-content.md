@@ -1184,6 +1184,26 @@ Clients compliant with this specification must be able to download
 ExternalParts with `http` and `https` URLs, and decrypt downloaded content
 encrypted with the AES-128-GCM AEAD algorithm.
 
+### Specifics of Github Flavored Markdown in MIMI
+
+A MIMI content client supports GitHub Flavored Markdown as defined in [@!GFM],
+with one exception (no raw HTML support) and a fixed list of supported
+extensions, as further described in the bullet points below.
+This document specifies what can be sent inside a MIMI content message; it does
+not restrict or prescribe in any way how input from a user is interpreted by an
+Instant Messaging client that support MIMI, before any message resulting from
+that input is sent.
+.
+Note that rendering Markdown as plain text is an aceptable form of "support".
+
+- Raw HTML MUST NOT be included other than blank HTML comments `<!-- -->`.
+Text which looks like an HTML tag should replace the opening angle bracket with
+`&lt;`. Any raw HTML tags in a received message are rendered as plain text
+- The following GitHub Flavored Markdown extensions are supported. No other extensions are allowed:
+    - Tables
+    - Task list items
+    - Strikethrough
+
 ## Use of proprietary media types
 
 As most messaging systems are proprietary, standalone systems, it is useful to allow
