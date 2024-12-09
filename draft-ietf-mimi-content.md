@@ -990,11 +990,10 @@ rendered separately.
       02                                # unsigned(2)
       69                                # text(9)
          766964656f2f6d7034             # "video/mp4"
-      d8 20                             # tag(32)
-         78 2b                          # text(43)
-            68747470733a2f2f6578616d706c652e636f6d2f73746f72616
-            7652f386b7342346253727252452e6d7034
-            # "https://example.com/storage/8ksB4bSrrRE.mp4"
+      78 2b                             # text(43)
+         68747470733a2f2f6578616d706c652e636f6d2f73746f72616
+         7652f386b7342346253727252452e6d7034
+         # "https://example.com/storage/8ksB4bSrrRE.mp4"
       00                                # unsigned(0)
       1a 2a36ced1                       # unsigned(708234961)
       01                                # unsigned(1)
@@ -1057,10 +1056,9 @@ of this document.
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""
-      d8 20                             # tag(32)
-         78 1e                          # text(30)
-            68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435
-            # "https://example.com/join/12345"
+      78 1e                             # text(30)
+         68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435
+         # "https://example.com/join/12345"
       00                                # unsigned(0)
       00                                # unsigned(0)
       00                                # unsigned(0)
