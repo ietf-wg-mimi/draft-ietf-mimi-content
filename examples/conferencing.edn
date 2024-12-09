@@ -14,7 +14,7 @@
     0,                                / partIndex = 1st part      /
     2,                                / cardinality = external part /
     "",                               / contentType               /
-    32("https://example.com/join/12345"),  / url                  /
+    "https://example.com/join/12345", / url                       /
     0,                                / expires                   /
     0,                                / size                      /
     0,                                / encAlg = none             /

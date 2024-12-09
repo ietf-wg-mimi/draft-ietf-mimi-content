@@ -26,7 +26,7 @@ SinglePart = (
 ExternalPart = (
     cardinality: external,
     contentType: tstr,
-    url: uri,
+    url: tstr,
     expires: uint .size 4,
     size: uint .size 8,
     encAlg: uint .size 2,
