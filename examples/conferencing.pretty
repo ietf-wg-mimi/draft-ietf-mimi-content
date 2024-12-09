@@ -2,7 +2,7 @@
    f6                                   # primitive(22)
    47                                   # bytes(7)
       466f6f20313138                    # "Foo 118"
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)

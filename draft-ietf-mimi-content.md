@@ -217,14 +217,27 @@ value in the `topicId` data field. If the `topicId` is zero length,
 there is no such grouping.
 
 The `expires` {3} data field is a hint from the sender to the receiver
-that the message should be locally deleted and disregarded at a specific
-timestamp in the future. Indicate a message with no specific expiration
-time with the value zero. The data field is an unsigned integer number of
-seconds after the start of the UNIX epoch. Using an 32-bit unsigned
-integer allows expiration dates until the year 2106. Note that
-specifying an expiration time provides no assurance that the client
-actually honors or can honor the expiration time, nor that the end user
-didn't otherwise save the expiring message (ex: via a screenshot).
+that the message should be locally deleted and disregarded at either a specific
+timestamp in the future, or a relative amount of time after the receiving client
+reads the message. Indicate a message with no specific expiration
+time with the value null. If non-null, the data field is an array of two items.
+
+``` cddl
+Expiration = [
+    relative: bool,
+    time: uint .size 4
+]
+```
+
+The first is a boolean indicating if the time is relative (true) or absolute
+(false). The second is an unsigned integer. If relative, it is the whole number
+of seconds the message should be visible before it is deleted. If absolute, it
+is the number of seconds after the start of the UNIX epoch, at which point the
+message should be deleted. Using an 32-bit unsigned integer allows expiration
+dates until the year 2106. Note that specifying an expiration time provides no
+assurance that the client actually honors or can honor the expiration time, nor
+that the end user didn't otherwise save the expiring message (ex: via a
+screenshot).
 
 The `inReplyTo` {4} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
@@ -574,7 +587,7 @@ printed CBOR.
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    80                                   # array(0)
    a0                                   # map(0)
@@ -621,7 +634,7 @@ Below is the annotated message in EDN and pretty printed CBOR:
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -678,7 +691,7 @@ Below is the annotated message in EDN and pretty printed CBOR:
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -729,7 +742,7 @@ Below is the annotated message in EDN and pretty printed CBOR:
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -788,7 +801,7 @@ Here Bob Jones corrects a typo in his original message:
       e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -849,7 +862,7 @@ as shown below.
       4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -892,7 +905,7 @@ created the reaction, as shown below.
       e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -913,11 +926,16 @@ created the reaction, as shown below.
 
 ## Expiring
 
-Expiring messages are designed to be deleted automatically by the receiving
-client at a certain time whether they have been read or not.  As with manually
-deleted messages, there is no guarantee that an uncooperative client or a
-determined user will not save the content of the message, however most clients
-respect the convention.
+There are two types of expiring messages in instant messaging systems. In the typical implementation, messages are deleted a specific amount of time relative to (after) when the receiving client reads the message. We will refer to this as
+relative expiration.
+
+Absolute expiring messages are designed to be deleted automatically by the
+receiving client at a certain time whether they have been read or not.
+
+As with manually deleted messages, there is no guarantee that an uncooperative
+client or a determined user will not save the content of the message. The goal
+instead is to allow cooperating client that respect the convention to signal
+expiration times clearly.
 
 The `expires` data field contains the timestamp when the message can be deleted.
 The semantics of the header are that the message is automatically deleted
@@ -937,7 +955,9 @@ network connectivity necessary.
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   1a 62036674                          # unsigned(1644390004)
+   82                                   # array(2)
+      f4                                # primitive(20)
+      1a 62036674                       # unsigned(1644390004)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -976,7 +996,7 @@ rendered separately.
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -1042,7 +1062,7 @@ of this document.
    f6                                   # primitive(22)
    47                                   # bytes(7)
       466f6f20313138                    # "Foo 118"
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -1632,3 +1652,10 @@ to avoid confusion
 
 * use CBOR as the binary encoding
 * add multipart examples
+
+## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
+
+* include both absolute and relative expiration times
+* add specificity about markdown support
+* remove tag from URLs in ExternalPart
+

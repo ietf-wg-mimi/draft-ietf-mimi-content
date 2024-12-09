@@ -2,13 +2,15 @@
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   1a 62036674                          # unsigned(1644390004)
+   82                                   # array(2)
+      f4                                # primitive(20)
+      1a 62036674                       # unsigned(1644390004)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
          1a771ca1d84f8fda4184a1e02a549e201bf434c6bfcf1237fa45463c6861853b # "\u001Aw\u001C\xA1\xD8O\x8F\xDAA\x84\xA1\xE0*T\x9E \e\xF44ƿ\xCF\u00127\xFAEF<ha\x85;"
    a0                                   # map(0)
-   86                                   # array(6)
+   87                                   # array(7)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
@@ -16,5 +18,5 @@
       01                                # unsigned(1)
       78 19                             # text(25)
          746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
-      58 53                             # bytes(83)
-         5f5f2a56504e20474f494e4720444f574e2a5f5f2049276d207265626f6f74696e67696e67207468652056504e20696e2074656e206d696e7574657320756e6c65737320616e796f6e65206f626a656374732e # "__*VPN GOING DOWN*__ I'm rebootinging the VPN in ten minutes unless anyone objects."
+      58 50                             # bytes(80)
+         5F5F2A56504E20474F494E4720444F574E2A5F5F2049276D207265626F6F74696E67207468652056504E20696E2074656E206D696E7574657320756E6C65737320616E796F6E65206F626A656374732E # "__*VPN GOING DOWN*__ I'm rebooting the VPN in ten minutes unless anyone objects."

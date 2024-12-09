@@ -2,7 +2,7 @@
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    80                                   # array(0)
    a0                                   # map(0)

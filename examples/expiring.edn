@@ -1,7 +1,10 @@
 [
   null,                             / replaces                 /
   h'',                              / topicId                  /
-  1644390004,                       / expires = in 10 minutes  /
+  [                                 / Expiration               /
+    false,                            / absolute, not relative  /
+    1644390004,        / expires = 10 minutes after it was sent /
+  ]
   null,                             / inReplyTo                /
   [                                 / lastSeen (1 item)        /
      /  Unlike message                                          /
@@ -15,7 +18,7 @@
     1,                                / cardinality = single part /
     "text/markdown;variant=GFM",      / contentType               /
                                       / content                   /
-    '__*VPN GOING DOWN*__ I\'m rebootinging the VPN in ten minutes'
+    '__*VPN GOING DOWN*__ I\'m rebooting the VPN in ten minutes'
     ' unless anyone objects.'
   ]
 ]

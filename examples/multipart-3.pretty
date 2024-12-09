@@ -2,7 +2,7 @@
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    80                                   # array(0)
    a0                                   # map(0)
@@ -30,7 +30,7 @@
                   03                    # unsigned(3)
                   00                    # unsigned(0)
                   82                    # array(2)
-                     86                 # array(6)
+                     88                 # array(8)
                         01              # unsigned(1)
                         62              # text(2)
                            656e         # "en"
@@ -38,9 +38,13 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 51           # bytes(81)
-                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e3c696d67207372633d226369643a352220616c743d2257656c636f6d6520696d616765222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Welcome!</h1><img src=\"cid:5\" alt=\"Welcome image\"/></body></html>"
-                     86                 # array(6)
+                        58 1d           # bytes(29)
+                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e # "<html><body><h1>Welcome!</h1>"
+                        58 26           # bytes(38)
+                           3c696d67207372633d226369643a352220616c743d2257656c636f6d6520696d616765222f3e # "<img src=\"cid:5\" alt=\"Welcome image\"/>"
+                        4e              # bytes(14)
+                           3c2f626f64793e3c2f68746d6c3e # "</body></html>"
+                     88                 # array(8)
                         01              # unsigned(1)
                         62              # text(2)
                            6672         # "fr"
@@ -48,8 +52,12 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 55           # bytes(85)
-                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e3c696d67207372633d226369643a352220616c743d22496d616765206269656e76656e7565222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Bienvenue!</h1><img src=\"cid:5\" alt=\"Image bienvenue\"/></body></html>"
+                        58 1f           # bytes(31)
+                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e # "<html><body><h1>Bienvenue!</h1>"
+                        58 28           # bytes(40)
+                           3c696d67207372633d226369643a352220616c743d22496d616765206269656e76656e7565222f3e # "<img src=\"cid:5\" alt=\"Image bienvenue\"/>"
+                        4e              # bytes(14)
+                           3c2f626f64793e3c2f68746d6c3e # "</body></html>"
                86                       # array(6)
                   04                    # unsigned(4)
                   60                    # text(0)
@@ -76,7 +84,7 @@
                   03                    # unsigned(3)
                   00                    # unsigned(0)
                   82                    # array(2)
-                     86                 # array(6)
+                     88                 # array(8)
                         01              # unsigned(1)
                         62              # text(2)
                            656e         # "en"
@@ -84,9 +92,13 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 52           # bytes(82)
-                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e3c696d67207372633d226369643a31302220616c743d2257656c636f6d6520696d616765222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Welcome!</h1><img src=\"cid:10\" alt=\"Welcome image\"/></body></html>"
-                     86                 # array(6)
+                        58 1d           # bytes(29)
+                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e # "<html><body><h1>Welcome!</h1>"
+                        58 27           # bytes(39)
+                           3c696d67207372633d226369643a31302220616c743d2257656c636f6d6520696d616765222f3e # "<img src=\"cid:10\" alt=\"Welcome image\"/>"
+                        4e              # bytes(14)
+                           3c2f626f64793e3c2f68746d6c3e # "</body></html>"
+                     88                 # array(8)
                         01              # unsigned(1)
                         62              # text(2)
                            6672         # "fr"
@@ -94,8 +106,12 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 56           # bytes(86)
-                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e3c696d67207372633d226369643a31302220616c743d22496d616765206269656e76656e7565222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Bienvenue!</h1><img src=\"cid:10\" alt=\"Image bienvenue\"/></body></html>"
+                        58 1f           # bytes(31)
+                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e # "<html><body><h1>Bienvenue!</h1>"
+                        58 29           # bytes(41)
+                           3c696d67207372633d226369643a31302220616c743d22496d616765206269656e76656e7565222f3e # "<img src=\"cid:10\" alt=\"Image bienvenue\"/>"
+                        4e              # bytes(14)
+                           3c2f626f64793e3c2f68746d6c3e # "</body></html>"
                86                       # array(6)
                   04                    # unsigned(4)
                   60                    # text(0)

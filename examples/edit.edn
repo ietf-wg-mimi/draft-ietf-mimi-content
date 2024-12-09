@@ -2,7 +2,7 @@
   / replaces = Reply message                                  /
   h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed',
   h'',                                 / topicId              /
-  0,                                   / expires = never      /
+  null,                                / expires = never      /
   [                                      / InReplyTo          /
      /  message = Original message                            /
      h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',

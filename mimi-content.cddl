@@ -1,7 +1,7 @@
 mimiContent = [
   replaces: null / MessageId,
   topicId: bstr,
-  expires: uint .size 4,
+  expires: null / Expiration,
   inReplyTo: null / InReplyTo,
   lastSeen: [* MessageId],
   extensions: {* name => value },
@@ -44,6 +44,11 @@ MultiPart = (
     partSemantics: chooseOne / singleUnit / processAll,
     parts: [2* NestedPart]
 )
+
+Expiration = [
+    relative: bool,
+    time: uint .size 4
+]
 
 InReplyTo = [
   message: MessageId,

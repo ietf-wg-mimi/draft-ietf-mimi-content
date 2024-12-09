@@ -1,7 +1,7 @@
 [
   null,                             / replaces                 /
   h'466f6f20313138',                / topicId = Foo 118        /
-  0,                                / expires                  /
+  null,                             / expires                  /
   null,                             / inReplyTo                /
   [                                 / lastSeen (1 item)        /
      /  Attachment message                                        /
