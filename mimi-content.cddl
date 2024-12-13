@@ -69,8 +69,8 @@ baseDispos = &(
 unknownDispos = &( unknown: 9..255 ) ; Note: any ext_dispos take precedence
 
 MessageId = bstr .size 32          ; MessageId is derived from SHA256 hash
-name = tstr .size (1..255)
-value = bstr .size (0..4095)
+name = int / tstr .size (1..255)
+value = any .size (0..4095)
 
 nullpart = 0
 single   = 1

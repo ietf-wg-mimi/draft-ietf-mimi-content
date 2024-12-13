@@ -301,16 +301,20 @@ only the message id of Doug's message.
 ## Extension Fields
 
 In order to add additional functionality to MIMI, senders can include
-extension fields in the message format {6}. Each extension has a name, which
-contains between 1 and 255 octets of UTF-8, and an opaque value. The value
-of each extension can be between 0 and 65535 octets.
+extension fields in the message format {6}. Each extension has a CBOR map key
+which is a positive integer, negative integer, or text string containing between
+1 and 255 octets of UTF-8. The value can be any CBOR (including combinations of maps and arrays) which can be represented in between 0 and 4096 octets.
 The message content `extensions` field MUST NOT include more than one
-extension field with the same name.
+extension field with the same map key.
 
 ``` cddl
-name = tstr .size (1..255)
-value = bstr .size (0..4095)
+name = int / tstr .size (1..255)
+value = any .size (0..4095)
 ```
+
+An IANA registry {{MIMI-Content-Extension-Keys-registry}} is defined for
+positive integer keys. Negative integer and text string keys are only for
+private use.
 
 ## Message Bodies
 
@@ -1240,6 +1244,8 @@ encryption. An example is given in the Appendix.
 
 # IANA Considerations
 
+RFC EDITOR: Please replace XXXX throughout with the RFC number assigned to this document.
+
 ## MIME subtype registration of application/mimi-content
 
 This document proposes registration of a media subtype with IANA.
@@ -1322,6 +1328,87 @@ Person & email address to contact for further information:
    IETF MIMI Working Group mimi@ietf.org
 
 ~~~~~~~
+
+## MIMI Content Extension Keys registry
+
+This document requests the creation of a new MIMI Content Extension Keys
+registry.
+The registry should be under the heading of "More Instant Messaging Interoperability (MIMI)".
+
+The MIMI Content format defined in this document, contains an extensions map in
+each message. The keys in the extensions map can be (positive or negative)
+integers, or text strings. Text strings and negative integer keys are reserved
+for private use. Positive integer keys are assigned in the registry under the
+Expert Review policy [@!RFC8126]. Integer keys between 1 and 255 are restricted
+to IETF consensus specifications.
+
+The columns in the registry are as follows:
+
+- Key: The extension map key positive integer assigned to the MIMI content extension.
+- Name: a short descriptive name for the MIMI content extension.
+- Type: The CBOR data type of the value corresponding to the key. Applications
+with multiple, related data items are encouraged to register a map type that
+contains all the related fields.
+- Recommended: Whether support for this MIMI content extension is recommended by
+the IETF. Valid values are "Y", "N", and "D", as described below. The default
+value of the "Recommended" column is "N". Setting the Recommended item to "Y" or
+"D", or changing an item whose current value is "Y" or "D", requires Standards
+Action [@!RFC8126].
+    - Y: Indicates that the IETF has consensus, and that the item is
+RECOMMENDED. This only means that the associated mechanism is fit for the
+purpose for which it was defined. Careful reading of the documentation for the
+mechanism is necessary to understand the applicability of that mechanism. The
+IETF could recommend mechanisms that have limited applicability, but will
+provide applicability statements that describe any limitations of the mechanism
+or necessary constraints on its use.
+    - N: Indicates that the item has not been evaluated by the IETF and that the
+IETF has made no statement about the suitability of the associated mechanism.
+This does not necessarily mean that the mechanism is flawed, only that no
+consensus exists. The IETF might have consensus to leave an item marked as "N"
+on the basis of it having limited applicability or usage constraints.
+    - D: Indicates that the item is discouraged and SHOULD NOT or MUST NOT be
+used. This marking could be used to identify mechanisms that might result in
+problems if they are used, such as a weak cryptographic algorithm or a mechanism
+that might cause interoperability problems in deployment.
+- Reference: The document where this MIMI content extension is defined
+
+Initial Contents:
+
+| Key   | Name                                     | Type      | R | Reference |
+|:------|:-----------------------------------------|:----------|:--|:----------|
+| 0     | (reserved)                               | -         | - | RFCXXXX   |
+
+### Expert Review
+
+Expert Review [@!RFC8126] registry requests are registered
+after a three-week review period on the MIMI Designated Expert (DE) mailing list
+<mimi-reg-review@ietf.org> on the advice of one or more of the MIMI DEs.
+
+Registration requests sent to the MIMI DEs' mailing list for review
+SHOULD use an appropriate subject (e.g., "Request to register value
+in MIMI Content Extensions Keys registry").
+
+Within the review period, the MIMI DEs will either approve or deny
+the registration request, communicating this decision to the MIMI DEs'
+mailing list and IANA. Denials SHOULD include an explanation and, if
+applicable, suggestions as to how to make the request successful.
+Registration requests that are undetermined for a period longer than
+21 days can be brought to the IESG's attention for resolution using
+the <iesg@ietf.org> mailing list.
+
+Criteria that SHOULD be applied by the MIMI DEs includes determining
+whether the proposed registration duplicates existing functionality,
+whether it is likely to be of general applicability or useful only
+for a single application, and whether the registration description
+is clear.
+
+IANA MUST only accept registry updates from the MIMI DEs and SHOULD
+direct all requests for registration to the MIMI DEs' mailing list.
+
+In cases where a registration decision could be perceived as creating a conflict
+of interest for a particular MIMI DE, that MIMI DE SHOULD defer to the judgment
+of the other MIMI DEs.
+
 
 # Security Considerations
 
