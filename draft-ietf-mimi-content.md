@@ -937,7 +937,8 @@ client or a determined user will not save the content of the message. The goal
 instead is to allow cooperating client that respect the convention to signal
 expiration times clearly.
 
-The `expires` data field contains the timestamp when the message can be deleted.
+The `expires` data field contains the absolute timestamp when, or relative
+amount of time after reading after which the message can be deleted.
 The semantics of the header are that the message is automatically deleted
 by the receiving clients at the indicated time without user interaction or
 network connectivity necessary.
@@ -1211,7 +1212,7 @@ This document specifies what can be sent inside a MIMI content message; it does
 not restrict or prescribe in any way how input from a user is interpreted by an
 Instant Messaging client that support MIMI, before any message resulting from
 that input is sent.
-.
+
 Note that rendering Markdown as plain text is an aceptable form of "support".
 
 - Raw HTML MUST NOT be included other than blank HTML comments `<!-- -->`.
@@ -1373,12 +1374,46 @@ cases, and should not be considered the result of a malicious sender.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
 
+## Rendering and authorization of edits and deletes
+
+This content format allows clients to send new versions of previously sent
+messages, effectively replacing ("editing") or retracting ("deleting") other
+a referenced message. The rendering of these "edits" and "deletes" are important
+from a security perspective.
+
+For example, if Alice writes "Bob, could I borow a pen?", and Bob reacts with a
+thumbs up emoji, Alice might edit this message with no change in meaning
+(correcting the spelling of "borrow"), or a dramatic change in meaning ("Bob,
+could I borrow your Ferrari this month?"). The receiver SHOULD indicate clearly
+that a received message has been edited or retracted. The receiver might:
+
+- offer an option to view previous versions of a message,
+- show a summarized or thumbnail version of a message referenced in a reply,
+- indicate clearly that a reply was to a previous version of a message than the
+most recent one.
+- show a detailed view of reaction indicating that some reactions referred to a
+previous version of the message.
+
+In addition, some groups may have special policies or permissions allowing
+specific types of edits or deletes. For example, a moderator in one room might
+be allowed to edit the topic of a message, but not modify the rest of the
+content. An administrator might be allowed to delete messages which violate the
+policy of the group. Receiving clients SHOULD NOT allow parties other than the
+original sender of a message to edit or delete that message, unless there is a
+specific, concrete authorization policy which allows it. Likewise, even the
+original sender of a message SHOULD NOT be able to change the semantics of any
+other portion of the message except for the contents of the NestedPart, without
+specific authorization.
+
 ## Validation of timestamp
 
 The timestamp is the time a message is accepted by the hub provider. As such,
 the hub provider can manipulate the timestamp, and the sending provider
 can delay sending messages selectively to cause the timestamp on a hub to
 be later.
+Note that the optional franking mechanism discussed in Section 5.4.1.2 of
+{{?I-D.ietf-mimi-protocol}} prevents follower servers from modifying the
+timestamp.
 
 > **TODO**: Discuss how to sanity check lastSeen, timestamp and the MLS
 > epoch and generation, and the limitations of this approach.
@@ -1655,6 +1690,8 @@ to avoid confusion
 
 ## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
 
+* discuss rendering and authorization issues for edit/delete in the security
+considerations
 * include both absolute and relative expiration times
 * add specificity about markdown support
 * remove tag from URLs in ExternalPart
