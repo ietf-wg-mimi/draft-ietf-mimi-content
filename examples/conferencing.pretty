@@ -8,11 +8,10 @@
       58 20                             # bytes(32)
          b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e # "\xB2gaMC\xE7gm(\xEF[\u0015\xE8go#g\x9F\xE3eǈI\xD8>+\xA0\xAE\x81\x96\xECN"
    a0                                   # map(0)
-   90                                   # array(16)
+   8f                                   # array(15)
       07                                # unsigned(7)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""

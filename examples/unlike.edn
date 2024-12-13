@@ -18,7 +18,6 @@
   [                                    / body (NestedPart)       /
     2,                                   / dispostion = reaction /
     "",                                  / language              /
-    0,                                   / partIndex = 1st part  /
     0                                    / cardinality = zero parts /
   ]
 ]

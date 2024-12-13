@@ -8,11 +8,10 @@
       58 20                             # bytes(32)
          5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1 # "\\\x95\xA4\xDFݫ\x844\x8B\xCC&ZG\x92\x99\xFBӢ\xEEϣԐ\x98]\xA5\u0011>T\x80\xC7\xF1"
    a0                                   # map(0)
-   90                                   # array(16)
+   8f                                   # array(15)
       06                                # unsigned(6)
       62                                # text(2)
          656e                           # "en"
-      00                                # unsigned(0)
       02                                # unsigned(2)
       69                                # text(9)
          766964656f2f6d7034             # "video/mp4"

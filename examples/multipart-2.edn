@@ -8,14 +8,12 @@
   [
     1,                           / disposition = render       /
     "",                          / language                   /
-    0,                           / partIndex = 0 (1st part)   /
     3,                           / cardinality = multi        /
     2,                           / partSemantics = processAll /
     [
       [
         1,                             / disposition = render /
         "",                            / language             /
-        1,                             / partIndex = 1        /
         1,                             / cardinality = single /
         "text/plain;charset=utf-8",    / contentType          /
         h'E2 9D A4'               / content = Unicode "heart" /
@@ -23,7 +21,6 @@
       [
         1,                             / disposition = render /
         "",                            / language             /
-        2,                             / partIndex = 2        /
         1,                             / cardinality = single /
         "text/plain;charset=utf-8",    / contentType          /
         h'F0 9F A5 B3'       / content = Unicode "party face" /
@@ -31,7 +28,6 @@
       [
         1,                             / disposition = render /
         "",                            / language             /
-        3,                             / partIndex = 3        /
         1,                             / cardinality = single /
         "text/plain;charset=utf-8",    / contentType          /
         h'F0 9F A4 9E'  / content = Unicode "fingers crossed" /

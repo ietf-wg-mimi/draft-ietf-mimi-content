@@ -6,11 +6,10 @@
    f6                                   # primitive(22)
    80                                   # array(0)
    a0                                   # map(0)
-   86                                   # array(6)
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
       78 19                             # text(25)
          746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"

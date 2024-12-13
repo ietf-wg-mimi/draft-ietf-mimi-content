@@ -16,11 +16,10 @@
       58 20                             # bytes(32)
          6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8 # "kP\xBF\xDDq\xED\xC85T\xAE!8\u0000\x80\xF4\xA3\xBAw\x98]\xA3E(\xA5\u0015\xFA\xC3ÎI\x98\xB8"
    a0                                   # map(0)
-   86                                   # array(6)
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
       78 19                             # text(25)
          746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"

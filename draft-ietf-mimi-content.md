@@ -325,7 +325,6 @@ contentType field {8}.
 NestedPart = [
   disposition: baseDispos / $extDispos / unknownDispos,  ; {10}
   language: tstr,                                        ; {11}
-  partIndex: uint .size 2,                               ; {12}
   ( NullPart // SinglePart // ExternalPart // MultiPart)
 ]
 
@@ -441,7 +440,7 @@ The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
 in [@!RFC5646]. 
 
-Each part also has an part index {12}, which is a zero-indexed,
+Each part also has an implied part index, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
 {Nested body examples} for an example of how the part index is
@@ -508,20 +507,20 @@ algorithm.
 
 In addition to fields which are contained in a MIMI content message,
 there are also two fields which the implementation can definitely derive
-(the MLS group ID {13}, and the leaf index of the sender {14}). Many
+(the MLS group ID {12}, and the leaf index of the sender {13}). Many
 implementations could also determine one or more of: the sender's client
-identifier URL {15}, the user identifier URL of the credential associated
-with the sender {16}, and the identifier URL for the MIMI room {17}.
+identifier URL {14}, the user identifier URL of the credential associated
+with the sender {15}, and the identifier URL for the MIMI room {16}.
 
 ``` cddl
 MessageDerivedValues = [
     messageId: MessageId,              ; sha256 hash of message ciphertext
     hubAcceptedTimestamp: Timestamp,
-    mlsGroupId: bstr,                  ; value always available {13}
-    senderLeafIndex: uint .size 4,     ; value always available {14}
-    senderClientUrl: uri               ; {15},
-    senderUserUrl: uri,                ; "From" {16}
-    roomUrl: uri                       ; "To"   {17}
+    mlsGroupId: bstr,                  ; value always available {12}
+    senderLeafIndex: uint .size 4,     ; value always available {13}
+    senderClientUrl: uri               ; {14},
+    senderUserUrl: uri,                ; "From" {15}
+    roomUrl: uri                       ; "To"   {16}
 ]
 
 MessageId = bstr .size 32
@@ -1357,7 +1356,6 @@ represent malicious messages. These should be logged and discarded.
   - is nested too deeply (more than 4 levels deep)
   - is too large (according to local policy)
   - has an unknown PartSemantics value
-  - contains `partIndex` values which are not continuous from zero
 
 For the avoidance of doubt, the following cases may be examples of legitimate use
 cases, and should not be considered the result of a malicious sender.
@@ -1690,9 +1688,10 @@ to avoid confusion
 
 ## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
 
+* remove partIndex and make it implied
 * discuss rendering and authorization issues for edit/delete in the security
 considerations
 * include both absolute and relative expiration times
 * add specificity about markdown support
-* remove tag from URLs in ExternalPart
+* remove tag from URLs in ExternalPart and implied headers
 

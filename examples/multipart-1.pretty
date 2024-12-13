@@ -6,29 +6,26 @@
    f6                                   # primitive(22)
    80                                   # array(0)
    a0                                   # map(0)
-   86                                   # array(6)
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       03                                # unsigned(3)
       00                                # unsigned(0)
       82                                # array(2)
-         86                             # array(6)
+         85                             # array(5)
             01                          # unsigned(1)
             60                          # text(0)
                                         # ""
-            01                          # unsigned(1)
             01                          # unsigned(1)
             78 19                       # text(25)
                746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
             4a                          # bytes(10)
                232057656c636f6d6521     # "# Welcome!"
-         86                             # array(6)
+         85                             # array(5)
             01                          # unsigned(1)
             60                          # text(0)
                                         # ""
-            02                          # unsigned(2)
             01                          # unsigned(1)
             78 2e                       # text(46)
                6170706c69636174696f6e2f766e642e6578616d706c6576656e646f722d66616e63792d696d2d6d657373616765 # "application/vnd.examplevendor-fancy-im-message"

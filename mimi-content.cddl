@@ -11,7 +11,6 @@ mimiContent = [
 NestedPart = [
   disposition: baseDispos / $extDispos / unknownDispos,
   language: tstr,
-  partIndex: uint .size 2,
   ( NullPart // SinglePart // ExternalPart // MultiPart)
 ]
 

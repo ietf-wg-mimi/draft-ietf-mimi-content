@@ -11,7 +11,6 @@
   [                                 / body (NestedPart) /
     6,                                / dispostion = attachment   /
     "en",                             / language = en             /
-    0,                                / partIndex = 1st part      /
     2,                                / cardinality = external part /
     "video/mp4",                      / contentType               /
     "https://example.com/storage/8ksB4bSrrRE.mp4",     / url      /

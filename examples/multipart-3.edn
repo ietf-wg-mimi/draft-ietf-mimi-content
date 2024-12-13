@@ -8,29 +8,29 @@
   [
     1,     / disposition = render /
     "",    / language /
-    0,     / partIndex = 0 (1st part)  /
+           / partIndex = 0 (1st part)  /
     3,     / cardinality = multi       /
     0,     / partSemantics = chooseOne /
     [
       [
         1,   / disposition = render /
         "",  / language /
-        1,   / partIndex = 1 /
+             / partIndex = 1 /
         3,   / cardinality = multi /
         2,   / partSemantics = processAll /
         [
           [
             1,   / disposition = render /
             "",  / language /
-            2,   / partIndex = 2 /
+                 / partIndex = 2 /
             3,   / cardinality = multi /
             0,   / partSemantics = chooseOne /
             [
               [
-                1,   / disposition = render /
+                1,     / disposition = render /
                 "en",  / language /
-                3,   / partIndex = 3 /
-                1,   / cardinality = single /
+                       / partIndex = 3 /
+                1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
                 '<html><body><h1>Welcome!</h1>'
@@ -38,10 +38,10 @@
                 '</body></html>'
               ],          / English HTML /
               [
-                1,   / disposition = render /
+                1,     / disposition = render /
                 "fr",  / language /
-                4,   / partIndex = 4 /
-                1,   / cardinality = single /
+                       / partIndex = 4 /
+                1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
                 '<html><body><h1>Bienvenue!</h1>'
@@ -53,7 +53,7 @@
           [
             4,   / disposition = inline /
             "",  / language /
-            5,   / partIndex = 5 /
+                 / partIndex = 5 /
             1,   / cardinality = single /
             "image/gif",   / contentType /
             h'028f83c894ca744f'       / content /
@@ -63,22 +63,22 @@
       [
         1,   / disposition = render /
         "",  / language /
-        6,   / partIndex = 6 /
+             / partIndex = 6 /
         3,   / cardinality = multi /
         2,   / partSemantics = processAll /
         [
           [
             1,   / disposition = render /
             "",  / language /
-            7,   / partIndex = 7 /
+                 / partIndex = 7 /
             3,   / cardinality = multi /
             0,   / partSemantics = chooseOne /
             [
               [
-                1,   / disposition = render /
+                1,     / disposition = render /
                 "en",  / language /
-                8,   / partIndex = 8 /
-                1,   / cardinality = single /
+                       / partIndex = 8 /
+                1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
                 '<html><body><h1>Welcome!</h1>'
@@ -86,10 +86,10 @@
                 '</body></html>'
               ],          / English HTML /
               [
-                1,   / disposition = render /
+                1,     / disposition = render /
                 "fr",  / language /
-                9,   / partIndex = 9 /
-                1,   / cardinality = single /
+                       / partIndex = 9 /
+                1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
                 '<html><body><h1>Bienvenue!</h1>'
@@ -101,7 +101,7 @@
           [
             4,   / disposition = inline /
             "",  / language /
-            10,   / partIndex = 10 /
+                 / partIndex = 10 /
             1,   / cardinality = single /
             "image/png",
             h'6963cff36275fdb8'       / content /

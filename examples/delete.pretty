@@ -14,9 +14,8 @@
       58 20                             # bytes(32)
          89d3472622a4d9de526742bcd00b09dc78fa4edceaf2720e17b730c6dfba8be4 # "\x89\xD3G&\"\xA4\xD9\xDERgB\xBC\xD0\v\t\xDCx\xFAN\xDC\xEA\xF2r\u000E\u0017\xB70\xC6ߺ\x8B\xE4"
    a0                                   # map(0)
-   84                                   # array(4)
+   83                                   # array(3)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       00                                # unsigned(0)

@@ -22,7 +22,6 @@
   [                                    / body (NestedPart)      /
     1,                                   / dispostion = render  /
     "",                                  / language             /
-    0,                                   / partIndex = 1st part /
     1,                                   / cardinality = single /
     "text/markdown;variant=GFM",         / contentType          /
                                          / content              /
