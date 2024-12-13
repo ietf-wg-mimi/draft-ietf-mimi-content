@@ -312,7 +312,7 @@ name = int / tstr .size (1..255)
 value = any .size (0..4095)
 ```
 
-An IANA registry {{MIMI-Content-Extension-Keys-registry}} is defined for
+An IANA registry (#keys-registry) is defined for
 positive integer keys. Negative integer and text string keys are only for
 private use.
 
@@ -447,7 +447,7 @@ in [@!RFC5646].
 Each part also has an implied part index, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
-{Complicated Nested Example} for an example of how the part index is
+(#nesting-example) for an example of how the part index is
 calculated.
 
 The partIndex can be used inside a content ID URI [@!RFC2392] in a "container"
@@ -1329,7 +1329,7 @@ Person & email address to contact for further information:
 
 ~~~~~~~
 
-## MIMI Content Extension Keys registry
+## MIMI Content Extension Keys registry {#keys-registry}
 
 This document requests the creation of a new MIMI Content Extension Keys
 registry.
@@ -1707,7 +1707,7 @@ This example shows sending a reaction with multiple separate emojis.
 
 <{{examples/multipart-2.edn}}
 
-## Complicated Nested Example
+## Complicated Nested Example {#nesting-example}
 
 This example shows separate GIF and PNG inline images with English and
 French versions of an HTML message. A summary of the 11 parts are shown below.
