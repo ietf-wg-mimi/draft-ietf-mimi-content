@@ -443,8 +443,14 @@ in [@!RFC5646].
 Each part also has an implied part index, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
-{Nested body examples} for an example of how the part index is
+{Complicated Nested Example} for an example of how the part index is
 calculated.
+
+The partIndex can be used inside a content ID URI [@!RFC2392] in a "container"
+part (for example HTML, Markdown, vCard [@?RFC6350], or iCal [@?RFC5545]) to
+reference another part inside the same MIMI message. In a MIMI message it has
+the form `cid:`*partIndex*`@local.invalid` .
+
 
 ## External content {#external}
 
@@ -1410,7 +1416,7 @@ the hub provider can manipulate the timestamp, and the sending provider
 can delay sending messages selectively to cause the timestamp on a hub to
 be later.
 Note that the optional franking mechanism discussed in Section 5.4.1.2 of
-{{?I-D.ietf-mimi-protocol}} prevents follower servers from modifying the
+[@?I-D.ietf-mimi-protocol] prevents follower servers from modifying the
 timestamp.
 
 > **TODO**: Discuss how to sanity check lastSeen, timestamp and the MLS
@@ -1689,6 +1695,7 @@ to avoid confusion
 ## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
 
 * remove partIndex and make it implied
+* mention Content ID URI (cid:) and describe implicit partIndex
 * discuss rendering and authorization issues for edit/delete in the security
 considerations
 * include both absolute and relative expiration times

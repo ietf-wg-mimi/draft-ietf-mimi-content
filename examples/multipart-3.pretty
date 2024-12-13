@@ -34,8 +34,8 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 51           # bytes(81)
-                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e3c696d67207372633d226369643a352220616c743d2257656c636f6d6520696d616765222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Welcome!</h1><img src=\"cid:5\" alt=\"Welcome image\"/></body></html>"
+                        58 61           # bytes(97)
+                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e0a3c696d67207372633d226369643a35406c6f63616c2e696e76616c69642220616c743d2257656c636f6d6520696d616765222f3e0a3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Welcome!</h1>\n<img src=\"cid:5@local.invalid\" alt=\"Welcome image\"/>\n</body></html>"
                      85                 # array(5)
                         01              # unsigned(1)
                         62              # text(2)
@@ -43,8 +43,8 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 55           # bytes(85)
-                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e3c696d67207372633d226369643a352220616c743d22496d616765206269656e76656e7565222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Bienvenue!</h1><img src=\"cid:5\" alt=\"Image bienvenue\"/></body></html>"
+                        58 65           # bytes(101)
+                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e0a3c696d67207372633d226369643a35406c6f63616c2e696e76616c69642220616c743d22496d616765206269656e76656e7565222f3e0a3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Bienvenue!</h1>\n<img src=\"cid:5@local.invalid\" alt=\"Image bienvenue\"/>\n</body></html>"
                85                       # array(5)
                   04                    # unsigned(4)
                   60                    # text(0)
@@ -75,8 +75,8 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 52           # bytes(82)
-                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e3c696d67207372633d226369643a31302220616c743d2257656c636f6d6520696d616765222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Welcome!</h1><img src=\"cid:10\" alt=\"Welcome image\"/></body></html>"
+                        58 62           # bytes(98)
+                           3c68746d6c3e3c626f64793e3c68313e57656c636f6d65213c2f68313e0a3c696d67207372633d226369643a3130406c6f63616c2e696e76616c69642220616c743d2257656c636f6d6520696d616765222f3e0a3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Welcome!</h1>\n<img src=\"cid:10@local.invalid\" alt=\"Welcome image\"/>\n</body></html>"
                      85                 # array(5)
                         01              # unsigned(1)
                         62              # text(2)
@@ -84,8 +84,8 @@
                         01              # unsigned(1)
                         77              # text(23)
                            746578742f68746d6c3b636861727365743d7574662d38 # "text/html;charset=utf-8"
-                        58 56           # bytes(86)
-                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e3c696d67207372633d226369643a31302220616c743d22496d616765206269656e76656e7565222f3e3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Bienvenue!</h1><img src=\"cid:10\" alt=\"Image bienvenue\"/></body></html>"
+                        58 66           # bytes(102)
+                           3c68746d6c3e3c626f64793e3c68313e4269656e76656e7565213c2f68313e0a3c696d67207372633d226369643a3130406c6f63616c2e696e76616c69642220616c743d22496d616765206269656e76656e7565222f3e0a3c2f626f64793e3c2f68746d6c3e # "<html><body><h1>Bienvenue!</h1>\n<img src=\"cid:10@local.invalid\" alt=\"Image bienvenue\"/>\n</body></html>"
                85                       # array(5)
                   04                    # unsigned(4)
                   60                    # text(0)

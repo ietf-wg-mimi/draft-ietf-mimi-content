@@ -33,8 +33,8 @@
                 1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
-                '<html><body><h1>Welcome!</h1>'
-                '<img src="cid:5" alt="Welcome image"/>'
+                '<html><body><h1>Welcome!</h1>\n'
+                '<img src="cid:5@local.invalid" alt="Welcome image"/>\n'
                 '</body></html>'
               ],          / English HTML /
               [
@@ -44,8 +44,8 @@
                 1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
-                '<html><body><h1>Bienvenue!</h1>'
-                '<img src="cid:5" alt="Image bienvenue"/>'
+                '<html><body><h1>Bienvenue!</h1>\n'
+                '<img src="cid:5@local.invalid" alt="Image bienvenue"/>\n'
                   '</body></html>'
               ]           / French HTML /
             ]
@@ -81,8 +81,8 @@
                 1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
-                '<html><body><h1>Welcome!</h1>'
-                '<img src="cid:10" alt="Welcome image"/>'
+                '<html><body><h1>Welcome!</h1>\n'
+                '<img src="cid:10@local.invalid" alt="Welcome image"/>\n'
                 '</body></html>'
               ],          / English HTML /
               [
@@ -92,8 +92,8 @@
                 1,     / cardinality = single /
                 "text/html;charset=utf-8",   / contentType /
                 / content /
-                '<html><body><h1>Bienvenue!</h1>'
-                '<img src="cid:10" alt="Image bienvenue"/>'
+                '<html><body><h1>Bienvenue!</h1>\n'
+                '<img src="cid:10@local.invalid" alt="Image bienvenue"/>\n'
                 '</body></html>'
               ]           / French HTML /
             ]
