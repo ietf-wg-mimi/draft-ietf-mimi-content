@@ -1,8 +1,9 @@
 mimiContent = [
+  salt: bstr .size 32,
   replaces: null / MessageId,
   topicId: bstr,
   expires: uint .size 4,
-  inReplyTo: null / InReplyTo,
+  inReplyTo: null / MessageId,
   lastSeen: [* MessageId],
   extensions: {* name => value },
   nestedPart: NestedPart
@@ -44,12 +45,6 @@ MultiPart = (
     partSemantics: chooseOne / singleUnit / processAll,
     parts: [2* NestedPart]
 )
-
-InReplyTo = [
-  message: MessageId,
-  hashAlg: uint .size 1,
-  hash: bstr
-]
 
 baseDispos = &(
     unspecified: 0,

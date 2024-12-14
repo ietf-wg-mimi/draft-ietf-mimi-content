@@ -133,21 +133,42 @@ This proposal relies on URIs for naming and identifiers. All the example use
 the `im:` URI scheme (defined in [@!RFC3862]), but any instant messaging scheme
 could be used.
 
-## Message ID and Accepted Timestamp
+## Message ID
 
-Every MIMI content message has a message ID which is calculated from the
-hash of the ciphertext of the message. When the content is end-to-encrypted
-with MLS for a specific MLS group, the cipher suite for the group specifies
-a hash algorithm. The message ID is the first 32 octets of the hash of the
-`MLSMessage` struct using that hash algorithm.
+The MIMI content format relies heavily of message IDs to refer to other
+messages, to reply, react, edit, delete, and report on the status of
+messages. Every MIMI content message contains a 32-octet per-message
+cryptographically random salt, and has a 32-octet message ID which is calculated
+from the hash of the message (including the salt).
+
+Calculation of the message ID works as follows. The first octet of the MessageID
+is the hash function ID from the
+[IANA hash algorithm registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg).
+The sender URI, room URI, and the entire MIMI message content (which includes
+the salt) are concatenated and then hashed with the algorithm identified in the
+first octet. The first 31 octets of the hash_output is appended to the hash
+function ID.
+
+~~~
+hash_output = hash( senderUri || roomUri || message )
+messageId = hashAlg || hash_output[0..30]
+~~~
+
+The MIMI content format uses the SHA-256 hash algorithm (identifier 0x01) by
+default, regardless of the hash algorithm of the cipher suite of a room's MLS
+group. The initial octet allows the MIMI protocol to deprecate SHA-256 and
+specify a new default algorithm in the future (for example if a practical
+birthday attack on SHA_256 becomes feasible).
+
+##  Accepted Timestamp
 
 As described in the the MIMI architecture [@?I-D.ietf-mimi-arch], one
 provider, called the hub, is responsible for ordering messages. The hub is
 also responsible for recording the time that any application message is
 accepted, and conveying it to any "follower" providers which receive messages
 from the group. It is represented as the whole number of milliseconds since
-the start of the UNIX epoch (01-Jan-1970 00:00:00 UTC). To the extent that
-the accepted timestamp is available to a MIMI client, the client can use it
+the start of the UNIX epoch (01-Jan-1970 00:00:00 UTC). The accepted timestamp
+MUST be available to each receiving MIMI client. The client can use it
 for fine grain sorting of messages into a consistent order.
 
 ## Message Container
@@ -190,6 +211,7 @@ Language (CDDL) [@!RFC8610] schemas for the MIMI Content Container. The complete
 
 ``` cddl
 mimiContent = [
+  salt: bstr .size 32,
   replaces: null / MessageId,       ; {1}
   topicId: bstr,                    ; {2}
   expires: uint .size 4,            ; {3}
@@ -199,8 +221,12 @@ mimiContent = [
   nestedPart: NestedPart            ; {7}
 ]
 
-MessageId = bstr .size 32          ; MessageId is derived from SHA256 hash
+MessageId = bstr .size 32
 ```
+
+The first data field is the per-message unique salt which MUST be
+cryptographically random. An example algorithm for generating the salt
+is described in (#salt-generation).
 
 The `replaces` {1} data field indicates that the current message
 is a replacement or update to a previous message whose message ID
@@ -228,31 +254,17 @@ didn't otherwise save the expiring message (ex: via a screenshot).
 
 The `inReplyTo` {4} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
-If present, it contains the message ID of the referenced message and the
-SHA-256 hash [@!RFC6234] of its `MimiContent` structure. Otherwise,
-the receiver assumes that the current message has not
-identified any special relationship with another previous message. 
-
-The `inReplyTo` hash is a message digest from the
-[IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg), used to make sure that a MIMI
+If present, it contains the message ID of the referenced message. Otherwise,
+the receiver assumes that the current message has not identified any special
+reply relationship with another previous message. The message id of the
+referenced message is also used to make sure that a MIMI
 message cannot refer to a sequence of referred messages which refers
 back to itself. When replying, a client MUST NOT knowingly create a sequence
 of replies which create a loop.
 
-When receiving a message, the client verifies that the hash is correct. Next
-it checks if the referenced message is itself a Reply. If so, it continues
-following the referenced messages, checking that neither the messageId nor
-the hash of any of referenced messages indicates a Reply which "loops" back
-to a message later in the inReplyTo chain.
-
-``` cddl
-InReplyTo = [
-  message: MessageId,
-  hashAlg: uint .size 1,   ; a value from the IANA Named Information Hash
-                           ; Algorithm Registry. Default: SHA-256 = 1
-  hash: bstr
-]
-```
+When receiving a message with inReplyTo message, the client checks if the referenced message is itself inReplyTo another message. If so, it continues
+following the referenced messages, checking that the message ID of none of the
+referenced messages "loop" back to a message later in the inReplyTo chain.
 
 Note that a `inReplyTo`
 always references a specific message ID. Even if the original message
@@ -570,7 +582,9 @@ printed CBOR.
 <{{examples/original.edn}}
 
 ```
-87                                      # array(7)
+88                                      # array(8)
+   58 20                                # bytes(20)
+      d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
@@ -1334,6 +1348,16 @@ cases, and should not be considered the result of a malicious sender.
   unknown value should be treated as if it where `render`.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
+
+## Generating the random salt {#salt-generation}
+
+To ensure a strong source of entropy for the per-message unique salt required in
+each message, the client can export a secret from the MLS key schedule, for
+example with the label `salt_base_secret` and calculate the salt as the HMAC of a locally generated nonce and the franking_base_secret.
+
+~~~
+salt = HMAC_SHA256( salt_base_secret, nonce )
+~~~
 
 ## Validation of timestamp
 
