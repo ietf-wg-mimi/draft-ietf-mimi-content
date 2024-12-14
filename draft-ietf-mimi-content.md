@@ -1304,15 +1304,11 @@ represent malicious messages. These should be logged and discarded.
   - where the apparent sender is not a member of the target MLS group
 * message IDs
   - which duplicate another message ID already encountered
+  - where the first octet of the message ID is an unknown hash algorithm.
 * timestamps
   - received more than a few minutes in the future, or 
   - before the first concrete syntax of this document is published
   - before the room containing them was created
-* inReplyTo
-  - `inReplyTo.hash-alg` is `none` even when the `inReplyTo.message` is present
-  - `inReplyTo.hash-alg` is an unknown value
-  - the length of `inReplyTo.replyToHash` does not correspond to the algorithm
-    specified in `inReplyTo.hash-alg`
 * topicId
   - the `topicId` is very long (greater than 4096 octets)
   - a topic is specified, but an `inReplyTo` or `replaces` field refers to a
@@ -1338,7 +1334,7 @@ For the avoidance of doubt, the following cases may be examples of legitimate us
 cases, and should not be considered the result of a malicious sender.
 
 * message IDs
-  - where `inReplyTo.message` or `replaces` refer to an unknown message.
+  - where `inReplyTo` or `replaces` refer to an unknown message.
     Such a message could have been sent before the local client joined.
 * lastSeen
   - refers to an unknown message
@@ -1426,7 +1422,7 @@ is an acceptable local representation of the user represented by the link
 itself. If the hint is not an acceptable representation, the client should
 instead display its canonical representation for the user. 
 
-For example, in the first examples, the sender expresses no preference
+For example, in the first example, the sender expresses no preference
 about how to render the mention. In the second example, the sender requests
 that the mention is rendered as the literal URI. In the third example, the
 sender requests the canonical handle for Alice. In the fourth example, the
