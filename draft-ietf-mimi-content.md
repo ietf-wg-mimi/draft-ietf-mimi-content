@@ -167,9 +167,9 @@ message or reply, a link, or an inline image).
 
 This document also describes the semantics of a status report of other messages.
 Because some messaging systems deliver messages in batches and allow a user to
-mark several messages read at a time, the report format allows a single report
-to convey the read/delivered status of multiple messages (by message ID) within
-the same MLS group at a time.
+mark several messages read at a time, the report format defined in (#reporting)
+allows a single report to convey the read/delivered status of multiple messages
+(by message ID) within the same MLS group at a time.
 
 # MIMI Content Container Message Semantics
 
@@ -194,7 +194,6 @@ mimiContent = [
   topicId: bstr,                    ; {2}
   expires: uint .size 4,            ; {3}
   inReplyTo: null / InReplyTo,      ; {4}
-  lastSeen: [* MessageId],          ; {5}
   extensions: {* name => value },   ; {6}
   nestedPart: NestedPart            ; {7}
 ]
@@ -262,28 +261,20 @@ time the reply is sent.
 
 ## Message Ordering
 
-The `lastSeen` {5} data field indicates the latest message the sender
-was aware of in the group.  It is a list of message ids.
-
-If the sender recently joined the group and has not yet seen any messages,
-the list is empty.
-
-If the sender identifies a single message as unambiguously the latest
-message in the group, the `lastSeen` list contains a single message id
-from that message.
+Message ordering is provided by the Hub in the form of the accepted
+timestamp. A malicious hub may be able to manipulate the order of
+messages.
 
 Imagine however that two users (Bob and Cathy) see a message from Alice
 offering free Hawaiian pizza, and reply at the same time. Bob and Cathy both send
-messages with their `lastSeen` including a single message id (Alice's)
+messages somehow referencing (Alice's)
 message about pizza.  Their messages don't need to be replies or reactions.
 Bob might just send a message saying he doesn't like pineapple on pizza.
-Now Doug receives all these messages and replies
-as well. Doug's message contains a `lastSeen` including the message id
-list of both Bob's and Cathy's replies, effectively "merging" the order
-of messages. 
 
-The next message after Doug's message contains a `lastSeen` containing
-only the message id of Doug's message.
+If clients want to detect messages sent out of order by the hub, they
+require notification of message delivery at the MLS level (ex: the AppAck
+mechanism provided in [@?I-D.ietf-mls-extensions]) or at the MIMI level,
+such as the format defined in (#reporting).
 
 ## Extension Fields
 
@@ -1099,7 +1090,7 @@ for messages within a thread uses the timestamp field. If more than
 one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
 
-## Delivery Reporting and Read Receipts
+## Delivery Reporting and Read Receipts {#reporting}
 
 In instant messaging systems, read receipts typically generate a distinct
 indicator for each message. In some systems, the number of users in a group
@@ -1306,13 +1297,6 @@ represent malicious messages. These should be logged and discarded.
 * expires
   - refers to a date more than a year in the past
   - refers to a date more than a year in the future
-* lastSeen
-  - is empty, but the sender has previously sent messages in the room
-  - results in a loop
-  - refers to an excessive number of lastSeen messages simultaneously
-    (contains more than 65535 message IDs). (Note that a popular
-    message sent in a large group can result in thousands of reactions in
-    a few hundred milliseconds.)
 * body
   - has too many body parts (more than 1024)
   - is nested too deeply (more than 4 levels deep)
@@ -1326,9 +1310,6 @@ cases, and should not be considered the result of a malicious sender.
 * message IDs
   - where `inReplyTo.message` or `replaces` refer to an unknown message.
     Such a message could have been sent before the local client joined.
-* lastSeen
-  - refers to an unknown message
-  - is empty for the sender's first message sent in the room
 * body
   - where a body part contains an unrecognized Disposition value. The
   unknown value should be treated as if it where `render`.
