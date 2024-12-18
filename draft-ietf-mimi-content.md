@@ -1222,7 +1222,7 @@ not restrict or prescribe in any way how input from a user is interpreted by an
 Instant Messaging client that support MIMI, before any message resulting from
 that input is sent.
 
-Note that rendering Markdown as plain text is an aceptable form of "support".
+Note that rendering Markdown as plain text is an acceptable form of "support".
 
 - Raw HTML MUST NOT be included other than blank HTML comments `<!-- -->`.
 Text which looks like an HTML tag should replace the opening angle bracket with
@@ -1468,8 +1468,8 @@ cases, and should not be considered the result of a malicious sender.
 ## Rendering and authorization of edits and deletes
 
 This content format allows clients to send new versions of previously sent
-messages, effectively replacing ("editing") or retracting ("deleting") other
-a referenced message. The rendering of these "edits" and "deletes" are important
+messages, effectively replacing ("editing") or retracting ("deleting") another
+referenced message. The rendering of these "edits" and "deletes" are important
 from a security perspective.
 
 For example, if Alice writes "Bob, could I borow a pen?", and Bob reacts with a
