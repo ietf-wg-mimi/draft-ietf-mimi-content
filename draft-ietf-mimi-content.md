@@ -1195,7 +1195,7 @@ Clients compliant with MIMI MUST be able to receive the following media types:
 
 * application/mimi-content -- the MIMI Content container format (described in this document)
 * text/plain;charset=utf-8 
-* text/markdown;variant=GFM -- Github Flavored Markdown [@!GFM])
+* text/markdown;variant=GFM-MIMI -- Github Flavored Markdown for MIMI, defined in (#gfm-mimi)
 
 Note that it is acceptable to render the contents of a received markdown
 document as plain text.
@@ -1212,25 +1212,33 @@ Clients compliant with this specification must be able to download
 ExternalParts with `http` and `https` URLs, and decrypt downloaded content
 encrypted with the AES-128-GCM AEAD algorithm.
 
-### Specifics of Github Flavored Markdown in MIMI
+### Specifics of Github Flavored Markdown in MIMI {#gfm-mimi}
 
 A MIMI content client supports GitHub Flavored Markdown as defined in [@!GFM],
-with one exception (no raw HTML support) and a fixed list of supported
-extensions, as further described in the bullet points below.
+with two changes: the Autolink extension is not supported; and instead of the
+Disallowed Raw HTML extension (`tagfilter`), the No HTML extension (`nohtml`),
+which is defined here, is MANDATORY. (For clarity, a fixed list of supported
+extensions, is further described in the bullet points below.)
+
+To implement the No HTML extension to GFM, the opening angle bracket (`<`) of
+any `HTML tag` (as defined in Section 6.10 of [@!GFM]) is replaced with `&lt;`
+before sending. Any `HTML tag` in a received message is rendered as plain text.
+Note that `HTML tag` includes open tags, closing tags, HTML comments, processing
+instructions, declarations, and CDATA sections.
+
+The following GitHub Flavored Markdown extensions are supported. No other extensions are allowed:
+
+- Tables
+- Task list items
+- Strikethrough
+- No HTML
+
 This document specifies what can be sent inside a MIMI content message; it does
 not restrict or prescribe in any way how input from a user is interpreted by an
 Instant Messaging client that support MIMI, before any message resulting from
 that input is sent.
 
 Note that rendering Markdown as plain text is an acceptable form of "support".
-
-- Raw HTML MUST NOT be included other than blank HTML comments `<!-- -->`.
-Text which looks like an HTML tag should replace the opening angle bracket with
-`&lt;`. Any raw HTML tags in a received message are rendered as plain text
-- The following GitHub Flavored Markdown extensions are supported. No other extensions are allowed:
-    - Tables
-    - Task list items
-    - Strikethrough
 
 ## Use of proprietary media types
 
@@ -1409,6 +1417,24 @@ In cases where a registration decision could be perceived as creating a conflict
 of interest for a particular MIMI DE, that MIMI DE SHOULD defer to the judgment
 of the other MIMI DEs.
 
+## GFM-MIMI Markdown variant
+
+This document registers a new Markdown variant in the IANA Markdown Variants
+registry. The registration template below conforms with [@?RFC7763].
+
+~~~
+Identifier: GFM-MIMI
+
+Name: GitHub Flavored Markdown Subset for MIMI
+
+Description:
+   GitHub Flavored Markdown, without Autolinks and with no embedded HTML
+
+References: RFCXXXX
+
+Contact Information:
+   IETF MIMI Working Group <mimi@ietf.org>
+~~~
 
 # Security Considerations
 
