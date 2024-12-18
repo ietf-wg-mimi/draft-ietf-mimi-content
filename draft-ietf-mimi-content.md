@@ -217,14 +217,27 @@ value in the `topicId` data field. If the `topicId` is zero length,
 there is no such grouping.
 
 The `expires` {3} data field is a hint from the sender to the receiver
-that the message should be locally deleted and disregarded at a specific
-timestamp in the future. Indicate a message with no specific expiration
-time with the value zero. The data field is an unsigned integer number of
-seconds after the start of the UNIX epoch. Using an 32-bit unsigned
-integer allows expiration dates until the year 2106. Note that
-specifying an expiration time provides no assurance that the client
-actually honors or can honor the expiration time, nor that the end user
-didn't otherwise save the expiring message (ex: via a screenshot).
+that the message should be locally deleted and disregarded at either a specific
+timestamp in the future, or a relative amount of time after the receiving client
+reads the message. Indicate a message with no specific expiration
+time with the value null. If non-null, the data field is an array of two items.
+
+``` cddl
+Expiration = [
+    relative: bool,
+    time: uint .size 4
+]
+```
+
+The first is a boolean indicating if the time is relative (true) or absolute
+(false). The second is an unsigned integer. If relative, it is the whole number
+of seconds the message should be visible before it is deleted. If absolute, it
+is the number of seconds after the start of the UNIX epoch, at which point the
+message should be deleted. Using an 32-bit unsigned integer allows expiration
+dates until the year 2106. Note that specifying an expiration time provides no
+assurance that the client actually honors or can honor the expiration time, nor
+that the end user didn't otherwise save the expiring message (ex: via a
+screenshot).
 
 The `inReplyTo` {4} data field indicates that the current message is
 a related continuation of another message sent in the same MLS group.
@@ -288,16 +301,20 @@ only the message id of Doug's message.
 ## Extension Fields
 
 In order to add additional functionality to MIMI, senders can include
-extension fields in the message format {6}. Each extension has a name, which
-contains between 1 and 255 octets of UTF-8, and an opaque value. The value
-of each extension can be between 0 and 65535 octets.
+extension fields in the message format {6}. Each extension has a CBOR map key
+which is a positive integer, negative integer, or text string containing between
+1 and 255 octets of UTF-8. The value can be any CBOR (including combinations of maps and arrays) which can be represented in between 0 and 4096 octets.
 The message content `extensions` field MUST NOT include more than one
-extension field with the same name.
+extension field with the same map key.
 
 ``` cddl
-name = tstr .size (1..255)
-value = bstr .size (0..4095)
+name = int / tstr .size (1..255)
+value = any .size (0..4095)
 ```
+
+An IANA registry (#keys-registry) is defined for
+positive integer keys. Negative integer and text string keys are only for
+private use.
 
 ## Message Bodies
 
@@ -312,7 +329,6 @@ contentType field {8}.
 NestedPart = [
   disposition: baseDispos / $extDispos / unknownDispos,  ; {10}
   language: tstr,                                        ; {11}
-  partIndex: uint .size 2,                               ; {12}
   ( NullPart // SinglePart // ExternalPart // MultiPart)
 ]
 
@@ -428,11 +444,17 @@ The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
 in [@!RFC5646]. 
 
-Each part also has an part index {12}, which is a zero-indexed,
+Each part also has an implied part index, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
 body part (for example, an inline image) within another part. See
-{Nested body examples} for an example of how the part index is
+(#nesting-example) for an example of how the part index is
 calculated.
+
+The partIndex can be used inside a content ID URI [@!RFC2392] in a "container"
+part (for example HTML, Markdown, vCard [@?RFC6350], or iCal [@?RFC5545]) to
+reference another part inside the same MIMI message. In a MIMI message it has
+the form `cid:`*partIndex*`@local.invalid` .
+
 
 ## External content {#external}
 
@@ -495,20 +517,20 @@ algorithm.
 
 In addition to fields which are contained in a MIMI content message,
 there are also two fields which the implementation can definitely derive
-(the MLS group ID {13}, and the leaf index of the sender {14}). Many
+(the MLS group ID {12}, and the leaf index of the sender {13}). Many
 implementations could also determine one or more of: the sender's client
-identifier URL {15}, the user identifier URL of the credential associated
-with the sender {16}, and the identifier URL for the MIMI room {17}.
+identifier URL {14}, the user identifier URL of the credential associated
+with the sender {15}, and the identifier URL for the MIMI room {16}.
 
 ``` cddl
 MessageDerivedValues = [
     messageId: MessageId,              ; sha256 hash of message ciphertext
     hubAcceptedTimestamp: Timestamp,
-    mlsGroupId: bstr,                  ; value always available {13}
-    senderLeafIndex: uint .size 4,     ; value always available {14}
-    senderClientUrl: uri               ; {15},
-    senderUserUrl: uri,                ; "From" {16}
-    roomUrl: uri                       ; "To"   {17}
+    mlsGroupId: bstr,                  ; value always available {12}
+    senderLeafIndex: uint .size 4,     ; value always available {13}
+    senderClientUrl: uri               ; {14},
+    senderUserUrl: uri,                ; "From" {15}
+    roomUrl: uri                       ; "To"   {16}
 ]
 
 MessageId = bstr .size 32
@@ -574,7 +596,7 @@ printed CBOR.
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    80                                   # array(0)
    a0                                   # map(0)
@@ -621,7 +643,7 @@ Below is the annotated message in EDN and pretty printed CBOR:
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -678,7 +700,7 @@ Below is the annotated message in EDN and pretty printed CBOR:
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -729,7 +751,7 @@ Below is the annotated message in EDN and pretty printed CBOR:
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -788,7 +810,7 @@ Here Bob Jones corrects a typo in his original message:
       e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -849,7 +871,7 @@ as shown below.
       4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -892,7 +914,7 @@ created the reaction, as shown below.
       e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
@@ -913,13 +935,19 @@ created the reaction, as shown below.
 
 ## Expiring
 
-Expiring messages are designed to be deleted automatically by the receiving
-client at a certain time whether they have been read or not.  As with manually
-deleted messages, there is no guarantee that an uncooperative client or a
-determined user will not save the content of the message, however most clients
-respect the convention.
+There are two types of expiring messages in instant messaging systems. In the typical implementation, messages are deleted a specific amount of time relative to (after) when the receiving client reads the message. We will refer to this as
+relative expiration.
 
-The `expires` data field contains the timestamp when the message can be deleted.
+Absolute expiring messages are designed to be deleted automatically by the
+receiving client at a certain time whether they have been read or not.
+
+As with manually deleted messages, there is no guarantee that an uncooperative
+client or a determined user will not save the content of the message. The goal
+instead is to allow cooperating client that respect the convention to signal
+expiration times clearly.
+
+The `expires` data field contains the absolute timestamp when, or relative
+amount of time after reading after which the message can be deleted.
 The semantics of the header are that the message is automatically deleted
 by the receiving clients at the indicated time without user interaction or
 network connectivity necessary.
@@ -937,7 +965,9 @@ network connectivity necessary.
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   1a 62036674                          # unsigned(1644390004)
+   82                                   # array(2)
+      f4                                # primitive(20)
+      1a 62036674                       # unsigned(1644390004)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -976,7 +1006,7 @@ rendered separately.
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -990,11 +1020,10 @@ rendered separately.
       02                                # unsigned(2)
       69                                # text(9)
          766964656f2f6d7034             # "video/mp4"
-      d8 20                             # tag(32)
-         78 2b                          # text(43)
-            68747470733a2f2f6578616d706c652e636f6d2f73746f72616
-            7652f386b7342346253727252452e6d7034
-            # "https://example.com/storage/8ksB4bSrrRE.mp4"
+      78 2b                             # text(43)
+         68747470733a2f2f6578616d706c652e636f6d2f73746f72616
+         7652f386b7342346253727252452e6d7034
+         # "https://example.com/storage/8ksB4bSrrRE.mp4"
       00                                # unsigned(0)
       1a 2a36ced1                       # unsigned(708234961)
       01                                # unsigned(1)
@@ -1043,7 +1072,7 @@ of this document.
    f6                                   # primitive(22)
    47                                   # bytes(7)
       466f6f20313138                    # "Foo 118"
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
@@ -1057,10 +1086,9 @@ of this document.
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""
-      d8 20                             # tag(32)
-         78 1e                          # text(30)
-            68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435
-            # "https://example.com/join/12345"
+      78 1e                             # text(30)
+         68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435
+         # "https://example.com/join/12345"
       00                                # unsigned(0)
       00                                # unsigned(0)
       00                                # unsigned(0)
@@ -1167,7 +1195,7 @@ Clients compliant with MIMI MUST be able to receive the following media types:
 
 * application/mimi-content -- the MIMI Content container format (described in this document)
 * text/plain;charset=utf-8 
-* text/markdown;variant=GFM -- Github Flavored Markdown [@!GFM])
+* text/markdown;variant=GFM-MIMI -- Github Flavored Markdown for MIMI, defined in (#gfm-mimi)
 
 Note that it is acceptable to render the contents of a received markdown
 document as plain text.
@@ -1184,6 +1212,34 @@ Clients compliant with this specification must be able to download
 ExternalParts with `http` and `https` URLs, and decrypt downloaded content
 encrypted with the AES-128-GCM AEAD algorithm.
 
+### Specifics of Github Flavored Markdown in MIMI {#gfm-mimi}
+
+A MIMI content client supports GitHub Flavored Markdown as defined in [@!GFM],
+with two changes: the Autolink extension is not supported; and instead of the
+Disallowed Raw HTML extension (`tagfilter`), the No HTML extension (`nohtml`),
+which is defined here, is MANDATORY. (For clarity, a fixed list of supported
+extensions, is further described in the bullet points below.)
+
+To implement the No HTML extension to GFM, the opening angle bracket (`<`) of
+any `HTML tag` (as defined in Section 6.10 of [@!GFM]) is replaced with `&lt;`
+before sending. Any `HTML tag` in a received message is rendered as plain text.
+Note that `HTML tag` includes open tags, closing tags, HTML comments, processing
+instructions, declarations, and CDATA sections.
+
+The following GitHub Flavored Markdown extensions are supported. No other extensions are allowed:
+
+- Tables
+- Task list items
+- Strikethrough
+- No HTML
+
+This document specifies what can be sent inside a MIMI content message; it does
+not restrict or prescribe in any way how input from a user is interpreted by an
+Instant Messaging client that support MIMI, before any message resulting from
+that input is sent.
+
+Note that rendering Markdown as plain text is an acceptable form of "support".
+
 ## Use of proprietary media types
 
 As most messaging systems are proprietary, standalone systems, it is useful to allow
@@ -1195,6 +1251,8 @@ encryption. An example is given in the Appendix.
 
 
 # IANA Considerations
+
+RFC EDITOR: Please replace XXXX throughout with the RFC number assigned to this document.
 
 ## MIME subtype registration of application/mimi-content
 
@@ -1279,6 +1337,105 @@ Person & email address to contact for further information:
 
 ~~~~~~~
 
+## MIMI Content Extension Keys registry {#keys-registry}
+
+This document requests the creation of a new MIMI Content Extension Keys
+registry.
+The registry should be under the heading of "More Instant Messaging Interoperability (MIMI)".
+
+The MIMI Content format defined in this document, contains an extensions map in
+each message. The keys in the extensions map can be (positive or negative)
+integers, or text strings. Text strings and negative integer keys are reserved
+for private use. Positive integer keys are assigned in the registry under the
+Expert Review policy [@!RFC8126]. Integer keys between 1 and 255 are restricted
+to IETF consensus specifications.
+
+The columns in the registry are as follows:
+
+- Key: The extension map key positive integer assigned to the MIMI content extension.
+- Name: a short descriptive name for the MIMI content extension.
+- Type: The CBOR data type of the value corresponding to the key. Applications
+with multiple, related data items are encouraged to register a map type that
+contains all the related fields.
+- Recommended: Whether support for this MIMI content extension is recommended by
+the IETF. Valid values are "Y", "N", and "D", as described below. The default
+value of the "Recommended" column is "N". Setting the Recommended item to "Y" or
+"D", or changing an item whose current value is "Y" or "D", requires Standards
+Action [@!RFC8126].
+    - Y: Indicates that the IETF has consensus, and that the item is
+RECOMMENDED. This only means that the associated mechanism is fit for the
+purpose for which it was defined. Careful reading of the documentation for the
+mechanism is necessary to understand the applicability of that mechanism. The
+IETF could recommend mechanisms that have limited applicability, but will
+provide applicability statements that describe any limitations of the mechanism
+or necessary constraints on its use.
+    - N: Indicates that the item has not been evaluated by the IETF and that the
+IETF has made no statement about the suitability of the associated mechanism.
+This does not necessarily mean that the mechanism is flawed, only that no
+consensus exists. The IETF might have consensus to leave an item marked as "N"
+on the basis of it having limited applicability or usage constraints.
+    - D: Indicates that the item is discouraged and SHOULD NOT or MUST NOT be
+used. This marking could be used to identify mechanisms that might result in
+problems if they are used, such as a weak cryptographic algorithm or a mechanism
+that might cause interoperability problems in deployment.
+- Reference: The document where this MIMI content extension is defined
+
+Initial Contents:
+
+| Key   | Name                                     | Type      | R | Reference |
+|:------|:-----------------------------------------|:----------|:--|:----------|
+| 0     | (reserved)                               | -         | - | RFCXXXX   |
+
+### Expert Review
+
+Expert Review [@!RFC8126] registry requests are registered
+after a three-week review period on the MIMI Designated Expert (DE) mailing list
+<mimi-reg-review@ietf.org> on the advice of one or more of the MIMI DEs.
+
+Registration requests sent to the MIMI DEs' mailing list for review
+SHOULD use an appropriate subject (e.g., "Request to register value
+in MIMI Content Extensions Keys registry").
+
+Within the review period, the MIMI DEs will either approve or deny
+the registration request, communicating this decision to the MIMI DEs'
+mailing list and IANA. Denials SHOULD include an explanation and, if
+applicable, suggestions as to how to make the request successful.
+Registration requests that are undetermined for a period longer than
+21 days can be brought to the IESG's attention for resolution using
+the <iesg@ietf.org> mailing list.
+
+Criteria that SHOULD be applied by the MIMI DEs includes determining
+whether the proposed registration duplicates existing functionality,
+whether it is likely to be of general applicability or useful only
+for a single application, and whether the registration description
+is clear.
+
+IANA MUST only accept registry updates from the MIMI DEs and SHOULD
+direct all requests for registration to the MIMI DEs' mailing list.
+
+In cases where a registration decision could be perceived as creating a conflict
+of interest for a particular MIMI DE, that MIMI DE SHOULD defer to the judgment
+of the other MIMI DEs.
+
+## GFM-MIMI Markdown variant
+
+This document registers a new Markdown variant in the IANA Markdown Variants
+registry. The registration template below conforms with [@?RFC7763].
+
+~~~
+Identifier: GFM-MIMI
+
+Name: GitHub Flavored Markdown Subset for MIMI
+
+Description:
+   GitHub Flavored Markdown, without Autolinks and with no embedded HTML
+
+References: RFCXXXX
+
+Contact Information:
+   IETF MIMI Working Group <mimi@ietf.org>
+~~~
+
 # Security Considerations
 
 ## General handling
@@ -1301,11 +1458,11 @@ represent malicious messages. These should be logged and discarded.
     specified in `inReplyTo.hash-alg`
 * topicId
   - the `topicId` is very long (greater than 4096 octets)
-  - a topic is specified, but an `inReplyTo` or `replaces` field refers to a
-    message outside of the topic
 * expires
-  - refers to a date more than a year in the past
-  - refers to a date more than a year in the future
+  - refers to a date more than a year in the past (only possible with absolute
+    expiration)
+  - refers to a date more than a year in the future (possible with both
+    relative and absolute expiration)
 * lastSeen
   - is empty, but the sender has previously sent messages in the room
   - results in a loop
@@ -1318,7 +1475,6 @@ represent malicious messages. These should be logged and discarded.
   - is nested too deeply (more than 4 levels deep)
   - is too large (according to local policy)
   - has an unknown PartSemantics value
-  - contains `partIndex` values which are not continuous from zero
 
 For the avoidance of doubt, the following cases may be examples of legitimate use
 cases, and should not be considered the result of a malicious sender.
@@ -1335,12 +1491,46 @@ cases, and should not be considered the result of a malicious sender.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
 
+## Rendering and authorization of edits and deletes
+
+This content format allows clients to send new versions of previously sent
+messages, effectively replacing ("editing") or retracting ("deleting") another
+referenced message. The rendering of these "edits" and "deletes" are important
+from a security perspective.
+
+For example, if Alice writes "Bob, could I borow a pen?", and Bob reacts with a
+thumbs up emoji, Alice might edit this message with no change in meaning
+(correcting the spelling of "borrow"), or a dramatic change in meaning ("Bob,
+could I borrow your Ferrari this month?"). The receiver SHOULD indicate clearly
+that a received message has been edited or retracted. The receiver might:
+
+- offer an option to view previous versions of a message,
+- show a summarized or thumbnail version of a message referenced in a reply,
+- indicate clearly that a reply was to a previous version of a message than the
+most recent one.
+- show a detailed view of reaction indicating that some reactions referred to a
+previous version of the message.
+
+In addition, some groups may have special policies or permissions allowing
+specific types of edits or deletes. For example, a moderator in one room might
+be allowed to edit the topic of a message, but not modify the rest of the
+content. An administrator might be allowed to delete messages which violate the
+policy of the group. Receiving clients MUST NOT allow parties other than the
+original sender of a message to edit or delete that message, unless there is a
+specific, concrete authorization policy which allows it. Likewise, even the
+original sender of a message MUST NOT be able to change the semantics of any
+other portion of the message except for the contents of the NestedPart, without
+specific authorization.
+
 ## Validation of timestamp
 
 The timestamp is the time a message is accepted by the hub provider. As such,
 the hub provider can manipulate the timestamp, and the sending provider
 can delay sending messages selectively to cause the timestamp on a hub to
 be later.
+Note that the optional franking mechanism discussed in Section 5.4.1.2 of
+[@?I-D.ietf-mimi-protocol] prevents follower servers from modifying the
+timestamp.
 
 > **TODO**: Discuss how to sanity check lastSeen, timestamp and the MLS
 > epoch and generation, and the limitations of this approach.
@@ -1543,7 +1733,7 @@ This example shows sending a reaction with multiple separate emojis.
 
 <{{examples/multipart-2.edn}}
 
-## Complicated Nested Example
+## Complicated Nested Example {#nesting-example}
 
 This example shows separate GIF and PNG inline images with English and
 French versions of an HTML message. A summary of the 11 parts are shown below.
@@ -1614,3 +1804,14 @@ to avoid confusion
 
 * use CBOR as the binary encoding
 * add multipart examples
+
+## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
+
+* remove partIndex and make it implied
+* mention Content ID URI (cid:) and describe implicit partIndex
+* discuss rendering and authorization issues for edit/delete in the security
+considerations
+* include both absolute and relative expiration times
+* add specificity about markdown support
+* remove tag from URLs in ExternalPart and implied headers
+
