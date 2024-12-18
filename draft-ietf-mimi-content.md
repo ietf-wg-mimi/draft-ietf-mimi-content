@@ -1489,10 +1489,10 @@ In addition, some groups may have special policies or permissions allowing
 specific types of edits or deletes. For example, a moderator in one room might
 be allowed to edit the topic of a message, but not modify the rest of the
 content. An administrator might be allowed to delete messages which violate the
-policy of the group. Receiving clients SHOULD NOT allow parties other than the
+policy of the group. Receiving clients MUST NOT allow parties other than the
 original sender of a message to edit or delete that message, unless there is a
 specific, concrete authorization policy which allows it. Likewise, even the
-original sender of a message SHOULD NOT be able to change the semantics of any
+original sender of a message MUST NOT be able to change the semantics of any
 other portion of the message except for the contents of the NestedPart, without
 specific authorization.
 
