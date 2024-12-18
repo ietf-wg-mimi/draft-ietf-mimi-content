@@ -1432,11 +1432,11 @@ represent malicious messages. These should be logged and discarded.
     specified in `inReplyTo.hash-alg`
 * topicId
   - the `topicId` is very long (greater than 4096 octets)
-  - a topic is specified, but an `inReplyTo` or `replaces` field refers to a
-    message outside of the topic
 * expires
-  - refers to a date more than a year in the past
-  - refers to a date more than a year in the future
+  - refers to a date more than a year in the past (only possible with absolute
+    expiration)
+  - refers to a date more than a year in the future (possible with both
+    relative and absolute expiration)
 * lastSeen
   - is empty, but the sender has previously sent messages in the room
   - results in a loop
