@@ -3,11 +3,12 @@ MessageDerivedValues = [
     hubAcceptedTimestamp: Timestamp,
     mlsGroupId: bstr,
     senderLeafIndex: uint .size 4,
-    senderClientUrl: uri,
-    senderUserUrl: uri,
-    roomUrl: uri
+    senderClientUrl: MsgUri,
+    senderUserUrl: MsgUri,
+    roomUrl: MsgUri
 ]
 
+MsgUri = tstr
 MessageId = bstr .size 32
 Timestamp = #6.62(uint .size 8)    ; milliseconds since start of UNIX epoch
 

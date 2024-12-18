@@ -2,7 +2,7 @@
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    83                                   # array(3)
       58 20                             # bytes(32)
          d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501 # "\xD3\xC1GD\xD1y\u001D\u0002T\x822\xC2=5\xEF\xA9vh\u0017K\xA3\x85\xAF\u0006`\u0011\xE4;\xD7\xE5\u0015\u0001"
@@ -13,11 +13,10 @@
       58 20                             # bytes(32)
          e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed # "\xE7\u0001\xBE\xEEY\xF97b\x82\xF3\x90\x92\xE1\u0004\e*\xC2\xE3\xAA\xD1wep\xC1\xA2\x8D\xE2D\x97\x9Cq\xED"
    a0                                   # map(0)
-   86                                   # array(6)
+   85                                   # array(5)
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
       78 18                             # text(24)
          746578742f706c61696e3b636861727365743d7574662d38 # "text/plain;charset=utf-8"

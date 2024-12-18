@@ -1,7 +1,7 @@
 [
   null,                                / replaces             / 
   h'',                                 / topicId              /
-  0,                                   / expires = never      /
+  null,                                / expires = never      /
   [                                    / InReplyTo            /
      /  message = Original message                            /
      h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',
@@ -17,7 +17,6 @@
   [                                    / body (NestedPart)      /
     1,                                   / dispostion = render  /
     "",                                  / language             /
-    0,                                   / partIndex = 1st part /
     1,                                   / cardinality = single /
     "text/markdown;variant=GFM",         / contentType          /
                                          / content              /

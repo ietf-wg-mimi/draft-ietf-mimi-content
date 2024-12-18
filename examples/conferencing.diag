@@ -1,1 +1,1 @@
-[null, h'466F6F20313138', 0, null, [h'B267614D43E7676D28EF5B15E8676F23679FE365C78849D83E2BA0AE8196EC4E'], {}, [7, "", 0, 2, "", 32("https://example.com/join/12345"), 0, 0, 0, h'', h'', h'', 0, h'', "Join the Foo 118 conference", ""]]
+[null, h'466F6F20313138', null, null, [h'B267614D43E7676D28EF5B15E8676F23679FE365C78849D83E2BA0AE8196EC4E'], {}, [7, "", 2, "", "https://example.com/join/12345", 0, 0, 0, h'', h'', h'', 0, h'', "Join the Foo 118 conference", ""]]
