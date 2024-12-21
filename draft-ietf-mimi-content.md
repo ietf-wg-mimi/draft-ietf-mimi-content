@@ -9,7 +9,7 @@ keyword = ["mimi","content","mls","mime"]
 [seriesInfo]
 status = "informational"
 name = "Internet-Draft"
-value = "draft-ietf-mimi-content-04"
+value = "draft-ietf-mimi-content-05"
 stream = "IETF"
 
 [[author]]
@@ -1827,11 +1827,12 @@ to avoid confusion
 
 ## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
 
+* change message ID construction: TODO: fix examples
 * remove partIndex and make it implied
 * mention Content ID URI (cid:) and describe implicit partIndex
 * discuss rendering and authorization issues for edit/delete in the security
 considerations
 * include both absolute and relative expiration times
-* add specificity about markdown support
+* add specificity about markdown support / create GFM-MIMI Markdown variant
 * remove tag from URLs in ExternalPart and implied headers
 
