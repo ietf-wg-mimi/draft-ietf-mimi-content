@@ -214,7 +214,7 @@ mimiContent = [
   salt: bstr .size 32,
   replaces: null / MessageId,       ; {1}
   topicId: bstr,                    ; {2}
-  expires: uint .size 4,            ; {3}
+  expires: null / Expiration        ; {3}
   inReplyTo: null / InReplyTo,      ; {4}
   lastSeen: [* MessageId],          ; {5}
   extensions: {* name => value },   ; {6}
