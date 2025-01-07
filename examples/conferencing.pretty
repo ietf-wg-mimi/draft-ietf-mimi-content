@@ -2,23 +2,21 @@
    f6                                   # primitive(22)
    47                                   # bytes(7)
       466f6f20313138                    # "Foo 118"
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
          b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e # "\xB2gaMC\xE7gm(\xEF[\u0015\xE8go#g\x9F\xE3eǈI\xD8>+\xA0\xAE\x81\x96\xECN"
    a0                                   # map(0)
-   90                                   # array(16)
+   8f                                   # array(15)
       07                                # unsigned(7)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""
-      d8 20                             # tag(32)
-         78 1e                          # text(30)
-            68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435 # "https://example.com/join/12345"
+      78 1e                             # text(30)
+         68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435 # "https://example.com/join/12345"
       00                                # unsigned(0)
       00                                # unsigned(0)
       00                                # unsigned(0)

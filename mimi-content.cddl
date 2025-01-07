@@ -1,7 +1,9 @@
 mimiContent = [
+  salt: bstr .size 32,
   replaces: null / MessageId,
   topicId: bstr,
-  expires: uint .size 4,
+  expires: null / Expiration,
+  inReplyTo: null / MessageId,
   inReplyTo: null / InReplyTo,
   lastSeen: [* MessageId],
   extensions: {* name => value },
@@ -11,7 +13,6 @@ mimiContent = [
 NestedPart = [
   disposition: baseDispos / $extDispos / unknownDispos,
   language: tstr,
-  partIndex: uint .size 2,
   ( NullPart // SinglePart // ExternalPart // MultiPart)
 ]
 
@@ -26,7 +27,7 @@ SinglePart = (
 ExternalPart = (
     cardinality: external,
     contentType: tstr,
-    url: uri,
+    url: tstr,
     expires: uint .size 4,
     size: uint .size 8,
     encAlg: uint .size 2,
@@ -45,10 +46,9 @@ MultiPart = (
     parts: [2* NestedPart]
 )
 
-InReplyTo = [
-  message: MessageId,
-  hashAlg: uint .size 1,
-  hash: bstr
+Expiration = [
+    relative: bool,
+    time: uint .size 4
 ]
 
 baseDispos = &(
@@ -65,8 +65,8 @@ baseDispos = &(
 unknownDispos = &( unknown: 9..255 ) ; Note: any ext_dispos take precedence
 
 MessageId = bstr .size 32          ; MessageId is derived from SHA256 hash
-name = tstr .size (1..255)
-value = bstr .size (0..4095)
+name = int / tstr .size (1..255)
+value = any .size (0..4095)
 
 nullpart = 0
 single   = 1

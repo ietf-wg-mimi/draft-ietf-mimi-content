@@ -7,8 +7,8 @@ content := $(filter-out report.cbor implied-original.cbor,$(cbor))
 
 all: $(targets)
 
-%.diag: %.edn
-	edn-abnf -t diag $< > $@
+#%.diag: %.edn
+#	edn-abnf -t diag $< > $@
 
 %.cbor: %.diag
 	diag2cbor.rb $< > $@

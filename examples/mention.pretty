@@ -2,17 +2,16 @@
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
-   00                                   # unsigned(0)
+   f6                                   # primitive(22)
    f6                                   # primitive(22)
    81                                   # array(1)
       58 20                             # bytes(32)
          e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed # "\xE7\u0001\xBE\xEEY\xF97b\x82\xF3\x90\x92\xE1\u0004\e*\xC2\xE3\xAA\xD1wep\xC1\xA2\x8D\xE2D\x97\x9Cq\xED"
    a0                                   # map(0)
-   86                                   # array(6)
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
       78 19                             # text(25)
          746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"

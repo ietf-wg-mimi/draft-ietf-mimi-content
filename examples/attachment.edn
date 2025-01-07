@@ -1,7 +1,7 @@
 [
   null,                             / replaces                 /
   h'',                              / topicId                  /
-  0,                                / expires = never          /
+  null,                             / expires = never          /
   null,                             / inReplyTo                /
   [                                 / lastSeen (1 item)        /
      /  Expiring message                                          /
@@ -11,10 +11,9 @@
   [                                 / body (NestedPart) /
     6,                                / dispostion = attachment   /
     "en",                             / language = en             /
-    0,                                / partIndex = 1st part      /
     2,                                / cardinality = external part /
     "video/mp4",                      / contentType               /
-    32("https://example.com/storage/8ksB4bSrrRE.mp4"), / url      /
+    "https://example.com/storage/8ksB4bSrrRE.mp4",     / url      /
     0,                                / expires                   /
     708234961,                        / size                      /
     1,                                / encAlg = AES-128-GCM      /

@@ -1,21 +1,21 @@
 [
   null,                             / replaces          /
   h'',                              / topicId           /
-  0,                                / expires           /
+  null,                             / expires           /
   null,                             / inReplyTo         /
   [],                               / lastSeen          /
   {},                               / extensions        /
   [
     1,                          / disposition = render      /
     "",                         / language                  /
-    0,                          / partIndex = 0 (1st part)  /
+                                / partIndex = 0 (1st part)  /
     3,                          / cardinality = multi       /
     0,                          / partSemantics = chooseOne /
     [
       [
         1,                           / disposition = render /
         "",                          / language             /
-        1,                           / partIndex = 1        /
+                                     / partIndex = 1        /
         1,                           / cardinality = single /
         "text/markdown;variant=GFM", / contentType          /
         '# Welcome!'                 / content              /
@@ -23,7 +23,7 @@
       [
         1,                           / disposition = render /
         "",                          / language             /
-        2,                           / partIndex = 1        /
+                                     / partIndex = 2        /
         1,                           / cardinality = single /
                                      / contentType          /
         "application/vnd.examplevendor-fancy-im-message",
