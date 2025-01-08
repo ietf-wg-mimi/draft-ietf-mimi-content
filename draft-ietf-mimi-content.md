@@ -25,7 +25,7 @@ organization = "Rohan Mahy Consulting Services"
 
 This document describes content semantics common in Instant Messaging (IM)
 systems and describes a profile suitable for instant messaging
-interoperability of messages end-to-end encrypted inside the MLS 
+interoperability of messages end-to-end encrypted inside the MLS
 (Message Layer Security) Protocol.
 
 {mainmatter}
@@ -37,7 +37,7 @@ document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] wh
 and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS group, and KeyPackage have the same meanings as in
-the MLS protocol [@!RFC9420]. Other relevant terminology cab be
+the MLS protocol [@!RFC9420]. Other relevant terminology can be
 found in [@?I-D.ietf-mimi-arch].
 
 # Introduction
@@ -45,7 +45,7 @@ found in [@?I-D.ietf-mimi-arch].
 RFC EDITOR: PLEASE REMOVE THE FOLLOWING PARAGRAPH. The source for
 this draft is maintained in GitHub. Suggested changes should be
 submitted as pull requests at https://github.com/ietf-wg-mimi/draft-ietf-mimi-content.
-Editorial changes can be managed in GitHub, but any substantive 
+Editorial changes can be managed in GitHub, but any substantive
 change should be discussed on the MIMI mailing list (mimi@ietf.org).
 
 MLS [@!RFC9420] is a group key establishment protocol
@@ -110,7 +110,7 @@ Extended Diagnostic Notation (described in [Appendix G of @!RFC8610] and
 more rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then
 include a hex dump of the CBOR data in the pretty printed format popularized
 by the CBOR playground website (https://cbor.me) with some minor whitespace
-and comment reformatting. Finally a message ID for the message is included
+and comment reformatting. Finally, a message ID for the message is included
 for most messages.
 
 All the instance documents validate using the CDDL schemas in Appendix B and
@@ -121,7 +121,7 @@ are included in the examples directory in the github repo for this document.
 IM systems have a number of types of identifiers. These are described in detail
 in [@?I-D.mahy-mimi-identity]. A few of these used in this document are:
 
-* handle identifier (external, friendly representation). This is the type 
+* handle identifier (external, friendly representation). This is the type
 of identifier described later as the senderUserUrl in the examples, which
 is analogous to the From header in email.
 * client/device identifier (internal representation). This is the type
@@ -135,7 +135,7 @@ could be used.
 
 ## Message ID
 
-The MIMI content format relies heavily of message IDs to refer to other
+The MIMI content format relies heavily on message IDs to refer to other
 messages, to reply, react, edit, delete, and report on the status of
 messages. Every MIMI content message contains a 32-octet per-message
 cryptographically random salt, and has a 32-octet message ID which is calculated
@@ -162,7 +162,7 @@ birthday attack on SHA_256 becomes feasible).
 
 ##  Accepted Timestamp
 
-As described in the the MIMI architecture [@?I-D.ietf-mimi-arch], one
+As described in the MIMI architecture [@?I-D.ietf-mimi-arch], one
 provider, called the hub, is responsible for ordering messages. The hub is
 also responsible for recording the time that any application message is
 accepted, and conveying it to any "follower" providers which receive messages
@@ -176,7 +176,7 @@ for fine grain sorting of messages into a consistent order.
 Most common instant messaging features are expressed as individual messages.
 A plain or rich text message is obviously a message, but a reaction (ex: like),
 a reply, editing a previous message, deleting an earlier message, and read
-receipts are all typically modeled as another message with different properties. 
+receipts are all typically modeled as another message with different properties.
 
 This document describes the semantics of a message container, which
 can represent most of these previously mentioned message types.
@@ -195,7 +195,7 @@ allows a single report to convey the read/delivered status of multiple messages
 # MIMI Content Container Message Semantics
 
 Each MIMI Content message is a container format with two categories
-of information: 
+of information:
 
 * the message behavior fields (which can have default or empty values), and
 * the body part(s) and associated parameters
@@ -207,7 +207,7 @@ The subsections that follow contain snippets of Concise Data Definition
 Language (CDDL) [@!RFC8610] schemas for the MIMI Content Container. The complete collected CDDL schema for MIMI Content Container is available in
 (#full-schema).
 
-## Message Behavior Fields 
+## Message Behavior Fields
 
 ``` cddl
 mimiContent = [
@@ -234,7 +234,7 @@ messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
  If the `replaces` field is absent, the receiver
 assumes that the current message has not identified any special
-relationship with another previous message. 
+relationship with another previous message.
 
 The `topicId` {2} data field indicates that the current message is
 part of a logical grouping of messages which all share the same
@@ -326,7 +326,7 @@ possibly nested parts. A body with zero parts is permitted when
 deleting or unliking. External body parts (#external) are also supported.
 When there is a single (inline) part or a (single) externally reference
 part, its IANA media type, subtype, and parameters are included in the
-contentType field {8}. 
+contentType field {8}.
 
 ``` cddl
 NestedPart = [
@@ -383,7 +383,7 @@ for example a rich-text message with an inline image. With other
 messages, there are multiple choices available for the same content,
 for example a choice among multiple languages, or between two
 different image formats. The relationship semantics among the parts
-is specified as an enumeration {9}. 
+is specified as an enumeration {9}.
 
 The `chooseOne` part semantic is roughly analogous to the semantics of the
 `multipart/alternative` media type, except that the ordering of the
@@ -441,11 +441,11 @@ registry.
 The `session` disposition means that the content is a description of
 a multimedia session, or a URI used to join one.
 The `preview` disposition means that the content is a sender-generated
-preview of something, such as the contents of a link. 
+preview of something, such as the contents of a link.
 
 The value of the language data field is an empty string or a
 comma-separated list of one or more `Language-tag`s as defined
-in [@!RFC5646]. 
+in [@!RFC5646].
 
 Each part also has an implied part index, which is a zero-indexed,
 depth-first integer. It is used to efficiently refer to a specific
@@ -456,7 +456,7 @@ calculated.
 The partIndex can be used inside a content ID URI [@!RFC2392] in a "container"
 part (for example HTML, Markdown, vCard [@?RFC6350], or iCal [@?RFC5545]) to
 reference another part inside the same MIMI message. In a MIMI message it has
-the form `cid:`*partIndex*`@local.invalid` .
+the form `cid:`*partIndex*`@local.invalid`.
 
 
 ## External content {#external}
@@ -550,7 +550,7 @@ member of the group:
 * The membership of the group (via MLS).
 * The identity of any MLS client which sends an application message (via MLS).
 * The MLS group ID (via MLS)
-* The human readable name(s) of the MIMI room, if any (out-of-band or extension).
+* The human-readable name(s) of the MIMI room, if any (out-of-band or extension).
 * Which media types are mandatory to implement (MLS content advertisement extensions).
 * For each member, the media types each supports (MLS content advertisement extensions).
 
@@ -562,7 +562,7 @@ Extended Diagnostic Format (described in [Appendix G of @!RFC8610] and more
 rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then include a
 hex dump of the CBOR data in the pretty printed format popularized by the
 CBOR playground website (https://cbor.me) with some minor whitespace and
-comment reformatting. Finally a message ID for the message is included for
+comment reformatting. Finally, a message ID for the message is included for
 most messages.
 
 All the instance documents validate using the CDDL schemas in Appendix B and
@@ -688,7 +688,7 @@ does not recognize could render the reaction as a reply, possibly prefixing
 with a localized string such as "Reaction: ".  Note that a reaction could
 theoretically even be another media type (ex: image, audio, or video), although
 not currently implemented in major instant messaging systems.
-Note that many systems allow mutiple independent reactions per sender.
+Note that many systems allow multiple independent reactions per sender.
 
 * Sender user handle URL:
   im:cathy-washington@example.com
@@ -791,7 +791,7 @@ replace in the EDN the contentType and content indicated below.
 ## Edit
 
 Unlike with email messages, it is common in IM systems to allow the sender of
-a message to edit or delete the message after the fact. Typically the message
+a message to edit or delete the message after the fact. Typically, the message
 is replaced in the user interface of the receivers (even after the original
 message is read) but shows a visual indication that it has been edited.
 
@@ -853,7 +853,7 @@ a subsequently edited message.
 
 In IM systems, a delete means that the author of a specific message has
 retracted the message, regardless if other users have read the message
-or not. Typically a placeholder remains in the user interface showing
+or not. Typically, a placeholder remains in the user interface showing
 that a message was deleted. Replies which reference a deleted message
 typically hide the quoted portion and reflect that the original message
 was deleted.
@@ -952,7 +952,7 @@ instead is to allow cooperating client that respect the convention to signal
 expiration times clearly.
 
 The `expires` data field contains the absolute timestamp when, or relative
-amount of time after reading after which the message can be deleted.
+amount of time after reading, after which the message can be deleted.
 The semantics of the header are that the message is automatically deleted
 by the receiving clients at the indicated time without user interaction or
 network connectivity necessary.
@@ -1063,10 +1063,10 @@ reaction disposition.
 
 Joining a conference via an external URL is possible. The link could be
 rendered to the user, requiring a click. Alternatively the URL could be
-rendered the 
-disposition could be specified as `session` which could be processed 
+rendered the
+disposition could be specified as `session` which could be processed
 differently by the client (for example, alerting the user or presenting
-a dialog box). 
+a dialog box).
 Further discussion of calling and conferencing functionality is out-of-scope
 of this document.
 
@@ -1149,12 +1149,12 @@ in [@?RFC8098] is completely inappropriate in this context:
 * each notification can refer to only one message
 * it is extremely verbose
 
-Instead we would like to be able to include status changes about multiple
+Instead, we would like to be able to include status changes about multiple
 messages in each report, the ability to mark a message delivered, then read, then unread, then expired
 for example.
 
 The format below, application/mimi-message-status is sent
-by one member of an MLS group to the entire group and can refer to multiple messages in that group. 
+by one member of an MLS group to the entire group and can refer to multiple messages in that group.
 The format contains its own timestamp, and a list of message ID / status pairs. As
 the status at the recipient changes, the status can be updated in a subsequent notification. Below is the CDDL schema for message status.
 
@@ -1199,7 +1199,7 @@ text messages sent inside, and any image or other formats needs to be specified.
 Clients compliant with MIMI MUST be able to receive the following media types:
 
 * application/mimi-content -- the MIMI Content container format (described in this document)
-* text/plain;charset=utf-8 
+* text/plain;charset=utf-8
 * text/markdown;variant=GFM-MIMI -- Github Flavored Markdown for MIMI, defined in (#gfm-mimi)
 
 Note that it is acceptable to render the contents of a received markdown
@@ -1454,7 +1454,7 @@ represent malicious messages. These should be logged and discarded.
   - which duplicate another message ID already encountered
   - where the first octet of the message ID is an unknown hash algorithm.
 * timestamps
-  - received more than a few minutes in the future, or 
+  - received more than a few minutes in the future, or
   - before the first concrete syntax of this document is published
   - before the room containing them was created
 * topicId
@@ -1591,7 +1591,7 @@ link is considered a rendering hint from the sender to the receiver of
 the message. The receiver should use local policy to decide if the hint
 is an acceptable local representation of the user represented by the link
 itself. If the hint is not an acceptable representation, the client should
-instead display its canonical representation for the user. 
+instead display its canonical representation for the user.
 
 For example, in the first example, the sender expresses no preference
 about how to render the mention. In the second example, the sender requests
@@ -1627,7 +1627,7 @@ read receipts to be in the group and agree to the policy of sending them
 whenever a message was read. A user who did not wish to send read receipts could
 review the policy (automatically or manually) and choose not to join
 the group. Of course, requiring read receipts is a cooperative effort
-just like using self-deleting messages. A malicious client could obviously 
+just like using self-deleting messages. A malicious client could obviously
 read a message and not send a read receipt, or send a read receipt for a
 message that was never rendered. However, cooperating clients have a way to
 agree that they will send read receipts when a message is read in a specific
@@ -1702,7 +1702,7 @@ Below is a CDDL schema for the implied message fields.
 
 # Multipart examples
 
-In a heterogenous group of IM clients, it is often desirable to send more than one
+In a heterogeneous group of IM clients, it is often desirable to send more than one
 media type as alternatives, such that IM clients have a choice of which media
 type to render. For example, imagine an IM group containing a set of clients
 which support a common video format and a subset which only support animated GIFs.
@@ -1711,13 +1711,13 @@ containing both media types. Every client in the group chat could render somethi
 resembling the media sent. This is analogous to the `multipart/alternative` [@?RFC2046]
 media type.
 
-Likewise it is often desirable to send more than one media type intended to be
+Likewise, it is often desirable to send more than one media type intended to be
 rendered together as in (for example a rich text document with embedded images),
 which can be represented using a `MultiPart` NestablePart with `processAll`
 semantics. This is analogous to the `multipart/mixed` [@?RFC2046] media type.
 
 Note that there is a minor semantic difference between multipart/alternative and
-`MultiPart` with `chooseOne` semantics. In multipart/alternative, the parts are 
+`MultiPart` with `chooseOne` semantics. In multipart/alternative, the parts are
 presented in preference order by the sender. With `MultiPart` the receiver
 chooses its "best" format to render according to its own preferences.
 
@@ -1728,7 +1728,7 @@ messaging format simultaneously.
 
 <{{examples/multipart-1.edn}}
 
-## Mulitple Reactions Example
+## Multiple Reactions Example
 
 This example shows sending a reaction with multiple separate emojis.
 
@@ -1816,4 +1816,3 @@ considerations
 * include both absolute and relative expiration times
 * add specificity about markdown support / create GFM-MIMI Markdown variant
 * remove tag from URLs in ExternalPart and implied headers
-
