@@ -1063,8 +1063,7 @@ reaction disposition.
 
 Joining a conference via an external URL is possible. The link could be
 rendered to the user, requiring a click. Alternatively the URL could be
-rendered the
-disposition could be specified as `session` which could be processed
+in an ExternalPart with a disposition of `session`, which could be processed
 differently by the client (for example, alerting the user or presenting
 a dialog box).
 Further discussion of calling and conferencing functionality is out-of-scope
