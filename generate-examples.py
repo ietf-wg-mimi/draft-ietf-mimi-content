@@ -125,7 +125,7 @@ if __name__ == "__main__":
     alice = "mimi://example.com/u/alice-smith"
     bob   = "mimi://example.com/u/bob-jones"
     cathy = "mimi://example.com/u/cathy-washington"
-    t = 1644387225019
+    #t = 1644387225019
     message_ids = {}
     salts = [
         '5eed9406c2545547ab6f09f20a18b003',
@@ -280,7 +280,7 @@ if __name__ == "__main__":
 
     # MENTION MESSAGE
     part = make_singlepart(
-        b'Kudos to [@Alice Smith](im:alice-smith@example.com)' +
+        b'Kudos to [@Alice Smith](mimi://example.com/u/alice-smith)' +
         b' for making the release happen!')
     make_message("mention", 3,
         sender=cathy, room=room,
@@ -290,8 +290,8 @@ if __name__ == "__main__":
 
     # MENTION-HTML MESSAGE
     part = make_singlepart(
-        b'<p>Kudos to <a href="im:alice-smith@example.com">@Alice Smith</a>' +
-        b' for making the release happen!</p>',
+        b'<p>Kudos to <a href="mimi://example.com/u/alice-smith">' +
+        b'@Alice Smith</a> for making the release happen!</p>',
         content_type="text/html;charset=utf-8")
     make_message("mention-html", 4,
         sender=cathy, room=room,
