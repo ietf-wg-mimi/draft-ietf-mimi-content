@@ -1,11 +1,17 @@
+/ message ID = h'010714238126772e253118df3cd18fa6
+                 9f90841d7df1f6f0cddab1f0dc0c9a26' /
+/ timestamp  = 1644387225019 = 2022-02-09T06:13:45.019000+00:00Z /
 [
-  null,                             / replaces          /
-  h'',                              / topicId           /
-  null,                             / expires           /
-  null,                             / inReplyTo         /
-  [],                               / lastSeen          /
-  {},                               / extensions        /
-  [                                 / body (NestedPart) /
+  h'5eed9406c2545547ab6f09f20a18b003', / salt /
+  null,                                / replaces /
+  h'',                                 / topicId /
+  null,                                / expires /
+  null,                                / inReplyTo /
+  {                                    / extensions /
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    / body (NestedPart) /
     1,                                / dispostion = render       /
     "",                               / language                  /
     1,                                / cardinality = single part /

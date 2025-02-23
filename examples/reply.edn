@@ -1,25 +1,23 @@
+/ message ID = h'013a4620586d9b9c02ffd89321fef55f
+                 b51b9d2229c13d90473172f909410e8f' /
+/ timestamp  = 1644387237492 = 2022-02-09T06:13:57.492000+00:00Z /
 [
-  null,                                / replaces             / 
-  h'',                                 / topicId              /
-  null,                                / expires = never      /
-  [                                    / InReplyTo            /
-     /  message = Original message                            /
-     h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',
-     1,                                  /  hashAlg = sha256  /
-     /  hash  /
-     h'6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5'
-  ],
-  [                                      / lastSeen (1 item)   /
-     /  Original message                                       /
-     h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501'
-  ],
-  {},                                  / extensions             /
-  [                                    / body (NestedPart)      /
-    1,                                   / dispostion = render  /
-    "",                                  / language             /
-    1,                                   / cardinality = single /
-    "text/markdown;variant=GFM",         / contentType          /
-                                         / content              /
-    'Right on! _Congratulations_ \'all!'
+  h'11a458c73b8dd2cf404db4b378b8fe4d', / salt /
+  null,                                / replaces /
+  h'',                                 / topicId /
+  null,                                / expires /
+  h'010714238126772e253118df3cd18fa6
+    9f90841d7df1f6f0cddab1f0dc0c9a26', / inReplyTo /
+  {                                    / extensions /
+    1: "mimi://example.com/u/bob-jones",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    / body (NestedPart) /
+    1,                                / dispostion = render       /
+    "",                               / language                  /
+    1,                                / cardinality = single part /
+    "text/markdown;variant=GFM",      / contentType               /
+                                      / content                   /
+    'Right on! _Congratulations_ 'all!'
   ]
 ]
