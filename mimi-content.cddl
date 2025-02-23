@@ -4,8 +4,6 @@ mimiContent = [
   topicId: bstr,
   expires: null / Expiration,
   inReplyTo: null / MessageId,
-  inReplyTo: null / InReplyTo,
-  lastSeen: [* MessageId],
   extensions: {* name => value },
   nestedPart: NestedPart
 ]
