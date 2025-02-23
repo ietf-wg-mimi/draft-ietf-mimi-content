@@ -1,28 +1,32 @@
+# CONFERENCING
+# message ID = h'015bec6df9b19f8e9feb729a9f881705
+#                c714a4ad01b30ee70ce4e0c7b8226e24'
+# timestamp  = not specified in example
 [
-  null,                             / replaces                 /
-  h'466f6f20313138',                / topicId = Foo 118        /
-  null,                             / expires                  /
-  null,                             / inReplyTo                /
-  [                                 / lastSeen (1 item)        /
-     /  Attachment message                                        /
-     h'b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e'
-  ],
-  {},                               / extensions               /
-  [                                 / body (NestedPart)        /
-    7,                                / dispostion = session      /
-    "",                               / language                  /
-    2,                                / cardinality = external part /
-    "",                               / contentType               /
-    "https://example.com/join/12345", / url                       /
-    0,                                / expires                   /
-    0,                                / size                      /
-    0,                                / encAlg = none             /
-    h'',                              / key                       /
-    h'',                              / nonce                     /
-    h'',                              / aad                       /
-    0,                                / hashAlg = none            /
-    h'',                              / content hash              /
-    "Join the Foo 118 conference",    / description               /
-    ""                                / filename                  /
+  h'678ac6cd54de049c3e9665cd212470fa', # salt
+  null,                                # replaces
+  'Foo 118',                           # topicId
+  null,                                # expires
+  null,                                # inReplyTo
+  {                                    # extensions
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+    7,                                   # dispostion = session
+    "",                                  # language
+    2,                                   # cardinality = external part
+    "",                                  # contentType
+    "https://example.com/join/12345",    # url
+    0,                                   # expires
+    708234961,                           # size
+    0,                                   # encAlg = none
+    h'',                                 # key
+    h'',                                 # nonce
+    h'',                                 # aad
+    0,                                   # hashAlg = none
+    h'',                                 # content hash
+    "Join the Foo 118 conference",       # description
+    ""                                   # filename
   ]
 ]

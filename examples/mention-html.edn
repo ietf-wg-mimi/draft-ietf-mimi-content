@@ -1,20 +1,25 @@
+# MENTION-HTML
+# message ID = h'010608d9bf7ed720be4e6e869c04db4a
+#                b91ca5b590984a3ad6721f958dd40364'
+# timestamp  = 1644387243008 = 2022-02-08T22:14:03.008Z
 [
-  null,                                / replaces             / 
-  h'',                                 / topicId              /
-  null,                                / expires = never      /
-  null,                                / InReplyTo            /
-  [                                      / lastSeen (1 item)   /
-     /  Reply message                                          /
-     h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed'
-  ],
-  {},                                  / extensions              /
-  [                                    / body (NestedPart)       /
-    1,                                   / dispostion = render   /
-    "",                                  / language              /
-    1,                                   / cardinality = single  /
-    "text/html;charset=utf-8",           / contentType           /
-                                         / content               /
-    '<p>Kudos to <a href="im:alice-smith@example.com">@Alice '
-    'Smith</a> for making the release happen!</p>'
+  h'15d9705fd5bf5e02b0af47c85f8b98fe', # salt
+  null,                                # replaces
+  h'',                                 # topicId
+  null,                                # expires
+  h'010714238126772e253118df3cd18fa6   # inReplyTo =
+    9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+  {                                    # extensions
+    1: "mimi://example.com/u/cathy-washington",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+    1,                                   # dispostion = render
+    "",                                  # language
+    1,                                   # cardinality = single
+    "text/html;charset=utf-8",           # contentType
+                                         # content
+    '<p>Kudos to <a href="mimi://example.com/u/alice-smith">' +
+    '@Alice Smith</a> for making the release happen!</p>'
   ]
 ]

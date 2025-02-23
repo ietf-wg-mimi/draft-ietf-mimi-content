@@ -1,23 +1,27 @@
+# EXPIRING
+# message ID = h'0114e486b39d705e15e3000b57290de4
+#                79affbda4ec2c1b17cc25c214229ed7d'
+# timestamp  = 1644389403227 = 2022-02-08T22:49:06.227Z
 [
-  null,                             / replaces                 /
-  h'',                              / topicId                  /
-  [                                 / Expiration               /
-    false,                            / absolute, not relative  /
-    1644390004,        / expires = 10 minutes after it was sent /
+  h'33be993eb39f418f9295afc2ae160d2d', # salt
+  null,                                # replaces
+  h'',                                 # topicId
+  [                                    # expires
+    false,                               # absolute, not relative
+    1644390004,          # expires = 10 minutes after it was sent
   ]
-  null,                             / inReplyTo                /
-  [                                 / lastSeen (1 item)        /
-     /  Unlike message                                          /
-     h'1a771ca1d84f8fda4184a1e02a549e201bf434c6bfcf1237fa45463c6861853b'
-  ],
-  {},                               / extensions        /
-  [                                 / body (NestedPart) /
-    1,                                / dispostion = render       /
-    "",                               / language                  /
-    1,                                / cardinality = single part /
-    "text/markdown;variant=GFM",      / contentType               /
-                                      / content                   /
-    '__*VPN GOING DOWN*__ I\'m rebooting the VPN in ten minutes'
+  null,                                # inReplyTo
+  {                                    # extensions
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+    1,                                   # dispostion = render
+    "",                                  # language
+    1,                                   # cardinality = single part
+    "text/markdown;variant=GFM-MIMI",    # contentType
+                                         # content
+    '__*VPN GOING DOWN*__ I\'m rebooting the VPN in ten minutes' +
     ' unless anyone objects.'
   ]
 ]

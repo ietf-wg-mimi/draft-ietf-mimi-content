@@ -1,30 +1,25 @@
+# EDIT
+# message ID = h'0177ae58cfe751f18d7c89979ceabb0d
+#                e701acb8daa2872bb353fa5f8aba1851'
+# timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
 [
-  / replaces = Reply message                                  /
-  h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed',
-  h'',                                 / topicId              /
-  null,                                / expires = never      /
-  [                                      / InReplyTo          /
-     /  message = Original message                            /
-     h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',
-     1,                                  /  hashAlg = sha256  /
-     /  hash                /
-     h'6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5'
-  ],
-  [                                      / lastSeen (2 items)   /
-    /  Reaction message /
-    h'4dcab7711a77ea1dd025a6a1a7fe01ab
-      3b0d690f82417663cb752dfcc37779a1',
-    /  Mention message  /
-    h'6b50bfdd71edc83554ae21380080f4a3
-      ba77985da34528a515fac3c38e4998b8'  
-  ],
-  {},                                  / extensions             /
-  [                                    / body (NestedPart)      /
-    1,                                   / dispostion = render  /
-    "",                                  / language             /
-    1,                                   / cardinality = single /
-    "text/markdown;variant=GFM",         / contentType          /
-                                         / content              /
-    'Right on! _Congratulations_ y\'all'
+  h'b8c2e6d8800ecf45df39be6c45f4c042',  # salt
+  h'01efab9eca8374d3618a16b39c658689    / replaces /
+  fd90d07fe666a846178cb4965c94a8bf',    #   Reply
+  h'',                                 # topicId
+  null,                                # expires
+  h'010714238126772e253118df3cd18fa6   # inReplyTo =
+    9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+  {                                    # extensions
+    1: "mimi://example.com/u/bob-jones",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+    1,                                   # dispostion = render
+    "",                                  # language
+    1,                                   # cardinality = single part
+    "text/markdown;variant=GFM-MIMI",    # contentType
+                                         # content
+    'Right on! _Congratulations_ y\'all!'
   ]
 ]

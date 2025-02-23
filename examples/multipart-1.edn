@@ -1,33 +1,39 @@
+# MULTIPART-1
+# message ID = h'0127c836722b55fafc7f196d7017a593
+#                f09b500fee8dfe1dbf2071ee5f1caba7'
+# timestamp  = not specified in example
 [
-  null,                             / replaces          /
-  h'',                              / topicId           /
-  null,                             / expires           /
-  null,                             / inReplyTo         /
-  [],                               / lastSeen          /
-  {},                               / extensions        /
-  [
-    1,                          / disposition = render      /
-    "",                         / language                  /
-                                / partIndex = 0 (1st part)  /
-    3,                          / cardinality = multi       /
-    0,                          / partSemantics = chooseOne /
+  h'261c953e178af653fe3d42641b91d814', # salt
+  null,                                # replaces
+  h'',                                 # topicId
+  null,                                # expires = never
+  null,                                # inReplyTo
+  {                                    # extensions
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+                                         # partIndex = 0 (1st part)
+    1,                                   # disposition = render
+    "",                                  # language
+    3,                                   # cardinality = multi
+    0,                                   # partSemantics = chooseOne
     [
-      [
-        1,                           / disposition = render /
-        "",                          / language             /
-                                     / partIndex = 1        /
-        1,                           / cardinality = single /
-        "text/markdown;variant=GFM", / contentType          /
-        '# Welcome!'                 / content              /
+      [                                  # partIndex = 1
+        1,                               # disposition = render
+        "",                              # language
+        1,                               # cardinality = single
+        "text/markdown;variant=GFM-MIMI",# contentType
+        '# Welcome!'                     # content
       ],
-      [
-        1,                           / disposition = render /
-        "",                          / language             /
-                                     / partIndex = 2        /
-        1,                           / cardinality = single /
-                                     / contentType          /
+      [                                  # partIndex = 2
+        1,                               # disposition = render
+        "",                              # language
+        1,                               # cardinality = single
+        # contentType
         "application/vnd.examplevendor-fancy-im-message",
-        h'dc861ebaa718fd7c3ca159f71a2001'       / content   /
+        # content
+        h'dc861ebaa718fd7c3ca159f71a2001'
       ]
     ]
   ]
