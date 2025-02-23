@@ -76,7 +76,7 @@ def indent(string, num_spaces=4):
         return string
 
 
-# ****** 
+# ****** MIMI content specific
 
 def message_id(message_array):
     if type(message_array) is not list:
@@ -99,21 +99,26 @@ def message_id(message_array):
     )
     return b'\x01' + hash_output[0:31]
 
-
-# ****** 
-
 # numbered extensions
 SENDER = 1
 ROOM   = 2
 
 # dispositions
-RENDER = 1
+RENDER     = 1
+REACTION   = 2
+ATTACHMENT = 6
+SESSION    = 7
 
 # cardinalities
-NULLPART = 0
-SINGLEPART = 1
+NULLPART     = 0
+SINGLEPART   = 1
 EXTERNALPART = 2
-MULTIPART = 3
+MULTIPART    = 3
+
+# partSemantics
+CHOOSEONE    = 0
+SINGLEUNIT   = 1
+PROCESSALL   = 2
 
 if __name__ == "__main__":
     room = "mimi://example.com/r/engineering_team"
@@ -199,13 +204,14 @@ if __name__ == "__main__":
         ]
         return body
 
-    def make_multipart(parts_array, lang="", dispo=RENDER):
+    def make_multipart(parts_array, part_semantics, lang="", dispo=RENDER):
         if type(parts_array) is not list or len(parts_array) < 2:
             raise Exception("invalid Parts array")
         body = [
             dispo,
             lang,
             MULTIPART,
+            part_semantics,
             parts_array
         ]
         return body
@@ -241,111 +247,205 @@ if __name__ == "__main__":
         msgid = message_id(msg)
         print(message_name + ":")
         print(pretty_id(msgid, 0))
+        message_ids[message_name] = msgid
         return msgid
 
     # ORIGINAL MESSAGE
-#    part = make_singlepart(
-#        b'Hi everyone, we just shipped release 2.0. __Good  work__!')
-#    message_ids[0] = make_message("original", 0,
-#        sender=alice, room=room,
-#        replaces=None, topic=b'',
-#        expires=None, relative_expires=False,
-#        reply_to=None, body=part)
+    part = make_singlepart(
+        b'Hi everyone, we just shipped release 2.0. __Good  work__!')
+    make_message("original", 0,
+        sender=alice, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=None, body=part)
 
-
-
-
-    original = [
-        hex2bytes(salts[0]),  # salt
-        None,                 # replaces
-        b'',                  # topic
-        None,                 # expires
-        None,                 # inReplyTo
-        {                     # extensions
-            SENDER: alice,
-            ROOM: room
-        },
-        [                     # body
-            RENDER,
-            "",
-            SINGLEPART,
-            "text/markdown;variant=GFM-MIMI",
-            b'Hi everyone, we just shipped release 2.0. __Good  work__!'
-        ]
-    ]
-    msgid = message_id(original)
-    message_ids["original"] = msgid
-
-    original_edn = f"""/ message ID = {pretty_hex(bytes2hex(msgid), 15)} /
-/ timestamp  = {t} = {iso_msdate(t)} /
-[
-  h'{salts[0]}', / salt /
-  null,                                / replaces /
-  h'',                                 / topicId /
-  null,                                / expires /
-  null,                                / inReplyTo /
-  {{                                    / extensions /
-    {SENDER}: "{alice}",
-    {ROOM}: "{room}"
-  }},
-  [                                    / body (NestedPart) /
-    {RENDER},                                / dispostion = render       /
-    "",                               / language                  /
-    {SINGLEPART},                                / cardinality = single part /
-    "text/markdown;variant=GFM",      / contentType               /
-                                      / content                   /
-    'Hi everyone, we just shipped release 2.0. __Good  work__!'
-  ]
-]"""
-    write_to_file(cbor2.dumps(original), "examples/original.cbor")
-    write_to_file(original_edn, "examples/original.edn")
-    
-    
     # REPLY MESSAGE
+    part = make_singlepart(
+        b"Right on! _Congratulations_ 'all!")
+    make_message("reply", 1,
+        sender=bob, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
 
-    reply = [
-        hex2bytes(salts[1]),         # salt
-        None,                        # replaces
-        b'',                         # topic
-        None,                        # expires
-        message_ids["original"],     # inReplyTo
-        {                            # extensions
-            SENDER: bob,
-            ROOM: room
-        },
-        [                       # body
-            RENDER,
-            "",
-            SINGLEPART,
-            "text/markdown;variant=GFM",
-            b"Right on! _Congratulations_ 'all!"
-        ]
-    ]
-    msgid = message_id(reply)
-    message_ids["reply"] = msgid
+    # REACTION MESSAGE
+    part = make_singlepart(
+        '❤'.encode('utf-8'), dispo=REACTION,
+        content_type="text/plain;charset=utf-8")
+    make_message("reaction", 2,
+        sender=cathy, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
 
-    original_edn = f"""/ message ID = {pretty_id(msgid, 15)} /
-/ timestamp  = {t+12473} = {iso_msdate(t+12473)} /
-[
-  h'{salts[1]}', / salt /
-  null,                                / replaces /
-  h'',                                 / topicId /
-  null,                                / expires /
-  {pretty_id(message_ids["original"], 2)}, / inReplyTo /
-  {{                                    / extensions /
-    {SENDER}: "{bob}",
-    {ROOM}: "{room}"
-  }},
-  [                                    / body (NestedPart) /
-    {RENDER},                                / dispostion = render       /
-    "",                               / language                  /
-    {SINGLEPART},                                / cardinality = single part /
-    "text/markdown;variant=GFM",      / contentType               /
-                                      / content                   /
-    'Right on! _Congratulations_ \'all!'
-  ]
-]"""
-    write_to_file(cbor2.dumps(original), "examples/reply.cbor")
-    write_to_file(original_edn, "examples/reply.edn")
-    
+    # MENTION MESSAGE
+    part = make_singlepart(
+        b'Kudos to [@Alice Smith](im:alice-smith@example.com)' +
+        b' for making the release happen!')
+    make_message("mention", 3,
+        sender=cathy, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
+
+    # MENTION-HTML MESSAGE
+    part = make_singlepart(
+        b'<p>Kudos to <a href="im:alice-smith@example.com">@Alice Smith</a>' +
+        b' for making the release happen!</p>',
+        content_type="text/html;charset=utf-8")
+    make_message("mention-html", 4,
+        sender=cathy, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
+
+    # EDIT MESSAGE
+    part = make_singlepart(
+        b"Right on! _Congratulations_ y'all!")
+    make_message("edit", 5,
+        sender=bob, room=room,
+        replaces=message_ids["reply"], topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
+
+    # DELETE MESSAGE
+    part = make_nullpart()
+    make_message("delete", 6,
+        sender=bob, room=room,
+        replaces=message_ids["reply"], topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
+
+    # UNLIKE MESSAGE
+    part = make_nullpart(dispo=REACTION)
+    make_message("unlike", 7,
+        sender=cathy, room=room,
+        replaces=message_ids["reaction"], topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=message_ids["original"], body=part)
+
+    # EXPIRING MESSAGE
+    part = make_singlepart(
+        b"__*VPN GOING DOWN*__ I'm rebooting the VPN in ten minutes" +
+        b" unless anyone objects.")
+    make_message("expiring", 8,
+        sender=alice, room=room,
+        replaces=None, topic=b'',
+        expires=1644390004, relative_expires=False,
+        reply_to=None, body=part)
+
+    # ATTACHMENT MESSAGE
+    part = make_externalpart(lang="en", dispo=ATTACHMENT,
+            content_type="video/mp4",
+            url="https://example.com/storage/8ksB4bSrrRE.mp4",
+            expires=0,
+            size=708234961,
+            encAlg=1,  # AES-128-GCM
+            key=hex2bytes('21399320958a6f4c745dde670d95e0d8'),
+            nonce=hex2bytes('c86cf2c33f21527d1dd76f5b'),
+            aad=b'',
+            hashAlg=1, # SHA-256
+            contentHash=hex2bytes('9ab17a8cf0890baaae7ee016c7312fcc' +
+                                  '080ba46498389458ee44f0276e783163'),
+            description="2 hours of key signing video", 
+            filename="bigfile.mp4")
+    make_message("attachment", 9,
+        sender=bob, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=None, body=part)
+
+    # CONFERENCING MESSAGE
+    part = make_externalpart(lang="", dispo=SESSION,
+            content_type="",
+            url="https://example.com/join/12345",
+            expires=0,
+            size=708234961,
+            encAlg=0,  # NONE
+            key=b'', nonce=b'', aad=b'',
+            hashAlg=0, # NONE
+            contentHash=b'',
+            description="Join the Foo 118 conference",
+            filename="")
+    make_message("conferencing", 10,
+        sender=alice, room=room,
+        replaces=None, topic=b'Foo 118',
+        expires=None, relative_expires=False,
+        reply_to=None, body=part)
+
+    # MULTIPART-1 MESSAGE
+    part1 = make_singlepart(
+        b'# Welcome!')
+    part2 = make_singlepart(
+        hex2bytes('dc861ebaa718fd7c3ca159f71a2001'),
+        content_type="application/vnd.examplevendor-fancy-im-message")
+    part = make_multipart([part1, part2], CHOOSEONE)
+    make_message("multipart-1", 11,
+        sender=alice, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=None, body=part)
+
+    # MULTIPART-2 MESSAGE
+    part1 = make_singlepart(
+        '❤'.encode('utf-8'), dispo=REACTION,
+        content_type="text/plain;charset=utf-8")
+    part2 = make_singlepart(
+        '🥳'.encode('utf-8'), dispo=REACTION,
+        content_type="text/plain;charset=utf-8")
+    part3 = make_singlepart(
+        '🤞'.encode('utf-8'), dispo=REACTION,
+        content_type="text/plain;charset=utf-8")
+    part = make_multipart([part1, part2, part3], PROCESSALL, dispo=REACTION)
+    make_message("multipart-2", 12,
+        sender=alice, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=None, body=part)
+
+    # MULTIPART-3 MESSAGE
+    #   GIF related parts
+    part3 = make_singlepart(
+        b'<html><body><h1>Welcome!</h1>\n' +
+        b'<img src="cid:5@local.invalid" alt="Welcome image"/>\n' +
+        b'</body></html>',
+        content_type="text/html;charset=utf-8",
+        lang="en")
+    part4 = make_singlepart(
+        b'<html><body><h1>Bienvenue!</h1>\n' +
+        b'<img src="cid:5@local.invalid" alt="Image bienvenue"/>\n' +
+        b'</body></html>',
+        content_type="text/html;charset=utf-8",
+        lang="en")
+    part2 = make_multipart([part3, part4], CHOOSEONE) # pick en or fr (GIF)
+    part5 = make_singlepart(
+        hex2bytes('dc861ebaa718fd7c3ca159f71a2001a7'),
+        content_type="image.gif")
+    part1 = make_multipart([part2, part5], PROCESSALL)
+    #   PNG related parts
+    part8 = make_singlepart(
+        b'<html><body><h1>Welcome!</h1>\n' +
+        b'<img src="cid:10@local.invalid" alt="Welcome image"/>\n' +
+        b'</body></html>',
+        content_type="text/html;charset=utf-8",
+        lang="en")
+    part9 = make_singlepart(
+        b'<html><body><h1>Bienvenue!</h1>\n' +
+        b'<img src="cid:10@local.invalid" alt="Image bienvenue"/>\n' +
+        b'</body></html>',
+        content_type="text/html;charset=utf-8",
+        lang="en")
+    part7 = make_multipart([part8, part9], CHOOSEONE) # pick en or fr (PNG)
+    part10 = make_singlepart(
+        hex2bytes('fa444237451a05a72bb0f67037cc1669'),
+        content_type="image.png")
+    part6 = make_multipart([part7, part10], PROCESSALL)
+    #    top-level choose GIF or PNG
+    part = make_multipart([part1, part6], CHOOSEONE)
+    make_message("multipart-3", 13,
+        sender=alice, room=room,
+        replaces=None, topic=b'',
+        expires=None, relative_expires=False,
+        reply_to=None, body=part)
+
 
