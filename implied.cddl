@@ -1,5 +1,5 @@
 MessageDerivedValues = [
-    messageId: MessageId,               ; sha256 hash of message ciphertext
+    messageId: MessageId,
     hubAcceptedTimestamp: Timestamp,
     mlsGroupId: bstr,
     senderLeafIndex: uint .size 4,
@@ -10,5 +10,8 @@ MessageDerivedValues = [
 
 MsgUri = tstr
 MessageId = bstr .size 32
-Timestamp = #6.62(uint .size 8)    ; milliseconds since start of UNIX epoch
-
+Timestamp = MsecsSinceEpoch / TaggedTime
+MsecsSinceEpoch = uint .size 8  ; milliseconds since start of UNIX epoch
+TaggedTime = #6.62({* name => value })
+name = int / tstr .size (1..255)
+value = any .size (0..4095)
