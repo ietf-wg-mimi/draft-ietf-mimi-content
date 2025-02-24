@@ -364,7 +364,7 @@ if __name__ == "__main__":
             content_type="",
             url="https://example.com/join/12345",
             expires=0,
-            size=708234961,
+            size=0,
             encAlg=0,  # NONE
             key=b'', nonce=b'', aad=b'',
             hashAlg=0, # NONE
