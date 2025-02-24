@@ -594,29 +594,40 @@ printed CBOR.
 <{{examples/original.edn}}
 
 ```
-88                                      # array(8)
-   58 20                                # bytes(20)
-      d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+87                                      # array(7)
+   50                                   # bytes(16)
+      5eed9406c2545547ab6f09f20a18b003
    f6                                   # primitive(22)
    40                                   # bytes(0)
-                                        # ""
    f6                                   # primitive(22)
    f6                                   # primitive(22)
-   80                                   # array(0)
-   a0                                   # map(0)
-   86                                   # array(6)
+   a2                                   # map(2)
+      01                                # unsigned(1)
+      78 20                             # text(32)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f752f616c6963652d736d697468
+         # "mimi://example.com/u/alice-smith"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f722f656e67696e656572696e67
+         5f7465616d
+         # "mimi://example.com/r/engineering_team"
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 38                             # bytes(56)
-         48692065766572796f6e652c207765206a757374207368697070656420
-         72656c6561736520322e302e205f5f476f6f6420776f726b5f5f21
-         # "Hi everyone, we just shipped release 2.0. __Good work__!"
+      78 1e                             # text(30)
+         746578742f6d61726b646f776e3b7661
+         7269616e743d47464d2d4d494d49
+         # "text/markdown;variant=GFM-MIMI"
+      58 39                             # bytes(57)
+         48692065766572796f6e652c20776520
+         6a75737420736869707065642072656c
+         6561736520322e302e205f5f476f6f64
+         2020776f726b5f5f21
+         # "Hi everyone, we just shipped release 2.0. __Good  work__!"
 ```
 
 Below are the rest of the implied values for this message:
@@ -637,31 +648,39 @@ The annotated EDN follows, then the pretty printed CBOR.
 
 ```
 87                                      # array(7)
+   50                                   # bytes(16)
+      11a458c73b8dd2cf404db4b378b8fe4d
    f6                                   # primitive(22)
    40                                   # bytes(0)
-                                        # ""
    f6                                   # primitive(22)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+   58 20                                # bytes(32)
+      010714238126772e253118df3cd18fa6
+      9f90841d7df1f6f0cddab1f0dc0c9a26
+   a2                                   # map(2)
       01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-   a0                                   # map(0)
-   86                                   # array(6)
+      78 1e                             # text(30)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f752f626f622d6a6f6e6573
+         # "mimi://example.com/u/bob-jones"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f722f656e67696e656572696e67
+         5f7465616d
+         # "mimi://example.com/r/engineering_team"
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
+      78 1e                             # text(30)
+         746578742f6d61726b646f776e3b7661
+         7269616e743d47464d2d4d494d49
+         # "text/markdown;variant=GFM-MIMI"
       58 21                             # bytes(33)
-         5269676874206f6e21205f436f6e67726174756c6174696f6e735f2027616c6c21
+         5269676874206f6e21205f436f6e6772
+         6174756c6174696f6e735f2027616c6c
+         21
          # "Right on! _Congratulations_ 'all!"
 ```
 
@@ -688,31 +707,38 @@ Below is the annotated message in EDN and pretty printed CBOR:
 
 ```
 87                                      # array(7)
+   50                                   # bytes(16)
+      d37bc0e6a8b4f04e9e6382375f587bf6
    f6                                   # primitive(22)
    40                                   # bytes(0)
-                                        # ""
    f6                                   # primitive(22)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+   58 20                                # bytes(32)
+      010714238126772e253118df3cd18fa6
+      9f90841d7df1f6f0cddab1f0dc0c9a26
+   a2                                   # map(2)
       01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   a0                                   # map(0)
-   86                                   # array(6)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f752f63617468792d7761736869
+         6e67746f6e
+         # "mimi://example.com/u/cathy-washington"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f722f656e67696e656572696e67
+         5f7465616d
+         # "mimi://example.com/r/engineering_team"
+   85                                   # array(5)
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
       78 18                             # text(24)
-         746578742f706c61696e3b636861727365743d7574662d38
+         746578742f706c61696e3b6368617273
+         65743d7574662d38
          # "text/plain;charset=utf-8"
       43                                # bytes(3)
-         e299a5                         # "♥"
+         e29da4                         # "❤"
 ```
 
 ## Mentions
@@ -727,43 +753,8 @@ the IM client.
 We can convey a mention by linking the user handle URI, or group URI in Markdown
 or HTML rich content. For example, a mention using Markdown is indicated below.
 
-* Sender user handle URL:
-  im:cathy-washington@example.com
-* Message ID: 0x6b50bfdd71edc83554ae21380080f4a3
-                ba77985da34528a515fac3c38e4998b8
-* Timestamp: 1644387243008 = 2022-02-08T22:14:03.008-00:00
-
-Below is the annotated message in EDN and pretty printed CBOR:
-
 <{{examples/mention.edn}}
 
-```
-87                                      # array(7)
-   f6                                   # primitive(22)
-   40                                   # bytes(0)
-                                        # ""
-   f6                                   # primitive(22)
-   f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 52                             # bytes(82)
-         4b75646f7320746f205b40416c69636520536d6974685d28696d3a
-         616c6963652d736d697468406578616d706c652e636f6d2920666f
-         72206d616b696e67207468652072656c656173652068617070656e21
-         # "Kudos to [@Alice Smith](im:alice-smith@example.com)
-         # for making the release happen!"
-```
 
 The same mention using HTML [@!W3C.CR-html52-20170808] would instead
 replace in the EDN the contentType and content indicated below.
@@ -771,7 +762,8 @@ replace in the EDN the contentType and content indicated below.
 ``` edn
   / ... /
   "text/html;charset=utf-8",
-  '<p>Kudos to <a href="im:alice-smith@example.com">@Alice Smith</a> for making the release happen!</p>'
+  '<p>Kudos to <a href="mimi://example.com/u/alice-smith">' +
+  '@Alice Smith</a> for making the release happen!</p>'
 ```
 
 ## Edit
@@ -787,53 +779,14 @@ with the replaced message ID.
 
 Here Bob Jones corrects a typo in his original message:
 
-* Sender user handle URL:
-  im:%40bob-jones@example.com
-* Message ID:0x89d3472622a4d9de526742bcd00b09dc
-               78fa4edceaf2720e17b730c6dfba8be4
-* Timestamp: 1644387248621 = 2022-02-08T22:14:08.621-00:00
-
 <{{examples/edit.edn}}
-
-```
-87                                      # array(7)
-   58 20                                # bytes(32)
-      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   40                                   # bytes(0)
-                                        # ""
-   f6                                   # primitive(22)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   82                                   # array(2)
-      58 20                             # bytes(32)
-         4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
-      58 20                             # bytes(32)
-         6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
-   a0                                   # map(0)
-   86                                   # array(6)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
-      58 22                             # bytes(34)
-         5269676874206f6e21205f436f6e67726174756c6174696f6e735f
-         207927616c6c21
-         # "Right on! _Congratulations_ y'all!"
-```
 
 Note that replies and reactions always refer to a specific message id,
 and therefore a specific "version" of a message, which could have been
 edited before and/or after the message id referenced in the reply or reaction.
 It is a matter of local policy how to render (if at all) a reaction to
 a subsequently edited message.
+
 
 ## Delete
 
@@ -848,38 +801,8 @@ If Bob deleted his message instead of modifying it, we would represent it
 using the `replaces` data field, and using an empty body (NullPart),
 as shown below.
 
-* Sender user handle URL:
-  im:%40bob-jones@example.com
-* Message ID: 0x89d3472622a40d6ceeb27c42490fdc64
-    c0e9c20c598f9d7c8e81640dae8db0fb
-* Timestamp: 1644387248621 = 2022-02-08T22:14:08.621-00:00
-
 <{{examples/delete.edn}}
 
-```
-87                                      # array(7)
-   58 20                                # bytes(32)
-      4dcab7711a77ea1dd025a6a1a7fe01ab3b0d690f82417663cb752dfcc37779a1
-   40                                   # bytes(0)
-                                        # ""
-   f6                                   # primitive(22)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         89d3472622a40d6ceeb27c42490fdc64c0e9c20c598f9d7c8e81640dae8db0fb
-   a0                                   # map(0)
-   84                                   # array(4)
-      02                                # unsigned(2)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      00                                # unsigned(0)
-```
 
 ## Unlike
 
@@ -891,38 +814,8 @@ If Cathy removes her reaction, we would represent the removal using a
 `replaces` data field with an empty body, referring to the message which
 created the reaction, as shown below.
 
-* Sender user handle URL:
-  im:cathy-washington@example.com
-* Message ID: 0x1a771ca1d84f8fda4184a1e02a549e20
-                1bf434c6bfcf1237fa45463c6861853b
-* Timestamp: 1644387250389 = 2022-02-08T22:14:10.389-00:00
-
 <{{examples/unlike.edn}}
 
-```
-87                                      # array(7)
-   58 20                                # bytes(32)
-      e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-   40                                   # bytes(0)
-                                        # ""
-   f6                                   # primitive(22)
-   83                                   # array(3)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-      01                                # unsigned(1)
-      58 20                             # bytes(32)
-         6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         89d3472622a4d9de526742bcd00b09dc78fa4edceaf2720e17b730c6dfba8be4
-   a0                                   # map(0)
-   84                                   # array(4)
-      01                                # unsigned(1)
-      60                                # text(0)
-                                        # ""
-      00                                # unsigned(0)
-      00                                # unsigned(0)
-```
 
 ## Expiring
 
@@ -943,16 +836,12 @@ The semantics of the header are that the message is automatically deleted
 by the receiving clients at the indicated time without user interaction or
 network connectivity necessary.
 
-* Sender user handle URL:
-  im:alice-smith@example.com
-* Message ID: 0x5c95a4dfddab84348bcc265a479299fb
-    d3a2eecfa3d490985da5113e5480c7f1
-* Timestamp: 1644389403227 = 2022-02-08T22:49:06.227-00:00
-
 <{{examples/expiring.edn}}
 
 ```
 87                                      # array(7)
+   50                                   # bytes(16)
+      33be993eb39f418f9295afc2ae160d2d
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
@@ -960,26 +849,37 @@ network connectivity necessary.
       f4                                # primitive(20)
       1a 62036674                       # unsigned(1644390004)
    f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         1a771ca1d84f8fda4184a1e02a549e201bf434c6bfcf1237fa45463c6861853b
-   a0                                   # map(0)
-   86                                   # array(6)
+   a2                                   # map(2)
+      01                                # unsigned(1)
+      78 20                             # text(32)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f752f616c6963652d736d697468
+         # "mimi://example.com/u/alice-smith"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f722f656e67696e656572696e67
+         5f7465616d
+         # "mimi://example.com/r/engineering_team"
+   85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       01                                # unsigned(1)
-      78 1b                             # text(27)
-         746578742f6d61726b646f776e3b636861727365743d7574662d38
-         # "text/markdown;charset=utf-8"
+      78 1e                             # text(30)
+         746578742f6d61726b646f776e3b7661
+         7269616e743d47464d2d4d494d49
+         # "text/markdown;variant=GFM-MIMI"
       58 50                             # bytes(80)
-         5f5f2a56504e20474f494e4720444f574e2a5f5f0a49276d207265
-         626f6f74696e67207468652056504e20696e2074656e206d696e75
-         74657320756e6c65737320616e796f6e65206f626a656374732e
-         # "__*VPN GOING DOWN*__\nI'm rebooting the VPN in ten
-         #  minutes unless anyone objects."
+         5f5f2a56504e20474f494e4720444f57
+         4e2a5f5f2049276d207265626f6f7469
+         6e67207468652056504e20696e207465
+         6e206d696e7574657320756e6c657373
+         20616e796f6e65206f626a656374732e
+         # "__*VPN GOING DOWN*__ I'm rebooting the VPN in" +
+         # " ten minutes unless anyone objects."
 ```
+
 
 ## Attachments
 
@@ -994,26 +894,36 @@ rendered separately.
 
 ```
 87                                      # array(7)
+   50                                   # bytes(16)
+      18fac6371e4e53f1aeaf8a013155c166
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
    f6                                   # primitive(22)
    f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
-   a0                                   # map(0)
-   90                                   # array(16)
+   a2                                   # map(2)
+      01                                # unsigned(1)
+      78 1e                             # text(30)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f752f626f622d6a6f6e6573
+         # "mimi://example.com/u/bob-jones"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f722f656e67696e656572696e67
+         5f7465616d
+         # "mimi://example.com/r/engineering_team"
+   8f                                   # array(15)
       06                                # unsigned(6)
       62                                # text(2)
          656e                           # "en"
-      00                                # unsigned(0)
       02                                # unsigned(2)
       69                                # text(9)
          766964656f2f6d7034             # "video/mp4"
       78 2b                             # text(43)
-         68747470733a2f2f6578616d706c652e636f6d2f73746f72616
-         7652f386b7342346253727252452e6d7034
+         68747470733a2f2f6578616d706c652e
+         636f6d2f73746f726167652f386b7342
+         346253727252452e6d7034
          # "https://example.com/storage/8ksB4bSrrRE.mp4"
       00                                # unsigned(0)
       1a 2a36ced1                       # unsigned(708234961)
@@ -1023,21 +933,16 @@ rendered separately.
       4c                                # bytes(12)
          c86cf2c33f21527d1dd76f5b
       40                                # bytes(0)
-                                        # ""
       01                                # unsigned(1)
       58 20                             # bytes(32)
-         9ab17a8cf0890baaae7ee016c7312fcc080ba46498389458ee44f0276e783163
+         9ab17a8cf0890baaae7ee016c7312fcc
+         080ba46498389458ee44f0276e783163
       78 1c                             # text(28)
-         3220686f757273206f66206b6579207369676e696e6720766964656f
+         3220686f757273206f66206b65792073
+         69676e696e6720766964656f
          # "2 hours of key signing video"
       6b                                # text(11)
          62696766696c652e6d7034         # "bigfile.mp4"
-```
-
-```
-message ID
-  0xb267614d43e7676d28ef5b15e8676f23
-    679fe365c78849d83e2ba0ae8196ec4e
 ```
 
 Other dispositions of external content are also possible, for example
@@ -1059,25 +964,35 @@ of this document.
 
 ```
 87                                      # array(7)
+   50                                   # bytes(16)
+      678ac6cd54de049c3e9665cd212470fa
    f6                                   # primitive(22)
    47                                   # bytes(7)
       466f6f20313138                    # "Foo 118"
    f6                                   # primitive(22)
    f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         b267614d43e7676d28ef5b15e8676f23679fe365c78849d83e2ba0ae8196ec4e
-   a0                                   # map(0)
-   90                                   # array(16)
+   a2                                   # map(2)
+      01                                # unsigned(1)
+      78 20                             # text(32)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f752f616c6963652d736d697468
+         # "mimi://example.com/u/alice-smith"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e63
+         6f6d2f722f656e67696e656572696e67
+         5f7465616d
+         # "mimi://example.com/r/engineering_team"
+   8f                                   # array(15)
       07                                # unsigned(7)
       60                                # text(0)
                                         # ""
-      00                                # unsigned(0)
       02                                # unsigned(2)
       60                                # text(0)
                                         # ""
       78 1e                             # text(30)
-         68747470733a2f2f6578616d706c652e636f6d2f6a6f696e2f3132333435
+         68747470733a2f2f6578616d706c652e
+         636f6d2f6a6f696e2f3132333435
          # "https://example.com/join/12345"
       00                                # unsigned(0)
       00                                # unsigned(0)
@@ -1092,17 +1007,12 @@ of this document.
       40                                # bytes(0)
                                         # ""
       78 1b                             # text(27)
-         4a6f696e2074686520466f6f2031313820636f6e666572656e6365
+         4a6f696e2074686520466f6f20313138
+         20636f6e666572656e6365
          # "Join the Foo 118 conference"
       60                                # text(0)
-                                        # ""
 ```
 
-```
-message ID
-  0xb267614d43e7676d28ef5b15e8676f23
-    679fe365c78849d83e2ba0ae8196ec4e
-```
 
 ## Topics / Threading
 
