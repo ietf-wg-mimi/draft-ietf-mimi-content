@@ -106,8 +106,12 @@ ROOM   = 2
 # dispositions
 RENDER     = 1
 REACTION   = 2
+PROFILE    = 3
+INLINE     = 4
+ICON       = 5
 ATTACHMENT = 6
 SESSION    = 7
+PREVIEW    = 8
 
 # cardinalities
 NULLPART     = 0
@@ -416,11 +420,11 @@ if __name__ == "__main__":
         b'<img src="cid:5@local.invalid" alt="Image bienvenue"/>\n' +
         b'</body></html>',
         content_type="text/html;charset=utf-8",
-        lang="en")
+        lang="fr")
     part2 = make_multipart([part3, part4], CHOOSEONE) # pick en or fr (GIF)
     part5 = make_singlepart(
         hex2bytes('dc861ebaa718fd7c3ca159f71a2001a7'),
-        content_type="image.gif")
+        content_type="image/gif", dispo=INLINE)
     part1 = make_multipart([part2, part5], PROCESSALL)
     #   PNG related parts
     part8 = make_singlepart(
@@ -434,11 +438,11 @@ if __name__ == "__main__":
         b'<img src="cid:10@local.invalid" alt="Image bienvenue"/>\n' +
         b'</body></html>',
         content_type="text/html;charset=utf-8",
-        lang="en")
+        lang="fr")
     part7 = make_multipart([part8, part9], CHOOSEONE) # pick en or fr (PNG)
     part10 = make_singlepart(
         hex2bytes('fa444237451a05a72bb0f67037cc1669'),
-        content_type="image.png")
+        content_type="image/png", dispo=INLINE)
     part6 = make_multipart([part7, part10], PROCESSALL)
     #    top-level choose GIF or PNG
     part = make_multipart([part1, part6], CHOOSEONE)

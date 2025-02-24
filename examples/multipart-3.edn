@@ -1,113 +1,116 @@
+# MULTIPART-3
+# message ID = h'0182a32b2593cc68ef1b00ed91cfe2dc
+#                8db547636b6070b0f5ef8de7ae176523'
+# timestamp  = not specified in example
 [
-  null,                             / replaces          /
-  h'',                              / topicId           /
-  null,                             / expires           /
-  null,                             / inReplyTo         /
-  [],                               / lastSeen          /
-  {},                               / extensions        /
-  [
-    1,     / disposition = render /
-    "",    / language /
-           / partIndex = 0 (1st part)  /
-    3,     / cardinality = multi       /
-    0,     / partSemantics = chooseOne /
+  h'b8362793168d18c049b882d4642a2274', # salt
+  null,                                # replaces
+  h'',                                 # topicId
+  null,                                # expires = never
+  null,                                # inReplyTo
+  {                                    # extensions
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+                                         # partIndex = 0 (1st part)
+    1,                                   # disposition = render
+    "",                                  # language
+    3,                                   # cardinality = multi
+    0,                                   # partSemantics = chooseOne
     [
-      [
-        1,   / disposition = render /
-        "",  / language /
-             / partIndex = 1 /
-        3,   / cardinality = multi /
-        2,   / partSemantics = processAll /
+      [                                  # partIndex = 1
+        1,                               # disposition = render
+        "",                              # language
+        3,                               # cardinality = multi
+        2,                               # partSemantics = processAll
         [
-          [
-            1,   / disposition = render /
-            "",  / language /
-                 / partIndex = 2 /
-            3,   / cardinality = multi /
-            0,   / partSemantics = chooseOne /
+          [                              # partIndex = 2
+            1,                           # disposition = render
+            "",                          # language
+            3,                           # cardinality = multi
+            0,                           # partSemantics = chooseOne
             [
-              [
-                1,     / disposition = render /
-                "en",  / language /
-                       / partIndex = 3 /
-                1,     / cardinality = single /
-                "text/html;charset=utf-8",   / contentType /
-                / content /
-                '<html><body><h1>Welcome!</h1>\n'
-                '<img src="cid:5@local.invalid" alt="Welcome image"/>\n'
-                '</body></html>'
-              ],          / English HTML /
-              [
-                1,     / disposition = render /
-                "fr",  / language /
-                       / partIndex = 4 /
-                1,     / cardinality = single /
-                "text/html;charset=utf-8",   / contentType /
-                / content /
-                '<html><body><h1>Bienvenue!</h1>\n'
-                '<img src="cid:5@local.invalid" alt="Image bienvenue"/>\n'
-                  '</body></html>'
-              ]           / French HTML /
+              [                          # partIndex = 3
+                1,                       # disposition = render
+                "en",                    # language
+                1,                       # cardinality = single
+                # content type
+                "text/html;charset=utf-8",
+                # content
+                '<html><body><h1>Welcome!</h1>\n' +
+                '<img src="cid:5@local.invalid" ' +
+                'alt="Welcome image"/>\n</body></html>'
+              ],       # English HTML
+              [                          # partIndex = 4
+                1,                       # disposition = render
+                "fr",                    # language
+                1,                       # cardinality = single
+                # content type
+                "text/html;charset=utf-8",
+                # content
+                '<html><body><h1>Bienvenue!</h1>\n' +
+                '<img src="cid:5@local.invalid" ' +
+                'alt="Image bienvenue"/>\n</body></html>'
+              ]        # French HTML
             ]
-          ],          / English or French HTML (refers to GIF)/
-          [
-            4,   / disposition = inline /
-            "",  / language /
-                 / partIndex = 5 /
-            1,   / cardinality = single /
-            "image/gif",   / contentType /
-            h'028f83c894ca744f'       / content /
-          ]               / GIF /
+          ],         # English or French HTML (refers to GIF)
+          [                              # partIndex = 5
+            4,                           # disposition = inline
+            "",                          # language
+            1,                           # cardinality = single
+            "image/gif",                 # content type
+            # content
+            h'dc861ebaa718fd7c3ca159f71a2001a7'
+          ]          # GIF
         ]
-      ],                  / GIF with English or French HTML /
-      [
-        1,   / disposition = render /
-        "",  / language /
-             / partIndex = 6 /
-        3,   / cardinality = multi /
-        2,   / partSemantics = processAll /
+      ],           # GIF version with English or French HTML
+      [                                  # partIndex = 6
+        1,                               # disposition = render
+        "",                              # language
+        3,                               # cardinality = multi
+        2,                               # partSemantics = processAll
         [
-          [
-            1,   / disposition = render /
-            "",  / language /
-                 / partIndex = 7 /
-            3,   / cardinality = multi /
-            0,   / partSemantics = chooseOne /
+          [                              # partIndex = 7
+            1,                           # disposition = render
+            "",                          # language
+            3,                           # cardinality = multi
+            0,                           # partSemantics = chooseOne
             [
-              [
-                1,     / disposition = render /
-                "en",  / language /
-                       / partIndex = 8 /
-                1,     / cardinality = single /
-                "text/html;charset=utf-8",   / contentType /
-                / content /
-                '<html><body><h1>Welcome!</h1>\n'
-                '<img src="cid:10@local.invalid" alt="Welcome image"/>\n'
-                '</body></html>'
-              ],          / English HTML /
-              [
-                1,     / disposition = render /
-                "fr",  / language /
-                       / partIndex = 9 /
-                1,     / cardinality = single /
-                "text/html;charset=utf-8",   / contentType /
-                / content /
-                '<html><body><h1>Bienvenue!</h1>\n'
-                '<img src="cid:10@local.invalid" alt="Image bienvenue"/>\n'
-                '</body></html>'
-              ]           / French HTML /
+              [                          # partIndex = 8
+                1,                       # disposition = render
+                "en",                    # language
+                1,                       # cardinality = single
+                # content type
+                "text/html;charset=utf-8",
+                # content
+                '<html><body><h1>Welcome!</h1>\n' +
+                '<img src="cid:10@local.invalid" ' +
+                'alt="Welcome image"/>\n</body></html>'
+              ],       # English HTML
+              [                         # partIndex = 9
+                1,                      # disposition = render
+                "fr",                   # language
+                1,                      # cardinality = single
+                # content type
+                "text/html;charset=utf-8",
+                # content
+                '<html><body><h1>Bienvenue!</h1>\n' +
+                '<img src="cid:10@local.invalid" ' +
+                'alt="Image bienvenue"/>\n</body></html>'
+              ]        # French HTML
             ]
-          ],          / English or French HTML (refers to PNG)/
-          [
-            4,   / disposition = inline /
-            "",  / language /
-                 / partIndex = 10 /
-            1,   / cardinality = single /
-            "image/png",
-            h'6963cff36275fdb8'       / content /
-          ]               / PNG /
+          ],         # English or French HTML (refers to PNG)
+          [                              # partIndex = 10
+            4,                           # disposition = inline
+            "",                          # language
+            1,                           # cardinality = single
+            "image/png",                 # content type
+            # content
+            h'fa444237451a05a72bb0f67037cc1669'
+          ]          # PNG
         ]
-      ]                  / PNG with English or French HTML /
-    ]           / GIF or PNG (with English or French HTML) /
+      ]            # PNG version with English or French HTML
+    ]            # GIF or PNG (with English or French HTML)
   ]
 ]
