@@ -523,7 +523,10 @@ algorithm.
 ## Derived Data Values
 
 In addition to fields which are contained in a MIMI content message,
-there are also two fields which the implementation can definitely derive
+there is the hub accepted timestamp, which can be represented either
+as milliseconds since the start of the UNIX epoch, or for future
+extensibility as a CBOR extended time tag as defined in {{Section 3 of
+!RFC9581}}. There are also two fields the implementation can definitely derive:
 (the MLS group ID {12}, and the leaf index of the sender {13}). Many
 implementations could also determine one or more of: the sender's client
 identifier URL {14}, the user identifier URL of the credential associated
@@ -541,7 +544,11 @@ MessageDerivedValues = [
 ]
 
 MessageId = bstr .size 32
-Timestamp = #6.62(uint .size 8)    ; milliseconds since start of UNIX epoch
+Timestamp = MsecsSinceEpoch / ExtendedTime
+; milliseconds since start of UNIX epoch
+MsecsSinceEpoch = uint .size 8
+; extended time from RFC9581
+ExtendedTime = #6.1001({* name => value })
 ```
 
 # Examples
