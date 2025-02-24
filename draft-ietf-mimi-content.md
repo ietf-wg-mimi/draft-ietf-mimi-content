@@ -139,18 +139,19 @@ The MIMI content format relies heavily on message IDs to refer to other
 messages, to reply, react, edit, delete, and report on the status of
 messages. Every MIMI content message contains a 32-octet per-message
 cryptographically random salt, and has a 32-octet message ID which is calculated
-from the hash of the message (including the salt).
+from the hash of the message (including the salt), the sender URI, and the
+room URI.
 
 Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
 [IANA hash algorithm registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg).
-The sender URI, room URI, and the entire MIMI message content (which includes
-the salt) are concatenated and then hashed with the algorithm identified in the
-first octet. The first 31 octets of the hash_output is appended to the hash
-function ID.
+The sender URI, room URI, the entire MIMI message content (including
+the salt), and the salt again are all concatenated, and then hashed with the
+algorithm identified in the first octet. The first 31 octets of the hash_output
+is appended to the hash function ID.
 
 ~~~
-hash_output = hash( senderUri || roomUri || message )
+hash_output = hash( senderUri || roomUri || message || salt )
 messageId = hashAlg || hash_output[0..30]
 ~~~
 
@@ -159,6 +160,9 @@ default, regardless of the hash algorithm of the cipher suite of a room's MLS
 group. The initial octet allows the MIMI protocol to deprecate SHA-256 and
 specify a new default algorithm in the future (for example if a practical
 birthday attack on SHA_256 becomes feasible).
+
+> The salt is duplicated in the input to the hash to avoid a SHA-256 length
+> extension attack.
 
 ##  Accepted Timestamp
 
@@ -211,7 +215,7 @@ Language (CDDL) [@!RFC8610] schemas for the MIMI Content Container. The complete
 
 ``` cddl
 mimiContent = [
-  salt: bstr .size 32,
+  salt: bstr .size 16,
   replaces: null / MessageId,       ; {1}
   topicId: bstr,                    ; {2}
   expires: null / Expiration        ; {3}
@@ -571,23 +575,18 @@ are included in the examples directory in the github repo for this document.
 ## Original Message
 
 In this example, Alice Smith sends a rich-text (Markdown) [@!RFC7763]
-message to the Engineering Team MLS group. The following values are
+message to the Engineering Team room. The following values are
 derived from the client, except for the hub received timestamp, which
-might be available for the client from its provider:
+needs to be made available to the client by its provider:
 
-* Sender leaf index: 4
-* Sender client ID URL:
-  im:3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003@example.com
-* Sender user handle URL:
-  im:%40alice-smith@example.com
+* Sender MLS leaf index: 4
+* Sender MLS client ID URL:
+  mimi://example.com/d/3b52249d-68f9-45ce-8bf5-c799f3cad7ec/0003
 * MLS group ID:
-  7u4NEqe1tbeBFa0aHdsTgRyD/XOHxD5meZpZS+7aJr8=
-* The MIMI room URL:
-  im:#engineering_team@example.com
+  7u4NEqe1tbeBFa0aHdsTgRyD_XOHxD5meZpZS-7aJr8
 * The MIMI room name: "Engineering Team"
-* Message ID: 0xd3c14744d1791d02548232c23d35efa9
-                7668174ba385af066011e43bd7e51501
-* Timestamp: 1644387225019 = 2022-02-08T22:13:45.019-00:00
+* The Hub received timestamp:
+  1644387225019 = 2022-02-09T06:13:45.019Z
 
 Below is the message in annotated Extended Diagnostic Notation, and pretty
 printed CBOR.
@@ -630,16 +629,9 @@ A reply message looks similar, but contains the message ID of the
 original message in the `inReplyTo` data field. The derived MLS
 group ID, URL, and name do not change in this example. The derived
 senderClientId and senderLeafIndex are not especially relevant so
-all but the user handle URL, message ID, and hub received timestamp
-will be omitted.
-
-* Sender user handle URL:
-  im:%40bob-jones@example.com
-* MessageId: 0xe701beee59f9376282f39092e1041b2a
-               c2e3aad1776570c1a28de244979c71ed
-* Timestamp = 1644387237492 = 2022-02-08T22:13:57.492-00:00
-
-Below is the annotated message in EDN and pretty printed CBOR:
+only the user handle URL, message ID, and hub received timestamp
+are provided (in comments at the beginning of the annotated EDN).
+The annotated EDN follows, then the pretty printed CBOR.
 
 <{{examples/reply.edn}}
 
@@ -689,12 +681,6 @@ with a localized string such as "Reaction: ".  Note that a reaction could
 theoretically even be another media type (ex: image, audio, or video), although
 not currently implemented in major instant messaging systems.
 Note that many systems allow multiple independent reactions per sender.
-
-* Sender user handle URL:
-  im:cathy-washington@example.com
-* Message ID: 0x4dcab7711a77ea1dd025a6a1a7fe01ab
-                3b0d690f82417663cb752dfcc37779a1
-* Timestamp: 1644387237728 = 2022-02-08T22:13:57.728-00:00
 
 Below is the annotated message in EDN and pretty printed CBOR:
 
@@ -1807,11 +1793,14 @@ to avoid confusion
 
 ## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
 
-* change message ID construction: TODO: fix examples
+* change message ID construction:
 * remove partIndex and make it implied
-* mention Content ID URI (cid:) and describe implicit partIndex
+* mention Content ID URI (cid:) and describe using it with the implicit
+partIndex
 * discuss rendering and authorization issues for edit/delete in the security
 considerations
 * include both absolute and relative expiration times
 * add specificity about markdown support / create GFM-MIMI Markdown variant
 * remove tag from URLs in ExternalPart and implied headers
+* rebuild all the examples from a script. make sure the EDN and CBOR correspond
+and the CDDL validates the CBOR.
