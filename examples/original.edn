@@ -1,16 +1,23 @@
+# ORIGINAL
+# message ID = h'010714238126772e253118df3cd18fa6
+#                9f90841d7df1f6f0cddab1f0dc0c9a26'
+# timestamp  = 1644387225019 = 2022-02-09T06:13:45.019Z
 [
-  null,                             / replaces          /
-  h'',                              / topicId           /
-  null,                             / expires           /
-  null,                             / inReplyTo         /
-  [],                               / lastSeen          /
-  {},                               / extensions        /
-  [                                 / body (NestedPart) /
-    1,                                / dispostion = render       /
-    "",                               / language                  /
-    1,                                / cardinality = single part /
-    "text/markdown;variant=GFM",      / contentType               /
-                                      / content                   /
+  h'5eed9406c2545547ab6f09f20a18b003', # salt
+  null,                                # replaces
+  h'',                                 # topicId
+  null,                                # expires = never
+  null,                                # inReplyTo
+  {                                    # extensions
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+    1,                                   # disposition = render
+    "",                                  # language
+    1,                                   # cardinality = single part
+    "text/markdown;variant=GFM-MIMI",    # contentType
+                                         # content
     'Hi everyone, we just shipped release 2.0. __Good  work__!'
   ]
 ]

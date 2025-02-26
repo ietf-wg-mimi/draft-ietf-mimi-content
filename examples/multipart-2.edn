@@ -1,40 +1,44 @@
+# MULTIPART-2
+# message ID = h'014b0cc005052325622d14752517700a
+#                38dd32b10225da8437c3fe5a2603c303'
+# timestamp  = not specified in example
 [
-  null,                             / replaces          /
-  h'',                              / topicId           /
-  null,                             / expires           /
-  null,                             / inReplyTo         /
-  [],                               / lastSeen          /
-  {},                               / extensions        /
-  [
-    1,                           / disposition = render       /
-    "",                          / language                   /
-                                 / partIndex = 0 (1st part)   /
-    3,                           / cardinality = multi        /
-    2,                           / partSemantics = processAll /
+  h'8528dc2d92e4f1944d62042907ab94d0', # salt
+  null,                                # replaces
+  h'',                                 # topicId
+  null,                                # expires = never
+  null,                                # inReplyTo
+  {                                    # extensions
+    1: "mimi://example.com/u/alice-smith",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+                                         # partIndex = 0 (1st part)
+    2,                                   # disposition = reaction
+    "",                                  # language
+    3,                                   # cardinality = multi
+    2,                                   # partSemantics = processAll
     [
-      [
-        1,                             / disposition = render /
-        "",                            / language             /
-                                       / partIndex = 1        /
-        1,                             / cardinality = single /
-        "text/plain;charset=utf-8",    / contentType          /
-        h'E2 9D A4'               / content = Unicode "heart" /
+      [                                  # partIndex = 1
+        2,                               # disposition = reaction
+        "",                              # language
+        1,                               # cardinality = single
+        "text/plain;charset=utf-8",      # contentType
+        h'E2 9D A4'           # content = Unicode "heart"
       ],
-      [
-        1,                             / disposition = render /
-        "",                            / language             /
-                                       / partIndex = 2        /
-        1,                             / cardinality = single /
-        "text/plain;charset=utf-8",    / contentType          /
-        h'F0 9F A5 B3'       / content = Unicode "party face" /
+      [                                  # partIndex = 2
+        2,                               # disposition = reaction
+        "",                              # language
+        1,                               # cardinality = single
+        "text/plain;charset=utf-8",      # contentType
+        h'F0 9F A5 B3'        # content = Unicode "party face"
       ],
-      [
-        1,                             / disposition = render /
-        "",                            / language             /
-                                       / partIndex = 3        /
-        1,                             / cardinality = single /
-        "text/plain;charset=utf-8",    / contentType          /
-        h'F0 9F A4 9E'  / content = Unicode "fingers crossed" /
+      [                                  # partIndex = 3
+        2,                               # disposition = reaction
+        "",                              # language
+        1,                               # cardinality = single
+        "text/plain;charset=utf-8",      # contentType
+        h'F0 9F A4 9E'        # content = Unicode "fingers crossed"
       ]
     ]
   ]

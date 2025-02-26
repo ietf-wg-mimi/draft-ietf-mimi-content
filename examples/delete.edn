@@ -1,23 +1,22 @@
+# DELETE
+# message ID = h'01fb32968cf8c5fa00e6a45431d40aa8
+#                ce4b7a92523b8bc69f3233e65023055f'
+# timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
 [
-  / replaces = Reply message                                  /
-  h'e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed',
-  h'',                                 / topicId              /
-  null,                                / expires = never      /
-  [                                      / InReplyTo          /
-     /  message = Original message                            /
-     h'd3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501',
-     1,                                  /  hashAlg = sha256  /
-     /  hash                /
-     h'6b44053cb68e3f0cdd219da8d7104afc2ae5ffff782154524cef093de39345a5'
-  ],
-  [                                      / lastSeen (1 items)   /
-    /  Edit message /
-    h'89d3472622a4d9de526742bcd00b09dc78fa4edceaf2720e17b730c6dfba8be4'
-  ],
-  {},                                  / extensions             /
-  [                                    / body (NestedPart)      /
-    1,                                   / dispostion = render  /
-    "",                                  / language             /
-    0                                    / cardinality = zero parts /
+  h'0a590d73b2c7761c39168be5ebf7f2e6', # salt
+  h'01efab9eca8374d3618a16b39c658689    / replaces /
+  fd90d07fe666a846178cb4965c94a8bf',    #   Reply
+  h'',                                 # topicId
+  null,                                # expires
+  h'010714238126772e253118df3cd18fa6   # inReplyTo =
+    9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+  {                                    # extensions
+    1: "mimi://example.com/u/bob-jones",
+    2: "mimi://example.com/r/engineering_team"
+  },
+  [                                    # body (NestedPart)
+    1,                                   # disposition = render
+    "",                                  # language
+    0,                                   # cardinality = null part
   ]
 ]
