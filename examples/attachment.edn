@@ -13,7 +13,7 @@
     2: "mimi://example.com/r/engineering_team"
   },
   [                                    # body (NestedPart)
-    6,                                   # dispostion = attachment
+    6,                                   # disposition = attachment
     "en",                                # language
     2,                                   # cardinality = external part
     "video/mp4",                         # contentType
