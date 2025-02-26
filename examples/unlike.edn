@@ -15,7 +15,7 @@
     2: "mimi://example.com/r/engineering_team"
   },
   [                                    # body (NestedPart)
-    2,                                   # dispostion = reaction
+    2,                                   # disposition = reaction
     "",                                  # language
     0,                                   # cardinality = null part
   ]

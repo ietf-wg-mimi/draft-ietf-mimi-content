@@ -16,7 +16,7 @@
     2: "mimi://example.com/r/engineering_team"
   },
   [                                    # body (NestedPart)
-    1,                                   # dispostion = render
+    1,                                   # disposition = render
     "",                                  # language
     1,                                   # cardinality = single part
     "text/markdown;variant=GFM-MIMI",    # contentType
