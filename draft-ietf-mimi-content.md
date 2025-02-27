@@ -1289,9 +1289,11 @@ that might cause interoperability problems in deployment.
 
 Initial Contents:
 
-| Key   | Name                                     | Type      | R | Reference |
-|:------|:-----------------------------------------|:----------|:--|:----------|
-| 0     | (reserved)                               | -         | - | RFCXXXX   |
+| Key | Name       | Description                      | Type  | R | Reference |
+|:----|:-----------|:---------------------------------|:------|:--|:----------|
+| 0   | (reserved) | N/A                              | -     | - | RFCXXXX   |
+| 1   | sender_uri | the sender as a MIMI participant | tstr  | Y | RFCXXXX   |
+| 2   | room_uri   | the MIMI room URI                | tstr  | Y | RFCXXXX   |
 
 ### Expert Review
 
