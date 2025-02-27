@@ -1059,7 +1059,33 @@ for example.
 The format below, application/mimi-message-status is sent
 by one member of an MLS group to the entire group and can refer to multiple messages in that group.
 The format contains a list of message ID / status pairs. As
-the status at the recipient changes, the status can be updated in a subsequent notification. Below is the CDDL schema for message status.
+the status at the recipient changes, the status can be updated in a subsequent notification.
+
+The status of each message can be one of the following values:
+
+- 0 (unread) indicates that the message was not yet read by the sender of the
+report.
+- 1 (delivered) indicates that a messaging client of the sender of the report
+received the message.
+- 2 (read) indicates that the sender of the report read the message.
+- 3 (expired) indicates that the message expired and is not available for
+reading. In the case of absolute expiration, it does not indicate if the message
+was read before its expiry.
+- 4 (deleted) indicates that the message was deleted, either by the local
+client, or by another member of the room with the power to retract messages.
+- 5 (hidden) indicates that the message was hidden by the local
+client (for example archived).
+- 6 (error) indicates that the sender client is aware of the message ID, but
+that there was an unspecified error with the reception of the message.
+
+Depending on the policy of the room and a potential sender of delivery reports,
+sending delivery receipts and/or read receipt messages might be required,
+optional, or forbidden.
+Clients might also have policies about specific status values that are shared
+and others which are not. Some status values might only be shared among the
+reporting user's own clients, for example.
+
+Below is the CDDL schema for message status.
 
 <{{delivery-report.cddl}}
 
