@@ -428,7 +428,8 @@ baseDispos = &(
     session: 7,
     preview: 8
 )
-unknownDispos = &( unknown: 9..255 ) ; Note: any ext_dispos take precedence
+; Note: any ext_dispos take precedence
+unknownDispos = &( unknown: 9..255 )
 ```
 
 The `render` disposition means that the content should be rendered
@@ -534,7 +535,7 @@ with the sender {15}, and the identifier URL for the MIMI room {16}.
 
 ``` cddl
 MessageDerivedValues = [
-    messageId: MessageId,              ; sha256 hash of message ciphertext
+    messageId: MessageId,
     hubAcceptedTimestamp: Timestamp,
     mlsGroupId: bstr,                  ; value always available {12}
     senderLeafIndex: uint .size 4,     ; value always available {13}
@@ -1071,24 +1072,27 @@ the status at the recipient changes, the status can be updated in a subsequent n
 
 ```
 82                                      # array(2)
-   d8 3e                                # tag(62)
-      1b 0000017ed70171fb               # unsigned(1644284703227)
+   1b 0000017ed70171fb                  # unsigned(1644284703227)
    84                                   # array(4)
       82                                # array(2)
          58 20                          # bytes(32)
-            d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
+            d3c14744d1791d02548232c23d35efa9
+            7668174ba385af066011e43bd7e51501
          02                             # unsigned(2)
       82                                # array(2)
          58 20                          # bytes(32)
-            e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
+            e701beee59f9376282f39092e1041b2a
+            c2e3aad1776570c1a28de244979c71ed
          02                             # unsigned(2)
       82                                # array(2)
          58 20                          # bytes(32)
-            6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
+            6b50bfdd71edc83554ae21380080f4a3
+            ba77985da34528a515fac3c38e4998b8
          00                             # unsigned(0)
       82                                # array(2)
          58 20                          # bytes(32)
-            5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
+            5c95a4dfddab84348bcc265a479299fb
+            d3a2eecfa3d490985da5113e5480c7f1
          03                             # unsigned(3)
 ```
 

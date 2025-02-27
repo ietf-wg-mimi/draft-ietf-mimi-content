@@ -15,7 +15,7 @@
   [                                    # body (NestedPart)
     6,                                   # disposition = attachment
     "en",                                # language
-    2,                                   # cardinality = external part
+    2,                                   # cardinality = external
     "video/mp4",                         # contentType
     # url
     "https://example.com/storage/8ksB4bSrrRE.mp4",
