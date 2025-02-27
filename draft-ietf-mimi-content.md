@@ -1710,7 +1710,7 @@ to avoid confusion
 
 ## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
 
-* change message ID construction:
+* change message ID construction, and add salt
 * remove partIndex and make it implied
 * mention Content ID URI (cid:) and describe using it with the implicit
 partIndex
@@ -1719,5 +1719,14 @@ considerations
 * include both absolute and relative expiration times
 * add specificity about markdown support / create GFM-MIMI Markdown variant
 * remove tag from URLs in ExternalPart and implied headers
+
+## Changes between draft-mahy-mimi-content-05 and draft-mahy-mimi-content-06
+
+* remove lastSeen field
+* improve guidance on processing MultiPart with content ID URIs
+* add extra copy of the salt to Message ID construction to prevent SHA256 length extension attack
+* future-proof timestamp format hub timestamp
+* IANA register the MIMI extension keys used in the draft
+* lots of changes for internal consistency
 * rebuild all the examples from a script. make sure the EDN and CBOR correspond
 and the CDDL validates the CBOR.
