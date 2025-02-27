@@ -19,8 +19,8 @@ all: $(targets)
 #%.cbor: %.diag
 #	diag2cbor.rb $< > $@
 
-#%.pretty: %.diag
-#	diag2pretty.rb $< > $@
+%.pretty: %.cbor
+	cbor2pretty.rb $< > $@
 
 #%.cbor.tmp: %.edn
 #	edn2cbor $< $@

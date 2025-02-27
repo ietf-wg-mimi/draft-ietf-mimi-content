@@ -1,19 +1,25 @@
 87                                      # array(7)
+   50                                   # bytes(16)
+      04f290e215d0f82d1750bfa8b7dc089d  # "\u0004\xF2\x90\xE2\u0015\xD0\xF8-\u0017P\xBF\xA8\xB7\xDC\b\x9D"
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
    f6                                   # primitive(22)
-   f6                                   # primitive(22)
-   81                                   # array(1)
-      58 20                             # bytes(32)
-         e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed # "\xE7\u0001\xBE\xEEY\xF97b\x82\xF3\x90\x92\xE1\u0004\e*\xC2\xE3\xAA\xD1wep\xC1\xA2\x8D\xE2D\x97\x9Cq\xED"
-   a0                                   # map(0)
+   58 20                                # bytes(32)
+      010714238126772e253118df3cd18fa69f90841d7df1f6f0cddab1f0dc0c9a26 # "\u0001\a\u0014#\x81&w.%1\u0018\xDF<я\xA6\x9F\x90\x84\u001D}\xF1\xF6\xF0\xCDڱ\xF0\xDC\f\x9A&"
+   a2                                   # map(2)
+      01                                # unsigned(1)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e636f6d2f752f63617468792d77617368696e67746f6e # "mimi://example.com/u/cathy-washington"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e636f6d2f722f656e67696e656572696e675f7465616d # "mimi://example.com/r/engineering_team"
    85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
       01                                # unsigned(1)
-      78 19                             # text(25)
-         746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
-      58 52                             # bytes(82)
-         4b75646f7320746f205b40416c69636520536d6974685d28696d3a616c6963652d736d697468406578616d706c652e636f6d2920666f72206d616b696e67207468652072656c656173652068617070656e21 # "Kudos to [@Alice Smith](im:alice-smith@example.com) for making the release happen!"
+      78 1e                             # text(30)
+         746578742f6d61726b646f776e3b76617269616e743d47464d2d4d494d49 # "text/markdown;variant=GFM-MIMI"
+      58 58                             # bytes(88)
+         4b75646f7320746f205b40416c69636520536d6974685d286d696d693a2f2f6578616d706c652e636f6d2f752f616c6963652d736d6974682920666f72206d616b696e67207468652072656c656173652068617070656e21 # "Kudos to [@Alice Smith](mimi://example.com/u/alice-smith) for making the release happen!"
