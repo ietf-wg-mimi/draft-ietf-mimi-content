@@ -1,29 +1,26 @@
 [
-  1644284703227,   / Timestamp of the report /
   [
-    [
-      /  Original message     /
-      h'010714238126772e253118df3cd18fa6
-        9f90841d7df1f6f0cddab1f0dc0c9a26',
-      2    / status = read    / 
-    ],
-    [
-      /  Reply message        /
-      h'01efab9eca8374d3618a16b39c658689
-        fd90d07fe666a846178cb4965c94a8bf',
-      2    / status = read    /     
-    ],
-    [
-      /  Mention message      /
-      h'0103d50d4980c0a7a0990f65534ebd4f
-        0fa36b1f4680d6e080c19ea4a95def7b',
-      0    / status = unread  / 
-    ],
-    [
-      /  Expiring message     /
-      h'0114e486b39d705e15e3000b57290de4
-        79affbda4ec2c1b17cc25c214229ed7d',
-      3    / status = expired / 
-    ]
+    /  Original message     /
+    h'010714238126772e253118df3cd18fa6
+      9f90841d7df1f6f0cddab1f0dc0c9a26',
+    2    / status = read    / 
+  ],
+  [
+    /  Reply message        /
+    h'01efab9eca8374d3618a16b39c658689
+      fd90d07fe666a846178cb4965c94a8bf',
+    2    / status = read    /     
+  ],
+  [
+    /  Mention message      /
+    h'0103d50d4980c0a7a0990f65534ebd4f
+      0fa36b1f4680d6e080c19ea4a95def7b',
+    0    / status = unread  / 
+  ],
+  [
+    /  Expiring message     /
+    h'0114e486b39d705e15e3000b57290de4
+      79affbda4ec2c1b17cc25c214229ed7d',
+    3    / status = expired / 
   ]
 ]

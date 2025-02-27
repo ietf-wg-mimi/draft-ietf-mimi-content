@@ -1058,7 +1058,7 @@ for example.
 
 The format below, application/mimi-message-status is sent
 by one member of an MLS group to the entire group and can refer to multiple messages in that group.
-The format contains its own timestamp, and a list of message ID / status pairs. As
+The format contains a list of message ID / status pairs. As
 the status at the recipient changes, the status can be updated in a subsequent notification. Below is the CDDL schema for message status.
 
 <{{delivery-report.cddl}}
@@ -1071,29 +1071,27 @@ the status at the recipient changes, the status can be updated in a subsequent n
 <{{examples/report.edn}}
 
 ```
-82                                      # array(2)
-   1b 0000017ed70171fb                  # unsigned(1644284703227)
-   84                                   # array(4)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            d3c14744d1791d02548232c23d35efa9
-            7668174ba385af066011e43bd7e51501
-         02                             # unsigned(2)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            e701beee59f9376282f39092e1041b2a
-            c2e3aad1776570c1a28de244979c71ed
-         02                             # unsigned(2)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            6b50bfdd71edc83554ae21380080f4a3
-            ba77985da34528a515fac3c38e4998b8
-         00                             # unsigned(0)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            5c95a4dfddab84348bcc265a479299fb
-            d3a2eecfa3d490985da5113e5480c7f1
-         03                             # unsigned(3)
+84                                      # array(4)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa9
+         7668174ba385af066011e43bd7e51501
+      02                                # unsigned(2)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2a
+         c2e3aad1776570c1a28de244979c71ed
+      02                                # unsigned(2)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         6b50bfdd71edc83554ae21380080f4a3
+         ba77985da34528a515fac3c38e4998b8
+      00                                # unsigned(0)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         5c95a4dfddab84348bcc265a479299fb
+         d3a2eecfa3d490985da5113e5480c7f1
+      03                                # unsigned(3)
 ```
 
 # Support for Specific Media Types

@@ -1,7 +1,4 @@
-MessageStatusReport = [
-    timestamp: Timestamp,
-    statuses: [ * PerMessageStatus ]
-]
+MessageStatusReport = [ * PerMessageStatus ]
 
 PerMessageStatus = [
     messageId: MessageId,
@@ -20,8 +17,3 @@ baseStatus = &(
 unknownStatus = &( unknown: 7..255 )
 
 MessageId = bstr .size 32
-Timestamp = MsecsSinceEpoch / ExtendedTime
-; milliseconds since start of UNIX epoch
-MsecsSinceEpoch = uint .size 8
-; extended time from RFC9581
-ExtendedTime = #6.1001({* name => value })
