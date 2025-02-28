@@ -462,7 +462,11 @@ This format of the content ID URI in MIMI MUST only reference the `partIndex` of
 When processing a MultiPart nested structure, the client can start from the
 `body` in the MIMI content (the "top-level" or "root") and evaluate any
 `chooseOne` semantics MultiPart elements, effectively discarding non-chosen
-Parts. The remaining Parts might still reference each other in content ID URI. To prevent rendering a Part more than once, the client can handle the remaining Parts in order, skipping a Part if it was already referred to by a previously handled Part. If a MultiPart is skipped, all inner Parts are skipped too. All dispositions are handled the same: If a Part of disposition "reaction" is skipped, the reaction will not be counted. If a Part of disposition "attachment" is skipped, it will not be be visible in the attachment list.
+Parts. The remaining Parts might still reference each other in content ID URI.
+To prevent processing a Part more than once, the client can handle the remaining
+Parts in order, skipping any Parts already referenced by a previously handled
+Part. This process of skipping already processed Parts is respected regardless
+of the disposition of the Part.
 
 
 ## External content {#external}
