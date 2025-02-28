@@ -1,12 +1,14 @@
 [
   / messageId = Original message /
-  h'010714238126772e253118df3cd18fa69f90841d7df1f6f0cddab1f0dc0c9a26',
+  h'010714238126772e253118df3cd18fa6
+    9f90841d7df1f6f0cddab1f0dc0c9a26',
   
-  / hubAcceptedTimestamp = 2022-02-08T22:13:45.019-00:00 /
+  / hubAcceptedTimestamp = 2022-02-08T22:13:45.019Z /
   1644387225019,
 
   / mlsGroupId /
-  h'eeee0d12a7b5b5b78115ad1a1ddb13811c83fd7387c43e66799a594beeda26bf',
+  h'eeee0d12a7b5b5b78115ad1a1ddb1381
+    1c83fd7387c43e66799a594beeda26bf',
   
   / senderLeafIndex /
   4,

@@ -1,17 +1,24 @@
 87                                      # array(7)
+   50                                   # bytes(16)
+      5eed9406c2545547ab6f09f20a18b003  # "^\xED\x94\u0006\xC2TUG\xABo\t\xF2\n\u0018\xB0\u0003"
    f6                                   # primitive(22)
    40                                   # bytes(0)
                                         # ""
    f6                                   # primitive(22)
    f6                                   # primitive(22)
-   80                                   # array(0)
-   a0                                   # map(0)
+   a2                                   # map(2)
+      01                                # unsigned(1)
+      78 20                             # text(32)
+         6d696d693a2f2f6578616d706c652e636f6d2f752f616c6963652d736d697468 # "mimi://example.com/u/alice-smith"
+      02                                # unsigned(2)
+      78 25                             # text(37)
+         6d696d693a2f2f6578616d706c652e636f6d2f722f656e67696e656572696e675f7465616d # "mimi://example.com/r/engineering_team"
    85                                   # array(5)
       01                                # unsigned(1)
       60                                # text(0)
                                         # ""
       01                                # unsigned(1)
-      78 19                             # text(25)
-         746578742f6d61726b646f776e3b76617269616e743d47464d # "text/markdown;variant=GFM"
+      78 1e                             # text(30)
+         746578742f6d61726b646f776e3b76617269616e743d47464d2d4d494d49 # "text/markdown;variant=GFM-MIMI"
       58 39                             # bytes(57)
          48692065766572796f6e652c207765206a75737420736869707065642072656c6561736520322e302e205f5f476f6f642020776f726b5f5f21 # "Hi everyone, we just shipped release 2.0. __Good  work__!"

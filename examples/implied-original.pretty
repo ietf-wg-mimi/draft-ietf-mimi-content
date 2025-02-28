@@ -1,8 +1,7 @@
 87                                      # array(7)
    58 20                                # bytes(32)
-      d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501 # "\xD3\xC1GD\xD1y\u001D\u0002T\x822\xC2=5\xEF\xA9vh\u0017K\xA3\x85\xAF\u0006`\u0011\xE4;\xD7\xE5\u0015\u0001"
-   d8 3e                                # tag(62)
-      1b 0000017edd1dcdbb               # unsigned(1644387225019)
+      010714238126772e253118df3cd18fa69f90841d7df1f6f0cddab1f0dc0c9a26 # "\u0001\a\u0014#\x81&w.%1\u0018\xDF<я\xA6\x9F\x90\x84\u001D}\xF1\xF6\xF0\xCDڱ\xF0\xDC\f\x9A&"
+   1b 0000017edd1dcdbb                  # unsigned(1644387225019)
    58 20                                # bytes(32)
       eeee0d12a7b5b5b78115ad1a1ddb13811c83fd7387c43e66799a594beeda26bf # "\xEE\xEE\r\u0012\xA7\xB5\xB5\xB7\x81\u0015\xAD\u001A\u001D\xDB\u0013\x81\u001C\x83\xFDs\x87\xC4>fy\x9AYK\xEE\xDA&\xBF"
    04                                   # unsigned(4)

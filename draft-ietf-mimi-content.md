@@ -428,7 +428,8 @@ baseDispos = &(
     session: 7,
     preview: 8
 )
-unknownDispos = &( unknown: 9..255 ) ; Note: any ext_dispos take precedence
+; Note: any ext_dispos take precedence
+unknownDispos = &( unknown: 9..255 )
 ```
 
 The `render` disposition means that the content should be rendered
@@ -534,7 +535,7 @@ with the sender {15}, and the identifier URL for the MIMI room {16}.
 
 ``` cddl
 MessageDerivedValues = [
-    messageId: MessageId,              ; sha256 hash of message ciphertext
+    messageId: MessageId,
     hubAcceptedTimestamp: Timestamp,
     mlsGroupId: bstr,                  ; value always available {12}
     senderLeafIndex: uint .size 4,     ; value always available {13}
@@ -1034,7 +1035,7 @@ for messages within a thread uses the timestamp field. If more than
 one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
 
-## Delivery Reporting and Read Receipts {#reporting}
+# Delivery Reporting and Read Receipts {#reporting}
 
 In instant messaging systems, read receipts typically generate a distinct
 indicator for each message. In some systems, the number of users in a group
@@ -1057,39 +1058,66 @@ for example.
 
 The format below, application/mimi-message-status is sent
 by one member of an MLS group to the entire group and can refer to multiple messages in that group.
-The format contains its own timestamp, and a list of message ID / status pairs. As
-the status at the recipient changes, the status can be updated in a subsequent notification. Below is the CDDL schema for message status.
+The format contains a list of message ID / status pairs. As
+the status at the recipient changes, the status can be updated in a subsequent notification.
+
+The status of each message can be one of the following values:
+
+- 0 (unread) indicates that the message was not yet read by the sender of the
+report.
+- 1 (delivered) indicates that a messaging client of the sender of the report
+received the message.
+- 2 (read) indicates that the sender of the report read the message.
+- 3 (expired) indicates that the message expired and is not available for
+reading. In the case of absolute expiration, it does not indicate if the message
+was read before its expiry.
+- 4 (deleted) indicates that the message was deleted, either by the local
+client, or by another member of the room with the power to retract messages.
+- 5 (hidden) indicates that the message was hidden by the local
+client (for example archived).
+- 6 (error) indicates that the sender client is aware of the message ID, but
+that there was an unspecified error with the reception of the message.
+
+Depending on the policy of the room and a potential sender of delivery reports,
+sending delivery receipts and/or read receipt messages might be required,
+optional, or forbidden.
+Clients might also have policies about specific status values that are shared
+and others which are not. Some status values might only be shared among the
+reporting user's own clients, for example.
+
+Below is the CDDL schema for message status.
 
 <{{delivery-report.cddl}}
 
 * Sender user handle URL:
-  im:bob-jones@example.com
+  mimi://example.com/u/bob-jones
 
-### Delivery Report Example
+## Delivery Report Example
 
 <{{examples/report.edn}}
 
 ```
-82                                      # array(2)
-   d8 3e                                # tag(62)
-      1b 0000017ed70171fb               # unsigned(1644284703227)
-   84                                   # array(4)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            d3c14744d1791d02548232c23d35efa97668174ba385af066011e43bd7e51501
-         02                             # unsigned(2)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            e701beee59f9376282f39092e1041b2ac2e3aad1776570c1a28de244979c71ed
-         02                             # unsigned(2)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            6b50bfdd71edc83554ae21380080f4a3ba77985da34528a515fac3c38e4998b8
-         00                             # unsigned(0)
-      82                                # array(2)
-         58 20                          # bytes(32)
-            5c95a4dfddab84348bcc265a479299fbd3a2eecfa3d490985da5113e5480c7f1
-         03                             # unsigned(3)
+84                                      # array(4)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         d3c14744d1791d02548232c23d35efa9
+         7668174ba385af066011e43bd7e51501
+      02                                # unsigned(2)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         e701beee59f9376282f39092e1041b2a
+         c2e3aad1776570c1a28de244979c71ed
+      02                                # unsigned(2)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         6b50bfdd71edc83554ae21380080f4a3
+         ba77985da34528a515fac3c38e4998b8
+      00                                # unsigned(0)
+   82                                   # array(2)
+      58 20                             # bytes(32)
+         5c95a4dfddab84348bcc265a479299fb
+         d3a2eecfa3d490985da5113e5480c7f1
+      03                                # unsigned(3)
 ```
 
 # Support for Specific Media Types
@@ -1502,10 +1530,10 @@ sender requests the canonical handle for Alice. In the fourth example, the
 sender requests Alice's first name.
 
 ~~~
-<im:alice-smith@example.com>
-[im:alice-smith@example.com](im:alice-smith@example.com)
-[@AliceSmith](im:alice-smith@example.com)
-[Alice](im:alice-smith@example.com)
+<mimi://example.com/u/alice-smith>
+[mimi://example.com/u/alice-smith](mimi://example.com/u/alice-smith)
+[@AliceSmith](mimi://example.com/u/alice-smith)
+[Alice](mimi://example.com/u/alice-smith)
 ~~~
 
 Note that in some clients, presence of a mention for the local user may

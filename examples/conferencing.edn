@@ -15,7 +15,7 @@
   [                                    # body (NestedPart)
     7,                                   # disposition = session
     "",                                  # language
-    2,                                   # cardinality = external part
+    2,                                   # cardinality = external
     "",                                  # contentType
     "https://example.com/join/12345",    # url
     0,                                   # expires
