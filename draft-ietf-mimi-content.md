@@ -462,10 +462,7 @@ Using
 When processing a MultiPart nested structure, the client can start from the
 `body` in the MIMI content (the "top-level" or "root") and evaluate any
 `chooseOne` semantics MultiPart elements, effectively discarding non-chosen
-Parts. To prevent rendering a Part referenced in a content ID URI more that
-once, the client can walk through the remaining parts in order, rendering any
-parts with the `render` or `inline` dispositions that were not already
-previously rendered based on their content ID reference.
+Parts. The remaining Parts might still reference each other in content ID URI. To prevent rendering a Part more than once, the client can handle the remaining Parts in order, skipping a Part if it was already referred to by a previously handled Part. If a MultiPart is skipped, all inner Parts are skipped too. All dispositions are handled the same: If a Part of disposition "reaction" is skipped, the reaction will not be counted. If a Part of disposition "attachment" is skipped, it will not be be visible in the attachment list.
 
 
 ## External content {#external}
