@@ -462,6 +462,16 @@ The partIndex can be used inside a content ID URI [@!RFC2392] in a "container"
 part (for example HTML, Markdown, vCard [@?RFC6350], or iCal [@?RFC5545]) to
 reference another part inside the same MIMI message. In a MIMI message it has
 the form `cid:`*partIndex*`@local.invalid`.
+This format of the content ID URI in MIMI MUST only reference the `partIndex` of a SinglePart or ExternalPart.
+
+When processing a MultiPart nested structure, the client can start from the
+`body` in the MIMI content (the "top-level" or "root") and evaluate any
+`chooseOne` semantics MultiPart elements, effectively discarding non-chosen
+Parts. The remaining Parts might still reference each other in content ID URI.
+To prevent processing a Part more than once, the client can handle the remaining
+Parts in order, skipping any Parts already referenced by a previously handled
+Part. This process of skipping already processed Parts is respected regardless
+of the disposition of the Part.
 
 
 ## External content {#external}
