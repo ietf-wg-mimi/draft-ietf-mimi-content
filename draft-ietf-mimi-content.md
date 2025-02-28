@@ -1035,7 +1035,7 @@ for messages within a thread uses the timestamp field. If more than
 one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
 
-## Delivery Reporting and Read Receipts {#reporting}
+# Delivery Reporting and Read Receipts {#reporting}
 
 In instant messaging systems, read receipts typically generate a distinct
 indicator for each message. In some systems, the number of users in a group
@@ -1092,7 +1092,7 @@ Below is the CDDL schema for message status.
 * Sender user handle URL:
   im:bob-jones@example.com
 
-### Delivery Report Example
+## Delivery Report Example
 
 <{{examples/report.edn}}
 
