@@ -1090,7 +1090,7 @@ Below is the CDDL schema for message status.
 <{{delivery-report.cddl}}
 
 * Sender user handle URL:
-  im:bob-jones@example.com
+  mimi://example.com/u/bob-jones
 
 ## Delivery Report Example
 
@@ -1530,10 +1530,10 @@ sender requests the canonical handle for Alice. In the fourth example, the
 sender requests Alice's first name.
 
 ~~~
-<im:alice-smith@example.com>
-[im:alice-smith@example.com](im:alice-smith@example.com)
-[@AliceSmith](im:alice-smith@example.com)
-[Alice](im:alice-smith@example.com)
+<mimi://example.com/u/alice-smith>
+[mimi://example.com/u/alice-smith](mimi://example.com/u/alice-smith)
+[@AliceSmith](mimi://example.com/u/alice-smith)
+[Alice](mimi://example.com/u/alice-smith)
 ~~~
 
 Note that in some clients, presence of a mention for the local user may
