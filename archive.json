@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-18T01:54:32.154060+00:00",
+  "timestamp": "2025-03-20T01:53:29.358894+00:00",
   "repo": "ietf-wg-mimi/draft-ietf-mimi-content",
   "labels": [
     {
@@ -1390,66 +1390,105 @@
       "id": "I_kwDOJiBc4M6j0Kod",
       "title": "Should Expiration types be extensible beyond absolute and relative",
       "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/39",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "rohanmahy",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
+        "wontfix",
         "WG reviewed"
       ],
       "body": "",
       "createdAt": "2024-12-18T17:17:35Z",
-      "updatedAt": "2025-02-12T18:16:08Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-03-19T07:35:42Z",
+      "closedAt": "2025-03-19T07:35:41Z",
+      "comments": [
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed at IETF 122. Closing with won't fix. Created #53 to make sure it is clear this could be done later as an extensions",
+          "createdAt": "2025-03-19T07:35:41Z",
+          "updatedAt": "2025-03-19T07:35:41Z"
+        }
+      ]
     },
     {
       "number": 42,
       "id": "I_kwDOJiBc4M6p0RIR",
       "title": "No spoiler syntax for messages or media",
       "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/42",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "tgeoghegan",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "[Unresolved issue from #23](https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/23#issuecomment-2651317240)\n\n> No spoiler syntax for messages or media: In Discord it is ||secret||\n> > I think this could be done using attachments: \"The secret answer is ![](cid:2).\", where attachment 2 is markdown.",
       "createdAt": "2025-02-12T18:31:23Z",
-      "updatedAt": "2025-02-12T18:32:18Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-03-19T07:36:41Z",
+      "closedAt": "2025-03-19T07:35:11Z",
+      "comments": [
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed at IETF 122. Closing with won't fix. Created #53 to make sure it is clear this could be done later as an extensions",
+          "createdAt": "2025-03-19T07:35:11Z",
+          "updatedAt": "2025-03-19T07:35:11Z"
+        }
+      ]
     },
     {
       "number": 43,
       "id": "I_kwDOJiBc4M6p0Rz-",
       "title": "No built-in interactive elements like polls",
       "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/43",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "tgeoghegan",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "Unresolved issue from #23 \n\n> No built-in interactive elements like polls.\n> > This could be solved in a similar way, but with a new content type for polls.",
       "createdAt": "2025-02-12T18:32:46Z",
-      "updatedAt": "2025-02-12T18:32:46Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-03-19T07:36:24Z",
+      "closedAt": "2025-03-19T07:34:58Z",
+      "comments": [
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed at IETF 122. Closing with won't fix. Created #53 to make sure it is clear this could be done later as an extensions",
+          "createdAt": "2025-03-19T07:34:58Z",
+          "updatedAt": "2025-03-19T07:34:58Z"
+        }
+      ]
     },
     {
       "number": 44,
       "id": "I_kwDOJiBc4M6p0SCr",
       "title": "No smart timestamps that respect timezones",
       "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/44",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "tgeoghegan",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "Unresolved issue from #23 \n\n> No smart timestamps that respect timezones (see https://discord.com/developers/docs/reference#message-formatting-timestamp-styles )\n> >Perhaps this can be implemented using a new URI scheme: \"The global meeting will start in ![](time:2025-02-11T14:30:00Z?display=absolute)\"",
       "createdAt": "2025-02-12T18:33:15Z",
-      "updatedAt": "2025-02-12T18:33:15Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-03-19T07:36:05Z",
+      "closedAt": "2025-03-19T07:34:45Z",
+      "comments": [
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed at IETF 122. Closing with won't fix. Created #53 to make sure it is clear this could be done later as an extensions",
+          "createdAt": "2025-03-19T07:34:45Z",
+          "updatedAt": "2025-03-19T07:34:45Z"
+        }
+      ]
     },
     {
       "number": 45,
@@ -1554,6 +1593,22 @@
           "updatedAt": "2025-02-27T10:02:53Z"
         }
       ]
+    },
+    {
+      "number": 53,
+      "id": "I_kwDOJiBc4M6ur7g5",
+      "title": "Provide example how to extended MIMI content",
+      "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/53",
+      "state": "OPEN",
+      "author": "rohanmahy",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-03-19T07:33:06Z",
+      "updatedAt": "2025-03-19T07:33:06Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
