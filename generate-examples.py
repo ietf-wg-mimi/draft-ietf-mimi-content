@@ -88,7 +88,7 @@ def message_id(message_array):
     if SENDER in message_array[5]:
         sender_uri = message_array[5][SENDER]
     if ROOM in message_array[5]:
-        room_uri = message_array[5][SENDER]
+        room_uri = message_array[5][ROOM]
     if type(sender_uri) is not str or type(room_uri) is not str:
         raise Exception("sender_uri and room_uri must be text strings")
     hash_output = sha256(
