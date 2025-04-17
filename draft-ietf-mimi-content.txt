@@ -128,6 +128,8 @@ Table of Contents
            draft-mahy-mimi-content-05
      C.8.  Changes between draft-mahy-mimi-content-05 and
            draft-mahy-mimi-content-06
+     C.9.  Changes between draft-mahy-mimi-content-06 and
+           draft-mahy-mimi-content-07
    Author's Address
 
 1.  Terminology
@@ -724,8 +726,8 @@ Table of Contents
    pretty printed CBOR.
 
    # ORIGINAL
-   # message ID = h'010714238126772e253118df3cd18fa6
-   #                9f90841d7df1f6f0cddab1f0dc0c9a26'
+   # message ID = h'01b0084467273cc43d6f0ebeac13eb84
+   #                229c4fffe8f6c3594c905f47779e5a79'
    # timestamp  = 1644387225019 = 2022-02-09T06:13:45.019Z
    [
      h'5eed9406c2545547ab6f09f20a18b003', # salt
@@ -786,8 +788,8 @@ Table of Contents
 
    [
      / messageId = Original message /
-     h'010714238126772e253118df3cd18fa6
-       9f90841d7df1f6f0cddab1f0dc0c9a26',
+     h'01b0084467273cc43d6f0ebeac13eb84
+       229c4fffe8f6c3594c905f47779e5a79',
 
      / hubAcceptedTimestamp = 2022-02-08T22:13:45.019Z /
      1644387225019,
@@ -820,16 +822,16 @@ Table of Contents
    annotated EDN follows, then the pretty printed CBOR.
 
    # REPLY
-   # message ID = h'01efab9eca8374d3618a16b39c658689
-   #                fd90d07fe666a846178cb4965c94a8bf'
+   # message ID = h'01a419aef4e16d43cfc06c28235ecfbe
+   #                9faebc740d0148e7ca20b22150930836'
    # timestamp  = 1644387237492 = 2022-02-09T06:13:57.492Z
    [
      h'11a458c73b8dd2cf404db4b378b8fe4d', # salt
      null,                                # replaces
      h'',                                 # topicId
      null,                                # expires
-     h'010714238126772e253118df3cd18fa6   # inReplyTo =
-       9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
+       229c4fffe8f6c3594c905f47779e5a79', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/bob-jones",
        2: "mimi://example.com/r/engineering_team"
@@ -851,8 +853,8 @@ Table of Contents
       40                                   # bytes(0)
       f6                                   # primitive(22)
       58 20                                # bytes(32)
-         010714238126772e253118df3cd18fa6
-         9f90841d7df1f6f0cddab1f0dc0c9a26
+         01b0084467273cc43d6f0ebeac13eb84
+         229c4fffe8f6c3594c905f47779e5a79
       a2                                   # map(2)
          01                                # unsigned(1)
          78 1e                             # text(30)
@@ -902,16 +904,16 @@ Table of Contents
    Below is the annotated message in EDN and pretty printed CBOR:
 
    # REACTION
-   # message ID = h'019ae2809946ea7f0337958c5c1c22e9
-   #                5013c211c09290358d3eb8fb3aa2d019'
+   # message ID = h'01b1a14a88f4480e1336be86987854f8
+   #                38a3ec82944d4533d8d4088578550ed7'
    # timestamp  = 1644387237728 = 2022-02-08T22:13:57.728Z
    [
      h'd37bc0e6a8b4f04e9e6382375f587bf6', # salt
      null,                                # replaces
      h'',                                 # topicId
      null,                                # expires
-     h'010714238126772e253118df3cd18fa6   # inReplyTo =
-       9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
+       229c4fffe8f6c3594c905f47779e5a79', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/cathy-washington",
        2: "mimi://example.com/r/engineering_team"
@@ -932,8 +934,8 @@ Table of Contents
       40                                   # bytes(0)
       f6                                   # primitive(22)
       58 20                                # bytes(32)
-         010714238126772e253118df3cd18fa6
-         9f90841d7df1f6f0cddab1f0dc0c9a26
+         01b0084467273cc43d6f0ebeac13eb84
+         229c4fffe8f6c3594c905f47779e5a79
       a2                                   # map(2)
          01                                # unsigned(1)
          78 25                             # text(37)
@@ -973,16 +975,16 @@ Table of Contents
    Markdown is indicated below.
 
    # MENTION
-   # message ID = h'0103d50d4980c0a7a0990f65534ebd4f
-   #                0fa36b1f4680d6e080c19ea4a95def7b'
+   # message ID = h'01cbc26869928fd13edf55ace00f9976
+   #                8ca4e62ad17fede45520eaca58f69d02'
    # timestamp  = 1644387243008 = 2022-02-08T22:14:03.008Z
    [
      h'04f290e215d0f82d1750bfa8b7dc089d', # salt
      null,                                # replaces
      h'',                                 # topicId
      null,                                # expires
-     h'010714238126772e253118df3cd18fa6   # inReplyTo =
-       9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
+       229c4fffe8f6c3594c905f47779e5a79', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/cathy-washington",
        2: "mimi://example.com/r/engineering_team"
@@ -1021,17 +1023,17 @@ Table of Contents
    Here Bob Jones corrects a typo in his original message:
 
    # EDIT
-   # message ID = h'0177ae58cfe751f18d7c89979ceabb0d
-   #                e701acb8daa2872bb353fa5f8aba1851'
+   # message ID = h'01fdcd2f418e4b16f6ba319800a44c12
+   #                b3b0730871f29385bdc6d151b15751ad'
    # timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
    [
      h'b8c2e6d8800ecf45df39be6c45f4c042',  # salt
-     h'01efab9eca8374d3618a16b39c658689    / replaces /
-     fd90d07fe666a846178cb4965c94a8bf',    #   Reply
+     h'01a419aef4e16d43cfc06c28235ecfbe    / replaces /
+       9faebc740d0148e7ca20b22150930836',  #   Reply
      h'',                                 # topicId
      null,                                # expires
-     h'010714238126772e253118df3cd18fa6   # inReplyTo =
-       9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
+       229c4fffe8f6c3594c905f47779e5a79', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/bob-jones",
        2: "mimi://example.com/r/engineering_team"
@@ -1066,17 +1068,17 @@ Table of Contents
    (NullPart), as shown below.
 
    # DELETE
-   # message ID = h'01fb32968cf8c5fa00e6a45431d40aa8
-   #                ce4b7a92523b8bc69f3233e65023055f'
+   # message ID = h'01b85744b443e9db85de5bb826c04bcd
+   #                65b625e53d17839dc8a3f21321421088'
    # timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
    [
      h'0a590d73b2c7761c39168be5ebf7f2e6', # salt
-     h'01efab9eca8374d3618a16b39c658689    / replaces /
-     fd90d07fe666a846178cb4965c94a8bf',    #   Reply
+     h'01a419aef4e16d43cfc06c28235ecfbe    / replaces /
+       9faebc740d0148e7ca20b22150930836',  #   Reply
      h'',                                 # topicId
      null,                                # expires
-     h'010714238126772e253118df3cd18fa6   # inReplyTo =
-       9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
+       229c4fffe8f6c3594c905f47779e5a79', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/bob-jones",
        2: "mimi://example.com/r/engineering_team"
@@ -1100,17 +1102,17 @@ Table of Contents
    which created the reaction, as shown below.
 
    # UNLIKE
-   # message ID = h'01061e20fb16aad88bd75605df8387d4
-   #                fa444237451a05a72bb0f67037cc1669'
+   # message ID = h'01f4777df96bb04a66eabbe77b9a264f
+   #                e725f03d2905281dbb37a8b61484d791'
    # timestamp  = 1644387250389 = 2022-02-08T22:14:10.389Z
    [
      h'c5ba86dc9fd272e58ca52ec805b79199', # salt
-     h'019ae2809946ea7f0337958c5c1c22e9   / replaces /
-       5013c211c09290358d3eb8fb3aa2d019'  #   Reaction
+     h'01b1a14a88f4480e1336be86987854f8   / replaces /
+       38a3ec82944d4533d8d4088578550ed7'  #   Reaction
      h'',                                 # topicId
      null,                                # expires
-     h'010714238126772e253118df3cd18fa6   # inReplyTo =
-       9f90841d7df1f6f0cddab1f0dc0c9a26', #   Original
+     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
+       229c4fffe8f6c3594c905f47779e5a79', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/cathy-washington",
        2: "mimi://example.com/r/engineering_team"
@@ -1145,8 +1147,8 @@ Table of Contents
    without user interaction or network connectivity necessary.
 
    # EXPIRING
-   # message ID = h'0114e486b39d705e15e3000b57290de4
-   #                79affbda4ec2c1b17cc25c214229ed7d'
+   # message ID = h'0106308e2c03346eba95b24abdfa9fe6
+   #                43aa247debfb7192feae647155316920'
    # timestamp  = 1644389403227 = 2022-02-08T22:49:06.227Z
    [
      h'33be993eb39f418f9295afc2ae160d2d', # salt
@@ -1222,8 +1224,8 @@ Table of Contents
    separately.
 
    # ATTACHMENT
-   # message ID = h'019536595b777ea2a133a4f362e78926
-   #                b6807c3eb7d519fbd9c5e1ad24c7cf5e'
+   # message ID = h'01ad825f6116adeb437a7b1f95a9d9ac
+   #                bcc708f83f5df505d32af9c2826e8b5f'
    # timestamp  = not specified in example
    [
      h'18fac6371e4e53f1aeaf8a013155c166', # salt
@@ -1321,8 +1323,8 @@ Table of Contents
    and conferencing functionality is out-of-scope of this document.
 
    # CONFERENCING
-   # message ID = h'01c28cee525403a3a0d30e9958749790
-   #                42cd776051b3247a6ec3189e85804c02'
+   # message ID = h'01d8dab2e22b75dee4f5e52bb181d2d7
+   #                32008a235b80375113803e36b32a5f06'
    # timestamp  = not specified in example
    [
      h'678ac6cd54de049c3e9665cd212470fa', # salt
@@ -1499,26 +1501,26 @@ Table of Contents
    [
      [
        /  Original message     /
-       h'010714238126772e253118df3cd18fa6
-         9f90841d7df1f6f0cddab1f0dc0c9a26',
+       h'01b0084467273cc43d6f0ebeac13eb84
+         229c4fffe8f6c3594c905f47779e5a79',
        2    / status = read    /
      ],
      [
        /  Reply message        /
-       h'01efab9eca8374d3618a16b39c658689
-         fd90d07fe666a846178cb4965c94a8bf',
+       h'01a419aef4e16d43cfc06c28235ecfbe
+         9faebc740d0148e7ca20b22150930836',
        2    / status = read    /
      ],
      [
        /  Mention message      /
-       h'0103d50d4980c0a7a0990f65534ebd4f
-         0fa36b1f4680d6e080c19ea4a95def7b',
+       h'01cbc26869928fd13edf55ace00f9976
+         8ca4e62ad17fede45520eaca58f69d02',
        0    / status = unread  /
      ],
      [
        /  Expiring message     /
-       h'0114e486b39d705e15e3000b57290de4
-         79affbda4ec2c1b17cc25c214229ed7d',
+       h'0106308e2c03346eba95b24abdfa9fe6
+         43aa247debfb7192feae647155316920',
        3    / status = expired /
      ]
    ]
@@ -2334,8 +2336,8 @@ B.1.  Proprietary and Common formats sent as alternatives
    proprietary messaging format simultaneously.
 
    # MULTIPART-1
-   # message ID = h'0127c836722b55fafc7f196d7017a593
-   #                f09b500fee8dfe1dbf2071ee5f1caba7'
+   # message ID = h'015c0469c52da0938c27cfa16702e277
+   #                35a4729746be5f64bc5838f754828464'
    # timestamp  = not specified in example
    [
      h'261c953e178af653fe3d42641b91d814', # salt
@@ -2379,8 +2381,8 @@ B.2.  Multiple Reactions Example
    This example shows sending a reaction with multiple separate emojis.
 
    # MULTIPART-2
-   # message ID = h'014b0cc005052325622d14752517700a
-   #                38dd32b10225da8437c3fe5a2603c303'
+   # message ID = h'016d4d9acef39420bfcb686bcc6e5d3f
+   #                f70cc06b3229c051bdeba37fe0055dbc'
    # timestamp  = not specified in example
    [
      h'8528dc2d92e4f1944d62042907ab94d0', # salt
@@ -2444,8 +2446,8 @@ B.3.  Complicated Nested Example
    10        PNG
 
    # MULTIPART-3
-   # message ID = h'0182a32b2593cc68ef1b00ed91cfe2dc
-   #                8db547636b6070b0f5ef8de7ae176523'
+   # message ID = h'011c6794e5c4ee607f40f4c8485a0dab
+   #                5fd8be7331459b1d09e4f59693ca32b3'
    # timestamp  = not specified in example
    [
      h'b8362793168d18c049b882d4642a2274', # salt
@@ -2646,6 +2648,12 @@ C.8.  Changes between draft-mahy-mimi-content-05 and draft-mahy-mimi-
    *  lots of changes for internal consistency
    *  rebuild all the examples from a script. make sure the EDN and CBOR
       correspond and the CDDL validates the CBOR.
+
+C.9.  Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-
+      content-07
+
+   *  fixed a bug in the generation of message IDs; regenerated them
+      correctly.
 
 Author's Address
 
