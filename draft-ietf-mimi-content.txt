@@ -4,8 +4,8 @@
 
 MIMI                                                             R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                          28 February 2025
-Expires: 1 September 2025
+Intended status: Informational                             17 April 2025
+Expires: 19 October 2025
 
 
      More Instant Messaging Interoperability (MIMI) message content
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 September 2025.
+   This Internet-Draft will expire on 19 October 2025.
 
 Copyright Notice
 
@@ -2100,9 +2100,9 @@ Contact Information:
               Barnes, R., Hodgson, M., Kohbrok, K., Mahy, R., Ralston,
               T., and R. Robert, "More Instant Messaging
               Interoperability (MIMI) using HTTPS and MLS", Work in
-              Progress, Internet-Draft, draft-ietf-mimi-protocol-02, 21
-              October 2024, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-mimi-protocol-02>.
+              Progress, Internet-Draft, draft-ietf-mimi-protocol-03, 3
+              March 2025, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-mimi-protocol-03>.
 
    [I-D.ietf-mls-extensions]
               Robert, R., "The Messaging Layer Security (MLS)
@@ -2114,9 +2114,9 @@ Contact Information:
    [I-D.mahy-mimi-identity]
               Mahy, R., "More Instant Messaging Interoperability (MIMI)
               Identity Concepts", Work in Progress, Internet-Draft,
-              draft-mahy-mimi-identity-02, 10 July 2023,
+              draft-mahy-mimi-identity-03, 3 March 2025,
               <https://datatracker.ietf.org/doc/html/draft-mahy-mimi-
-              identity-02>.
+              identity-03>.
 
    [RFC2046]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
               Extensions (MIME) Part Two: Media Types", RFC 2046,
