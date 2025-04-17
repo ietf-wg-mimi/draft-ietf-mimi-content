@@ -672,8 +672,8 @@ The annotated EDN follows, then the pretty printed CBOR.
    40                                   # bytes(0)
    f6                                   # primitive(22)
    58 20                                # bytes(32)
-      010714238126772e253118df3cd18fa6
-      9f90841d7df1f6f0cddab1f0dc0c9a26
+      01b0084467273cc43d6f0ebeac13eb84
+      229c4fffe8f6c3594c905f47779e5a79
    a2                                   # map(2)
       01                                # unsigned(1)
       78 1e                             # text(30)
@@ -731,8 +731,8 @@ Below is the annotated message in EDN and pretty printed CBOR:
    40                                   # bytes(0)
    f6                                   # primitive(22)
    58 20                                # bytes(32)
-      010714238126772e253118df3cd18fa6
-      9f90841d7df1f6f0cddab1f0dc0c9a26
+      01b0084467273cc43d6f0ebeac13eb84
+      229c4fffe8f6c3594c905f47779e5a79
    a2                                   # map(2)
       01                                # unsigned(1)
       78 25                             # text(37)
@@ -1770,3 +1770,7 @@ considerations
 * lots of changes for internal consistency
 * rebuild all the examples from a script. make sure the EDN and CBOR correspond
 and the CDDL validates the CBOR.
+
+## Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-content-07
+
+* fixed a bug in the generation of message IDs; regenerated them correctly.
