@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-03T01:55:49.263706+00:00",
+  "timestamp": "2025-04-17T01:58:19.384807+00:00",
   "repo": "ietf-wg-mimi/draft-ietf-mimi-content",
   "labels": [
     {
@@ -1651,6 +1651,22 @@
       "updatedAt": "2025-03-19T07:33:06Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 54,
+      "id": "I_kwDOJiBc4M6yveo1",
+      "title": "Example message IDs are calculated incorrectly",
+      "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/54",
+      "state": "OPEN",
+      "author": "bitbltr",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The wrong URI is used to generate the hash_output.\n\nIn generate-examples.py, line 91 is\n```\nroom_uri = message_array[5][SENDER]\n```\n\nShould be:\n```\nroom_uri = message_array[5][ROOM]\n```\n",
+      "createdAt": "2025-04-16T07:51:54Z",
+      "updatedAt": "2025-04-16T07:51:54Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -2851,6 +2867,58 @@
       "mergeCommit": {
         "oid": "7b26fa1b9bd587c6c5fccd59b4040a4f941d1fdb"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 55,
+      "id": "PR_kwDOJiBc4M6Sy7OP",
+      "title": "Use the correct numbered extension ID for ROOM",
+      "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/pull/55",
+      "state": "CLOSED",
+      "author": "bitbltr",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #54 ",
+      "createdAt": "2025-04-16T07:57:39Z",
+      "updatedAt": "2025-04-16T07:59:04Z",
+      "baseRepository": "ietf-wg-mimi/draft-ietf-mimi-content",
+      "baseRefName": "main",
+      "baseRefOid": "b262c9974dc659428094a14b9d4fd5eb8b3ac737",
+      "headRepository": null,
+      "headRefName": "patch-1",
+      "headRefOid": "cdc37c8377034e74d1e12a31b9ddec544076b9bc",
+      "closedAt": "2025-04-16T07:59:03Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 56,
+      "id": "PR_kwDOJiBc4M6Sy8zg",
+      "title": "Use the correct numbered extension ID for ROOM",
+      "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/pull/56",
+      "state": "OPEN",
+      "author": "bitbltr",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #54 ",
+      "createdAt": "2025-04-16T08:00:34Z",
+      "updatedAt": "2025-04-16T08:00:34Z",
+      "baseRepository": "ietf-wg-mimi/draft-ietf-mimi-content",
+      "baseRefName": "main",
+      "baseRefOid": "b262c9974dc659428094a14b9d4fd5eb8b3ac737",
+      "headRepository": "bitbltr/draft-ietf-mimi-content",
+      "headRefName": "patch-1",
+      "headRefOid": "d73c237a28f77107e090922da7e816c4e357038c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
