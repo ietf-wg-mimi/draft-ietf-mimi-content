@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-17T01:58:19.384807+00:00",
+  "timestamp": "2025-04-20T02:05:15.159998+00:00",
   "repo": "ietf-wg-mimi/draft-ietf-mimi-content",
   "labels": [
     {
@@ -1657,14 +1657,52 @@
       "id": "I_kwDOJiBc4M6yveo1",
       "title": "Example message IDs are calculated incorrectly",
       "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/54",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bitbltr",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The wrong URI is used to generate the hash_output.\n\nIn generate-examples.py, line 91 is\n```\nroom_uri = message_array[5][SENDER]\n```\n\nShould be:\n```\nroom_uri = message_array[5][ROOM]\n```\n",
       "createdAt": "2025-04-16T07:51:54Z",
-      "updatedAt": "2025-04-16T07:51:54Z",
+      "updatedAt": "2025-04-17T18:30:25Z",
+      "closedAt": "2025-04-17T18:30:24Z",
+      "comments": [
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Need to actually generate the examples to correct the original issue.",
+          "createdAt": "2025-04-17T17:34:46Z",
+          "updatedAt": "2025-04-17T17:34:46Z"
+        },
+        {
+          "author": "bitbltr",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I did generate the example files on my machine. I just didn't know if I should include them in the PR or if you had a process for that so the proposal would get updated. Happy to update the examples directory",
+          "createdAt": "2025-04-17T17:40:55Z",
+          "updatedAt": "2025-04-17T17:40:55Z"
+        },
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "With the combination of #56 and #57 this can be closed now.",
+          "createdAt": "2025-04-17T18:30:24Z",
+          "updatedAt": "2025-04-17T18:30:24Z"
+        }
+      ]
+    },
+    {
+      "number": 58,
+      "id": "I_kwDOJiBc4M6zEmsL",
+      "title": "Salt length is inconsistent",
+      "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/issues/58",
+      "state": "OPEN",
+      "author": "bitbltr",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The message format schema in sections 4.1. and A.1. defines the salt as a 16-octet value\n```\nsalt: bstr .size 16\n```\n\nThe example messages use 16-octets, but section 3.3. defines the salt as 32-octets:\n```\nEvery MIMI content message contains a 32-octet per-message cryptographically random salt\n```\n\nI believe section 3.3 should define the salt as a 16-octet value, and section 9.2. (\"Generating the random salt\") should be changed to specify the use of the first 16-octets of the hash output:\n```\nhash_output = HMAC_SHA256( salt_base_secret, nonce )\nsalt = hash_output[0..15]\n```",
+      "createdAt": "2025-04-18T08:01:13Z",
+      "updatedAt": "2025-04-18T08:01:13Z",
       "closedAt": null,
       "comments": []
     }
@@ -2901,24 +2939,76 @@
       "id": "PR_kwDOJiBc4M6Sy8zg",
       "title": "Use the correct numbered extension ID for ROOM",
       "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/pull/56",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bitbltr",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #54 ",
       "createdAt": "2025-04-16T08:00:34Z",
-      "updatedAt": "2025-04-16T08:00:34Z",
+      "updatedAt": "2025-04-17T17:32:58Z",
       "baseRepository": "ietf-wg-mimi/draft-ietf-mimi-content",
       "baseRefName": "main",
       "baseRefOid": "b262c9974dc659428094a14b9d4fd5eb8b3ac737",
       "headRepository": "bitbltr/draft-ietf-mimi-content",
       "headRefName": "patch-1",
       "headRefOid": "d73c237a28f77107e090922da7e816c4e357038c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-04-17T17:32:58Z",
+      "mergedAt": "2025-04-17T17:32:58Z",
+      "mergedBy": "rohanmahy",
+      "mergeCommit": {
+        "oid": "603c4b19465dd1ed8c222c6d48046cd5e3bbc6e6"
+      },
+      "comments": [
+        {
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Good catch. Thanks!",
+          "createdAt": "2025-04-17T17:31:55Z",
+          "updatedAt": "2025-04-17T17:31:55Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOJiBc4M6lfd3X",
+          "commit": {
+            "abbreviatedOid": "d73c237"
+          },
+          "author": "rohanmahy",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-17T17:30:54Z",
+          "updatedAt": "2025-04-17T17:30:54Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 57,
+      "id": "PR_kwDOJiBc4M6TBusG",
+      "title": "Regenerate all examples with corrected message IDs",
+      "url": "https://github.com/ietf-wg-mimi/draft-ietf-mimi-content/pull/57",
+      "state": "MERGED",
+      "author": "rohanmahy",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "After merge of #56 :\r\n- reran the program to generate the CBOR examples\r\n- fixed the (now different) message ID in all the EDN files and in the pretty printed examples\r\n- generated new version of implied-original.cbor and report.cbor from the EDN.\r\n- compared the EDN of all the other EDN files to the corresponding CBOR\r\n- ran validate all\r\n- made a note in the change log to this effect\r\n\r\nAddresses #54 \r\n",
+      "createdAt": "2025-04-17T18:29:07Z",
+      "updatedAt": "2025-04-17T18:29:48Z",
+      "baseRepository": "ietf-wg-mimi/draft-ietf-mimi-content",
+      "baseRefName": "main",
+      "baseRefOid": "603c4b19465dd1ed8c222c6d48046cd5e3bbc6e6",
+      "headRepository": "ietf-wg-mimi/draft-ietf-mimi-content",
+      "headRefName": "gen-examples",
+      "headRefOid": "649b042a46447fd66844eae21cfc4cdc5e475137",
+      "closedAt": "2025-04-17T18:29:48Z",
+      "mergedAt": "2025-04-17T18:29:48Z",
+      "mergedBy": "rohanmahy",
+      "mergeCommit": {
+        "oid": "d4eef97e3237d929913f13075c91c2c78ee2ad29"
+      },
       "comments": [],
       "reviews": []
     }
