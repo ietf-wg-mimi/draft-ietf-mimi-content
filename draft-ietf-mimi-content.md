@@ -137,7 +137,7 @@ could be used.
 
 The MIMI content format relies heavily on message IDs to refer to other
 messages, to reply, react, edit, delete, and report on the status of
-messages. Every MIMI content message contains a 32-octet per-message
+messages. Every MIMI content message contains a 16-octet per-message
 cryptographically random salt, and has a 32-octet message ID which is calculated
 from the hash of the message (including the salt), the sender URI, and the
 room URI.
@@ -1428,10 +1428,12 @@ cases, and should not be considered the result of a malicious sender.
 
 To ensure a strong source of entropy for the per-message unique salt required in
 each message, the client can export a secret from the MLS key schedule, for
-example with the label `salt_base_secret` and calculate the salt as the HMAC of a locally generated nonce and the franking_base_secret.
+example with the label `salt_base_secret` and calculate the salt as the first
+16-octets of the HMAC of a locally generated nonce and the franking_base_secret.
 
 ~~~
-salt = HMAC_SHA256( salt_base_secret, nonce )
+hash_output = HMAC_SHA256( salt_base_secret, nonce )
+salt = hash_output[0..15]
 ~~~
 
 ## Rendering and authorization of edits and deletes
