@@ -274,7 +274,7 @@ message cannot refer to a sequence of referred messages which refers
 back to itself. When replying, a client MUST NOT knowingly create a sequence
 of replies which create a loop.
 
-When receiving a message with inReplyTo message, the client checks if the 
+When receiving a message with inReplyTo message, the client checks if the
 referenced message is itself inReplyTo another message. If so, it continues
 following the referenced messages, checking that the message ID of none of the
 referenced messages "loop" back to a message later in the inReplyTo chain.
@@ -300,7 +300,7 @@ Bob might just send a message saying he doesn't like pineapple on pizza.
 If clients want to detect messages sent out of order by the hub, they
 require notification of message delivery at the MLS level (ex: the AppAck
 mechanism provided in [@?I-D.ietf-mls-extensions]) or at the MIMI level,
-such as the format defined in (#reporting).
+such as the format defined in {{?I-D.mahy-mimi-message-status}}.
 
 ## Extension Fields
 
