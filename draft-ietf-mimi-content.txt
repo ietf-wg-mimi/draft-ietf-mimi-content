@@ -2425,6 +2425,8 @@ C.9.  Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-
       correctly.
    *  moved MIMI message status format into draft-mahy-mimi-message-
       status
+   *  clarified that the salt is always 16 octets
+   *  make examples uses the correct CBOR map key for room
 
 Author's Address
 
