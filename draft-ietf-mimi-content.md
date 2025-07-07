@@ -93,6 +93,10 @@ Below is a list of some features commonly found in IM group chat systems:
 * calling / conferencing
 * message threading
 
+Delivery notifications and read receipts are addressed in
+{{?I-D.mahy-mimi-message-status}}. Calling and conferencing will also be
+addressed in another document.
+
 # Overview
 
 ## Binary encoding
@@ -188,14 +192,6 @@ The container typically carries one or more body parts with the actual message
 content (for example, an emoji used in a reaction, a plain text or rich text
 message or reply, a link, or an inline image).
 
-## Message Status Report
-
-This document also describes the semantics of a status report of other messages.
-Because some messaging systems deliver messages in batches and allow a user to
-mark several messages read at a time, the report format defined in (#reporting)
-allows a single report to convey the read/delivered status of multiple messages
-(by message ID) within the same MLS group at a time.
-
 # MIMI Content Container Message Semantics
 
 Each MIMI Content message is a container format with two categories
@@ -278,7 +274,8 @@ message cannot refer to a sequence of referred messages which refers
 back to itself. When replying, a client MUST NOT knowingly create a sequence
 of replies which create a loop.
 
-When receiving a message with inReplyTo message, the client checks if the referenced message is itself inReplyTo another message. If so, it continues
+When receiving a message with inReplyTo message, the client checks if the
+referenced message is itself inReplyTo another message. If so, it continues
 following the referenced messages, checking that the message ID of none of the
 referenced messages "loop" back to a message later in the inReplyTo chain.
 
@@ -303,14 +300,15 @@ Bob might just send a message saying he doesn't like pineapple on pizza.
 If clients want to detect messages sent out of order by the hub, they
 require notification of message delivery at the MLS level (ex: the AppAck
 mechanism provided in [@?I-D.ietf-mls-extensions]) or at the MIMI level,
-such as the format defined in (#reporting).
+such as the format defined in {{?I-D.mahy-mimi-message-status}}.
 
 ## Extension Fields
 
 In order to add additional functionality to MIMI, senders can include
 extension fields in the message format {6}. Each extension has a CBOR map key
 which is a positive integer, negative integer, or text string containing between
-1 and 255 octets of UTF-8. The value can be any CBOR (including combinations of maps and arrays) which can be represented in between 0 and 4096 octets.
+1 and 255 octets of UTF-8. The value can be any CBOR (including combinations of
+maps and arrays) which can be represented in between 0 and 4096 octets.
 The message content `extensions` field MUST NOT include more than one
 extension field with the same map key.
 
@@ -462,7 +460,8 @@ The partIndex can be used inside a content ID URI [@!RFC2392] in a "container"
 part (for example HTML, Markdown, vCard [@?RFC6350], or iCal [@?RFC5545]) to
 reference another part inside the same MIMI message. In a MIMI message it has
 the form `cid:`*partIndex*`@local.invalid`.
-This format of the content ID URI in MIMI MUST only reference the `partIndex` of a SinglePart or ExternalPart.
+This format of the content ID URI in MIMI MUST only reference the `partIndex`
+of a SinglePart or ExternalPart.
 
 When processing a MultiPart nested structure, the client can start from the
 `body` in the MIMI content (the "top-level" or "root") and evaluate any
@@ -709,7 +708,8 @@ modeled on the reaction Content-Disposition token defined in [@RFC9078].
 Both indicate that the intended disposition of the
 contents of the message is a reaction.
 
-The content in the sample message is a single Unicode heart character (U+2665) which is expressed in UTF-8 as 0xe299a5.
+The content in the sample message is a single Unicode heart character (U+2665)
+which is expressed in UTF-8 as 0xe299a5.
 Discovering the range of characters each implementation could render as a
 reaction can occur out-of-band and is not within the scope of this proposal.
 However, an implementation which receives a reaction character string it
@@ -837,7 +837,9 @@ created the reaction, as shown below.
 
 ## Expiring
 
-There are two types of expiring messages in instant messaging systems. In the typical implementation, messages are deleted a specific amount of time relative to (after) when the receiving client reads the message. We will refer to this as
+There are two types of expiring messages in instant messaging systems. In the
+typical implementation, messages are deleted a specific amount of time relative
+to (after) when the receiving client reads the message. We will refer to this as
 relative expiration.
 
 Absolute expiring messages are designed to be deleted automatically by the
@@ -1045,90 +1047,6 @@ for messages within a thread uses the timestamp field. If more than
 one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
 
-# Delivery Reporting and Read Receipts {#reporting}
-
-In instant messaging systems, read receipts typically generate a distinct
-indicator for each message. In some systems, the number of users in a group
-who have read the message is subtly displayed and the list of users who
-read the message is available on further inspection.
-
-Of course, Internet mail has support for read receipts as well, but
-the existing message disposition notification mechanism defined for email
-in [@?RFC8098] is completely inappropriate in this context:
-
-* notifications can be sent by intermediaries
-* only one notification can be sent about a single message per recipient
-* a human-readable version of the notification is expected
-* each notification can refer to only one message
-* it is extremely verbose
-
-Instead, we would like to be able to include status changes about multiple
-messages in each report, the ability to mark a message delivered, then read, then unread, then expired
-for example.
-
-The format below, application/mimi-message-status is sent
-by one member of an MLS group to the entire group and can refer to multiple messages in that group.
-The format contains a list of message ID / status pairs. As
-the status at the recipient changes, the status can be updated in a subsequent notification.
-
-The status of each message can be one of the following values:
-
-- 0 (unread) indicates that the message was not yet read by the sender of the
-report.
-- 1 (delivered) indicates that a messaging client of the sender of the report
-received the message.
-- 2 (read) indicates that the sender of the report read the message.
-- 3 (expired) indicates that the message expired and is not available for
-reading. In the case of absolute expiration, it does not indicate if the message
-was read before its expiry.
-- 4 (deleted) indicates that the message was deleted, either by the local
-client, or by another member of the room with the power to retract messages.
-- 5 (hidden) indicates that the message was hidden by the local
-client (for example archived).
-- 6 (error) indicates that the sender client is aware of the message ID, but
-that there was an unspecified error with the reception of the message.
-
-Depending on the policy of the room and a potential sender of delivery reports,
-sending delivery receipts and/or read receipt messages might be required,
-optional, or forbidden.
-Clients might also have policies about specific status values that are shared
-and others which are not. Some status values might only be shared among the
-reporting user's own clients, for example.
-
-Below is the CDDL schema for message status.
-
-<{{delivery-report.cddl}}
-
-* Sender user handle URL:
-  mimi://example.com/u/bob-jones
-
-## Delivery Report Example
-
-<{{examples/report.edn}}
-
-```
-84                                      # array(4)
-   82                                   # array(2)
-      58 20                             # bytes(32)
-         d3c14744d1791d02548232c23d35efa9
-         7668174ba385af066011e43bd7e51501
-      02                                # unsigned(2)
-   82                                   # array(2)
-      58 20                             # bytes(32)
-         e701beee59f9376282f39092e1041b2a
-         c2e3aad1776570c1a28de244979c71ed
-      02                                # unsigned(2)
-   82                                   # array(2)
-      58 20                             # bytes(32)
-         6b50bfdd71edc83554ae21380080f4a3
-         ba77985da34528a515fac3c38e4998b8
-      00                                # unsigned(0)
-   82                                   # array(2)
-      58 20                             # bytes(32)
-         5c95a4dfddab84348bcc265a479299fb
-         d3a2eecfa3d490985da5113e5480c7f1
-      03                                # unsigned(3)
-```
 
 # Support for Specific Media Types
 
@@ -1149,7 +1067,6 @@ The following MIME types are RECOMMENDED:
 
 * text/markdown;variant=CommonMark -- [CommonMark](https://spec.commonmark.org/0.30)
 * text/html
-* application/mimi-message-status -- (described in this document)
 * image/jpeg
 * image/png
 
@@ -1237,49 +1154,6 @@ Additional information:
 
 Person & email address to contact for further information:
    IETF MIMI Working Group mimi@ietf.org
-
-
-~~~~~~~
-
-## MIME subtype registration of application/mimi-message-status
-
-This document proposes registration of a media subtype with IANA.
-
-~~~~~~~
-Type name: application
-
-Subtype name: mimi-message-status
-
-Required parameters: none
-
-Optional parameters: none
-
-Encoding considerations:
-   This message type should be encoded as binary data
-
-Security considerations:
-   See Section A of RFC XXXX
-
-Interoperability considerations:
-   See Section Y.Z of RFC XXXX
-
-Published specification: RFC XXXX
-
-Applications that use this media type:
-   Instant Messaging Applications
-
-Fragment identifier considerations: N/A
-
-Additional information:
-
-   Deprecated alias names for this type: N/A
-   Magic number(s): N/A
-   File extension(s): N/A
-   Macintosh file type code(s): N/A
-
-Person & email address to contact for further information:
-   IETF MIMI Working Group mimi@ietf.org
-
 ~~~~~~~
 
 ## MIMI Content Extension Keys registry {#keys-registry}
@@ -1556,30 +1430,6 @@ result in a different notification policy.
 If the client does not support special rendering of mentions, the
 application, should render the text like any other link.
 
-## Delivery and Read Receipts
-
-Delivery and Read Receipts can provide useful information inside a group,
-or they can reveal sensitive private information. In many IM systems
-there is are per-group policies for and/or delivery read receipts:
-
-* they are required
-* they are permitted, but optional
-* they are forbidden
-
-In the first case, everyone in the group would have to claim to support
-read receipts to be in the group and agree to the policy of sending them
-whenever a message was read. A user who did not wish to send read receipts could
-review the policy (automatically or manually) and choose not to join
-the group. Of course, requiring read receipts is a cooperative effort
-just like using self-deleting messages. A malicious client could obviously
-read a message and not send a read receipt, or send a read receipt for a
-message that was never rendered. However, cooperating clients have a way to
-agree that they will send read receipts when a message is read in a specific
-group.
-
-In the second case, sending a read receipt would be at the discretion
-of each receiver of the message (via local preferences).
-
 
 {backmatter}
 
@@ -1638,10 +1488,6 @@ the formats described in the body of the document.
 Below is a CDDL schema for the implied message fields.
 
 <{{implied.cddl}}
-
-## Delivery Report Format
-
-<{{delivery-report.cddl}}
 
 
 # Multipart examples
@@ -1776,3 +1622,4 @@ and the CDDL validates the CBOR.
 ## Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-content-07
 
 * fixed a bug in the generation of message IDs; regenerated them correctly.
+* moved MIMI message status format into draft-mahy-mimi-message-status
