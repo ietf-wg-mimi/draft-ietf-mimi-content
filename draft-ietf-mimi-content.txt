@@ -4,8 +4,8 @@
 
 MIMI                                                             R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                               4 July 2025
-Expires: 5 January 2026
+Intended status: Informational                               7 July 2025
+Expires: 8 January 2026
 
 
      More Instant Messaging Interoperability (MIMI) message content
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 January 2026.
+   This Internet-Draft will expire on 8 January 2026.
 
 Copyright Notice
 
@@ -59,7 +59,6 @@ Table of Contents
      3.3.  Message ID
      3.4.  Accepted Timestamp
      3.5.  Message Container
-     3.6.  Message Status Report
    4.  MIMI Content Container Message Semantics
      4.1.  Message Behavior Fields
      4.2.  Message Ordering
@@ -79,34 +78,28 @@ Table of Contents
      5.9.  Attachments
      5.10. Conferencing
      5.11. Topics / Threading
-   6.  Delivery Reporting and Read Receipts
-     6.1.  Delivery Report Example
-   7.  Support for Specific Media Types
-     7.1.  MIMI Required and Recommended media types
-       7.1.1.  Specifics of Github Flavored Markdown in MIMI
-     7.2.  Use of proprietary media types
-   8.  IANA Considerations
-     8.1.  MIME subtype registration of application/mimi-content
-     8.2.  MIME subtype registration of application/
-           mimi-message-status
-     8.3.  MIMI Content Extension Keys registry
-       8.3.1.  Expert Review
-     8.4.  GFM-MIMI Markdown variant
-   9.  Security Considerations
-     9.1.  General handling
-     9.2.  Generating the random salt
-     9.3.  Rendering and authorization of edits and deletes
-     9.4.  Validation of timestamp
-     9.5.  Alternate content rendering
-     9.6.  Link and Mention handling
-     9.7.  Delivery and Read Receipts
-   10. References
-     10.1.  Normative References
-     10.2.  Informative References
+   6.  Support for Specific Media Types
+     6.1.  MIMI Required and Recommended media types
+       6.1.1.  Specifics of Github Flavored Markdown in MIMI
+     6.2.  Use of proprietary media types
+   7.  IANA Considerations
+     7.1.  MIME subtype registration of application/mimi-content
+     7.2.  MIMI Content Extension Keys registry
+       7.2.1.  Expert Review
+     7.3.  GFM-MIMI Markdown variant
+   8.  Security Considerations
+     8.1.  General handling
+     8.2.  Generating the random salt
+     8.3.  Rendering and authorization of edits and deletes
+     8.4.  Validation of timestamp
+     8.5.  Alternate content rendering
+     8.6.  Link and Mention handling
+   9.  References
+     9.1.  Normative References
+     9.2.  Informative References
    Appendix A.  CDDL Schemas
      A.1.  Complete Message Format Schema
      A.2.  Implied Message Fields
-     A.3.  Delivery Report Format
    Appendix B.  Multipart examples
      B.1.  Proprietary and Common formats sent as alternatives
      B.2.  Multiple Reactions Example
@@ -200,6 +193,10 @@ Table of Contents
    *  shared files/audio/videos
    *  calling / conferencing
    *  message threading
+
+   Delivery notifications and read receipts are addressed in {{?I-
+   D.mahy-mimi-message-status}}. Calling and conferencing will also be
+   addressed in another document.
 
 3.  Overview
 
@@ -304,15 +301,6 @@ Table of Contents
    message content (for example, an emoji used in a reaction, a plain
    text or rich text message or reply, a link, or an inline image).
 
-3.6.  Message Status Report
-
-   This document also describes the semantics of a status report of
-   other messages.  Because some messaging systems deliver messages in
-   batches and allow a user to mark several messages read at a time, the
-   report format defined in Section 6 allows a single report to convey
-   the read/delivered status of multiple messages (by message ID) within
-   the same MLS group at a time.
-
 4.  MIMI Content Container Message Semantics
 
    Each MIMI Content message is a container format with two categories
@@ -346,7 +334,7 @@ Table of Contents
 
    The first data field is the per-message unique salt which MUST be
    cryptographically random.  An example algorithm for generating the
-   salt is described in Section 9.2.
+   salt is described in Section 8.2.
 
    The replaces {1} data field indicates that the current message is a
    replacement or update to a previous message whose message ID is in
@@ -422,7 +410,8 @@ Table of Contents
    If clients want to detect messages sent out of order by the hub, they
    require notification of message delivery at the MLS level (ex: the
    AppAck mechanism provided in [I-D.ietf-mls-extensions]) or at the
-   MIMI level, such as the format defined in Section 6.
+   MIMI level, such as the format defined in {{?I-D.mahy-mimi-message-
+   status}}.
 
 4.3.  Extension Fields
 
@@ -438,7 +427,7 @@ Table of Contents
    name = int / tstr .size (1..255)
    value = any .size (0..4095)
 
-   An IANA registry Section 8.3 is defined for positive integer keys.
+   An IANA registry Section 7.2 is defined for positive integer keys.
    Negative integer and text string keys are only for private use.
 
 4.4.  Message Bodies
@@ -1417,139 +1406,9 @@ Table of Contents
    message has the same timestamp, the lexically lowest message ID sorts
    earlier.
 
-6.  Delivery Reporting and Read Receipts
+6.  Support for Specific Media Types
 
-   In instant messaging systems, read receipts typically generate a
-   distinct indicator for each message.  In some systems, the number of
-   users in a group who have read the message is subtly displayed and
-   the list of users who read the message is available on further
-   inspection.
-
-   Of course, Internet mail has support for read receipts as well, but
-   the existing message disposition notification mechanism defined for
-   email in [RFC8098] is completely inappropriate in this context:
-
-   *  notifications can be sent by intermediaries
-   *  only one notification can be sent about a single message per
-      recipient
-   *  a human-readable version of the notification is expected
-   *  each notification can refer to only one message
-   *  it is extremely verbose
-
-   Instead, we would like to be able to include status changes about
-   multiple messages in each report, the ability to mark a message
-   delivered, then read, then unread, then expired for example.
-
-   The format below, application/mimi-message-status is sent by one
-   member of an MLS group to the entire group and can refer to multiple
-   messages in that group.  The format contains a list of message ID /
-   status pairs.  As the status at the recipient changes, the status can
-   be updated in a subsequent notification.
-
-   The status of each message can be one of the following values:
-
-   *  0 (unread) indicates that the message was not yet read by the
-      sender of the report.
-   *  1 (delivered) indicates that a messaging client of the sender of
-      the report received the message.
-   *  2 (read) indicates that the sender of the report read the message.
-   *  3 (expired) indicates that the message expired and is not
-      available for reading.  In the case of absolute expiration, it
-      does not indicate if the message was read before its expiry.
-   *  4 (deleted) indicates that the message was deleted, either by the
-      local client, or by another member of the room with the power to
-      retract messages.
-   *  5 (hidden) indicates that the message was hidden by the local
-      client (for example archived).
-   *  6 (error) indicates that the sender client is aware of the message
-      ID, but that there was an unspecified error with the reception of
-      the message.
-
-   Depending on the policy of the room and a potential sender of
-   delivery reports, sending delivery receipts and/or read receipt
-   messages might be required, optional, or forbidden.  Clients might
-   also have policies about specific status values that are shared and
-   others which are not.  Some status values might only be shared among
-   the reporting user's own clients, for example.
-
-   Below is the CDDL schema for message status.
-
-   MessageStatusReport = [ * PerMessageStatus ]
-
-   PerMessageStatus = [
-       messageId: MessageId,
-       status: baseStatus / $extStatus / unknownStatus
-   ]
-
-   baseStatus = &(
-       unread: 0,
-       delivered: 1,
-       read: 2,
-       expired: 3,
-       deleted: 4,
-       hidden: 5,
-       error: 6
-   )
-   unknownStatus = &( unknown: 7..255 )
-
-   MessageId = bstr .size 32
-
-   *  Sender user handle URL: mimi://example.com/u/bob-jones
-
-6.1.  Delivery Report Example
-
-   [
-     [
-       /  Original message     /
-       h'01b0084467273cc43d6f0ebeac13eb84
-         229c4fffe8f6c3594c905f47779e5a79',
-       2    / status = read    /
-     ],
-     [
-       /  Reply message        /
-       h'01a419aef4e16d43cfc06c28235ecfbe
-         9faebc740d0148e7ca20b22150930836',
-       2    / status = read    /
-     ],
-     [
-       /  Mention message      /
-       h'01cbc26869928fd13edf55ace00f9976
-         8ca4e62ad17fede45520eaca58f69d02',
-       0    / status = unread  /
-     ],
-     [
-       /  Expiring message     /
-       h'0106308e2c03346eba95b24abdfa9fe6
-         43aa247debfb7192feae647155316920',
-       3    / status = expired /
-     ]
-   ]
-
-   84                                      # array(4)
-      82                                   # array(2)
-         58 20                             # bytes(32)
-            d3c14744d1791d02548232c23d35efa9
-            7668174ba385af066011e43bd7e51501
-         02                                # unsigned(2)
-      82                                   # array(2)
-         58 20                             # bytes(32)
-            e701beee59f9376282f39092e1041b2a
-            c2e3aad1776570c1a28de244979c71ed
-         02                                # unsigned(2)
-      82                                   # array(2)
-         58 20                             # bytes(32)
-            6b50bfdd71edc83554ae21380080f4a3
-            ba77985da34528a515fac3c38e4998b8
-         00                                # unsigned(0)
-      82                                   # array(2)
-         58 20                             # bytes(32)
-            5c95a4dfddab84348bcc265a479299fb
-            d3a2eecfa3d490985da5113e5480c7f1
-         03                                # unsigned(3)
-
-7.  Support for Specific Media Types
-
-7.1.  MIMI Required and Recommended media types
+6.1.  MIMI Required and Recommended media types
 
    As the MIMI Content container is just a container, the plain text or
    rich text messages sent inside, and any image or other formats needs
@@ -1560,7 +1419,7 @@ Table of Contents
       (described in this document)
    *  text/plain;charset=utf-8
    *  text/markdown;variant=GFM-MIMI -- Github Flavored Markdown for
-      MIMI, defined in Section 7.1.1
+      MIMI, defined in Section 6.1.1
 
    Note that it is acceptable to render the contents of a received
    markdown document as plain text.
@@ -1570,7 +1429,6 @@ Table of Contents
    *  text/markdown;variant=CommonMark -- CommonMark
       (https://spec.commonmark.org/0.30)
    *  text/html
-   *  application/mimi-message-status -- (described in this document)
    *  image/jpeg
    *  image/png
 
@@ -1578,7 +1436,7 @@ Table of Contents
    ExternalParts with http and https URLs, and decrypt downloaded
    content encrypted with the AES-128-GCM AEAD algorithm.
 
-7.1.1.  Specifics of Github Flavored Markdown in MIMI
+6.1.1.  Specifics of Github Flavored Markdown in MIMI
 
    A MIMI content client supports GitHub Flavored Markdown as defined in
    [GFM], with two changes: the Autolink extension is not supported; and
@@ -1610,7 +1468,7 @@ Table of Contents
    Note that rendering Markdown as plain text is an acceptable form of
    "support".
 
-7.2.  Use of proprietary media types
+6.2.  Use of proprietary media types
 
    As most messaging systems are proprietary, standalone systems, it is
    useful to allow clients to send and receive proprietary formats among
@@ -1620,12 +1478,12 @@ Table of Contents
    simultaneously over the same group with end-to-end encryption.  An
    example is given in the Appendix.
 
-8.  IANA Considerations
+7.  IANA Considerations
 
    RFC EDITOR: Please replace XXXX throughout with the RFC number
    assigned to this document.
 
-8.1.  MIME subtype registration of application/mimi-content
+7.1.  MIME subtype registration of application/mimi-content
 
    This document proposes registration of a media subtype with IANA.
 
@@ -1663,45 +1521,7 @@ Table of Contents
    Person & email address to contact for further information:
       IETF MIMI Working Group mimi@ietf.org
 
-8.2.  MIME subtype registration of application/mimi-message-status
-
-   This document proposes registration of a media subtype with IANA.
-
-   Type name: application
-
-   Subtype name: mimi-message-status
-
-   Required parameters: none
-
-   Optional parameters: none
-
-   Encoding considerations:
-      This message type should be encoded as binary data
-
-   Security considerations:
-      See Section A of RFC XXXX
-
-   Interoperability considerations:
-      See Section Y.Z of RFC XXXX
-
-   Published specification: RFC XXXX
-
-   Applications that use this media type:
-      Instant Messaging Applications
-
-   Fragment identifier considerations: N/A
-
-   Additional information:
-
-      Deprecated alias names for this type: N/A
-      Magic number(s): N/A
-      File extension(s): N/A
-      Macintosh file type code(s): N/A
-
-   Person & email address to contact for further information:
-      IETF MIMI Working Group mimi@ietf.org
-
-8.3.  MIMI Content Extension Keys registry
+7.2.  MIMI Content Extension Keys registry
 
    This document requests the creation of a new MIMI Content Extension
    Keys registry.  The registry should be under the heading of "More
@@ -1768,7 +1588,7 @@ Table of Contents
 
                                  Table 1
 
-8.3.1.  Expert Review
+7.2.1.  Expert Review
 
    Expert Review [RFC8126] registry requests are registered after a
    three-week review period on the MIMI Designated Expert (DE) mailing
@@ -1801,7 +1621,7 @@ Table of Contents
    a conflict of interest for a particular MIMI DE, that MIMI DE SHOULD
    defer to the judgment of the other MIMI DEs.
 
-8.4.  GFM-MIMI Markdown variant
+7.3.  GFM-MIMI Markdown variant
 
    This document registers a new Markdown variant in the IANA Markdown
    Variants registry.  The registration template below conforms with
@@ -1819,9 +1639,9 @@ References: RFCXXXX
 Contact Information:
    IETF MIMI Working Group <mimi@ietf.org>
 
-9.  Security Considerations
+8.  Security Considerations
 
-9.1.  General handling
+8.1.  General handling
 
    The following cases are examples of nonsensical values that most
    likely represent malicious messages.  These should be logged and
@@ -1864,7 +1684,7 @@ Contact Information:
       -  where a contentType is unrecognized or unsupported.
       -  where a language tag is unrecognized or unsupported.
 
-9.2.  Generating the random salt
+8.2.  Generating the random salt
 
    To ensure a strong source of entropy for the per-message unique salt
    required in each message, the client can export a secret from the MLS
@@ -1875,7 +1695,7 @@ Contact Information:
    hash_output = HMAC_SHA256( salt_base_secret, nonce )
    salt = hash_output[0..15]
 
-9.3.  Rendering and authorization of edits and deletes
+8.3.  Rendering and authorization of edits and deletes
 
    This content format allows clients to send new versions of previously
    sent messages, effectively replacing ("editing") or retracting
@@ -1909,7 +1729,7 @@ Contact Information:
    change the semantics of any other portion of the message except for
    the contents of the NestedPart, without specific authorization.
 
-9.4.  Validation of timestamp
+8.4.  Validation of timestamp
 
    The timestamp is the time a message is accepted by the hub provider.
    As such, the hub provider can manipulate the timestamp, and the
@@ -1921,7 +1741,7 @@ Contact Information:
    |  *TODO*: Discuss how to sanity check lastSeen, timestamp and the
    |  MLS epoch and generation, and the limitations of this approach.
 
-9.5.  Alternate content rendering
+8.5.  Alternate content rendering
 
    This document includes a mechanism where the sender can offer
    alternate versions of content in a single message.  For example, the
@@ -1946,7 +1766,7 @@ Contact Information:
    Reply sent by Alice
    Alice: Yes please.
 
-9.6.  Link and Mention handling
+8.6.  Link and Mention handling
 
    Both Markdown and HTML support links.  Using the example of an https
    link, if the rendered text and the link target match exactly or are
@@ -1992,35 +1812,9 @@ Contact Information:
    If the client does not support special rendering of mentions, the
    application, should render the text like any other link.
 
-9.7.  Delivery and Read Receipts
+9.  References
 
-   Delivery and Read Receipts can provide useful information inside a
-   group, or they can reveal sensitive private information.  In many IM
-   systems there is are per-group policies for and/or delivery read
-   receipts:
-
-   *  they are required
-   *  they are permitted, but optional
-   *  they are forbidden
-
-   In the first case, everyone in the group would have to claim to
-   support read receipts to be in the group and agree to the policy of
-   sending them whenever a message was read.  A user who did not wish to
-   send read receipts could review the policy (automatically or
-   manually) and choose not to join the group.  Of course, requiring
-   read receipts is a cooperative effort just like using self-deleting
-   messages.  A malicious client could obviously read a message and not
-   send a read receipt, or send a read receipt for a message that was
-   never rendered.  However, cooperating clients have a way to agree
-   that they will send read receipts when a message is read in a
-   specific group.
-
-   In the second case, sending a read receipt would be at the discretion
-   of each receiver of the message (via local preferences).
-
-10.  References
-
-10.1.  Normative References
+9.1.  Normative References
 
    [GFM]      GitHub, "GitHub Flavored Markdown Spec, Version 0.29-gfm",
               6 March 2019, <https://github.github.com/gfm/>.
@@ -2078,7 +1872,7 @@ Contact Information:
               html52-20170808, 8 August 2017,
               <https://www.w3.org/TR/2017/CR-html52-20170808>.
 
-10.2.  Informative References
+9.2.  Informative References
 
    [DoubleRatchet]
               Perrin, T. and M. Marlinspike, "The Double Ratchet
@@ -2159,10 +1953,6 @@ Contact Information:
    [RFC7763]  Leonard, S., "The text/markdown Media Type", RFC 7763,
               DOI 10.17487/RFC7763, March 2016,
               <https://www.rfc-editor.org/info/rfc7763>.
-
-   [RFC8098]  Hansen, T., Ed. and A. Melnikov, Ed., "Message Disposition
-              Notification", STD 85, RFC 8098, DOI 10.17487/RFC8098,
-              February 2017, <https://www.rfc-editor.org/info/rfc8098>.
 
    [RFC8551]  Schaad, J., Ramsdell, B., and S. Turner, "Secure/
               Multipurpose Internet Mail Extensions (S/MIME) Version 4.0
@@ -2284,28 +2074,6 @@ A.2.  Implied Message Fields
    ExtendedTime = #6.1001({* name => value })
    name = int / tstr .size (1..255)
    value = any .size (0..4095)
-
-A.3.  Delivery Report Format
-
-   MessageStatusReport = [ * PerMessageStatus ]
-
-   PerMessageStatus = [
-       messageId: MessageId,
-       status: baseStatus / $extStatus / unknownStatus
-   ]
-
-   baseStatus = &(
-       unread: 0,
-       delivered: 1,
-       read: 2,
-       expired: 3,
-       deleted: 4,
-       hidden: 5,
-       error: 6
-   )
-   unknownStatus = &( unknown: 7..255 )
-
-   MessageId = bstr .size 32
 
 Appendix B.  Multipart examples
 
@@ -2655,6 +2423,8 @@ C.9.  Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-
 
    *  fixed a bug in the generation of message IDs; regenerated them
       correctly.
+   *  moved MIMI message status format into draft-mahy-mimi-message-
+      status
 
 Author's Address
 
