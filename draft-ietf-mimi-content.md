@@ -1623,3 +1623,5 @@ and the CDDL validates the CBOR.
 
 * fixed a bug in the generation of message IDs; regenerated them correctly.
 * moved MIMI message status format into draft-mahy-mimi-message-status
+* clarified that the salt is always 16 octets
+* make examples uses the correct CBOR map key for room
