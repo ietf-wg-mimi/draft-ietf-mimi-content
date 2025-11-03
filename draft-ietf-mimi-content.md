@@ -214,8 +214,8 @@ mimiContent = [
   salt: bstr .size 16,
   replaces: null / MessageId,       ; {1}
   topicId: bstr,                    ; {2}
-  expires: null / Expiration        ; {3}
-  inReplyTo: null / InReplyTo,      ; {4}
+  expires: null / Expiration,       ; {3}
+  inReplyTo: null / MessageId,      ; {4}
   extensions: {* name => value },   ; {6}
   nestedPart: NestedPart            ; {7}
 ]
@@ -348,7 +348,7 @@ SinglePart = (
 ExternalPart = (
     cardinality: external,
     contentType: tstr,
-    url: uri,
+    url: tstr,
     expires: uint .size 4,
     size: uint .size 8,
     encAlg: uint .size 2,
