@@ -412,7 +412,7 @@ The disposition {10} and language {11} of each part can be specified
 for any part, including for nested parts. The disposition represents
 the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
-[@?RFC2183].
+[@?RFC2183]. Disposition values are defined in (#dispo-registry).
 
 ``` cddl
 baseDispos = &(
@@ -1156,11 +1156,13 @@ Person & email address to contact for further information:
    IETF MIMI Working Group mimi@ietf.org
 ~~~~~~~
 
-## MIMI Content Extension Keys registry {#keys-registry}
+## "More Instant Messaging Interoperability (MIMI)" Group Heading
+
+### MIMI Content Extension Keys registry {#keys-registry}
 
 This document requests the creation of a new MIMI Content Extension Keys
 registry.
-The registry should be under the heading of "More Instant Messaging Interoperability (MIMI)".
+The registry should be under the group heading of "More Instant Messaging Interoperability (MIMI)".
 
 The MIMI Content format defined in this document, contains an extensions map in
 each message. The keys in the extensions map can be (positive or negative)
@@ -1206,6 +1208,39 @@ Initial Contents:
 | 0   | (reserved) | N/A                              | -     | - | RFCXXXX   |
 | 1   | sender_uri | the sender as a MIMI participant | tstr  | Y | RFCXXXX   |
 | 2   | room_uri   | the MIMI room URI                | tstr  | Y | RFCXXXX   |
+
+### MIMI Content Disposition registry {#dispo-registry}
+
+This document requests the creation of a new MIMI Disposition
+registry.
+The registry should be under the group heading of "More Instant Messaging Interoperability (MIMI)".
+
+The MIMI Content format defined in this document, contains a disposition field
+for each message part, represented by an integer in the range of 0 to 255.
+These values are assigned in the registry under the Expert Review policy
+[@!RFC8126].
+
+The columns in the registry are as follows:
+
+- Name: a short descriptive name for the MIMI disposition.
+- Value: The positive integer assigned to the MIMI disposition.
+- Semantics: The semantics of the MIMI disposition.
+- Reference: The document where this MIMI disposition is defined
+
+The initial contents of the registry are below:
+
+| Name        | Value | Semantics                                               | Reference |
+|:------------|:------|:--------------------------------------------------------|:----------|
+| unspecified | 0     | no disposition hint provided                              | RFCXXXX |
+| render      | 1     | render to the user according to local policy              | RFCXXXX |
+| reaction    | 2     | a single reaction to another message                      | RFCXXXX |
+| profile     | 3     | representing a profile of a participant or room           | RFCXXXX |
+| inline      | 4     | rendered "inline" directly in the chat interface          | RFCXXXX |
+| icon        | 5     | an icon such as an avatar image                           | RFCXXXX |
+| attachment  | 6     | intended to be downloaded instead of rendered immediately | RFCXXXX |
+| session     | 7     | a description of a multimedia session, or URI to join one | RFCXXXX |
+| preview     | 8     | a sender-generated preview, ex: image or link contents    | RFCXXXX |
+
 
 ### Expert Review
 
