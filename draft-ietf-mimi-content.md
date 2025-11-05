@@ -1632,5 +1632,6 @@ and the CDDL validates the CBOR.
 
 ## Changes between draft-ietf-mimi-content-07 and draft-ietf-mimi-content-08
 
-* add an explicit length before the sender URI and room URI in the input to the message ID hash input (Issue #61)
+* add an explicit length before the sender URI and room URI in the input to the message ID hash input (Issue #61/PR#70)
 * make the inline CDDL examples consistent with the complete CDDL (PR#69)
+* add IANA registry for disposition values (Issue #64/PR#71)
