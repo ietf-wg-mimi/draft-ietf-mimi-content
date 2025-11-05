@@ -4,8 +4,8 @@
 
 MIMI                                                             R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                               7 July 2025
-Expires: 8 January 2026
+Intended status: Informational                           5 November 2025
+Expires: 9 May 2026
 
 
      More Instant Messaging Interoperability (MIMI) message content
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2026.
+   This Internet-Draft will expire on 9 May 2026.
 
 Copyright Notice
 
@@ -324,8 +324,8 @@ Table of Contents
      salt: bstr .size 16,
      replaces: null / MessageId,       ; {1}
      topicId: bstr,                    ; {2}
-     expires: null / Expiration        ; {3}
-     inReplyTo: null / InReplyTo,      ; {4}
+     expires: null / Expiration,       ; {3}
+     inReplyTo: null / MessageId,      ; {4}
      extensions: {* name => value },   ; {6}
      nestedPart: NestedPart            ; {7}
    ]
@@ -456,7 +456,7 @@ Table of Contents
    ExternalPart = (
        cardinality: external,
        contentType: tstr,
-       url: uri,
+       url: tstr,
        expires: uint .size 4,
        size: uint .size 8,
        encAlg: uint .size 2,
@@ -1882,38 +1882,38 @@ Contact Information:
    [I-D.ietf-cbor-edn-literals]
               Bormann, C., "CBOR Extended Diagnostic Notation (EDN)",
               Work in Progress, Internet-Draft, draft-ietf-cbor-edn-
-              literals-17, 12 May 2025,
+              literals-19, 16 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-cbor-
-              edn-literals-17>.
+              edn-literals-19>.
 
    [I-D.ietf-mimi-arch]
               Barnes, R., "An Architecture for More Instant Messaging
               Interoperability (MIMI)", Work in Progress, Internet-
-              Draft, draft-ietf-mimi-arch-01, 21 November 2024,
+              Draft, draft-ietf-mimi-arch-02, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mimi-
-              arch-01>.
+              arch-02>.
 
    [I-D.ietf-mimi-protocol]
               Barnes, R., Hodgson, M., Kohbrok, K., Mahy, R., Ralston,
               T., and R. Robert, "More Instant Messaging
               Interoperability (MIMI) using HTTPS and MLS", Work in
-              Progress, Internet-Draft, draft-ietf-mimi-protocol-03, 3
-              March 2025, <https://datatracker.ietf.org/doc/html/draft-
-              ietf-mimi-protocol-03>.
+              Progress, Internet-Draft, draft-ietf-mimi-protocol-05, 20
+              October 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-mimi-protocol-05>.
 
    [I-D.ietf-mls-extensions]
               Robert, R., "The Messaging Layer Security (MLS)
               Extensions", Work in Progress, Internet-Draft, draft-ietf-
-              mls-extensions-07, 3 July 2025,
+              mls-extensions-08, 21 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
-              extensions-07>.
+              extensions-08>.
 
    [I-D.mahy-mimi-identity]
               Mahy, R., "More Instant Messaging Interoperability (MIMI)
               Identity Concepts", Work in Progress, Internet-Draft,
-              draft-mahy-mimi-identity-03, 3 March 2025,
+              draft-mahy-mimi-identity-04, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-mahy-mimi-
-              identity-03>.
+              identity-04>.
 
    [RFC2046]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
               Extensions (MIME) Part Two: Media Types", RFC 2046,
