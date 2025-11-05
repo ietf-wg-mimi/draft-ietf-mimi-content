@@ -1247,10 +1247,16 @@ interoperability of messages end-to-end encrypted inside the MLS
                 <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-mime-subtype-registration-o" class="internal xref">MIME subtype registration of application/mimi-content</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-mimi-content-extension-keys" class="internal xref">MIMI Content Extension Keys registry</a></p>
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-more-instant-messaging-inte" class="internal xref">"More Instant Messaging Interoperability (MIMI)" Group Heading</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2.2.1">
-                    <p id="section-toc.1-1.7.2.2.2.1.1"><a href="#section-7.2.1" class="auto internal xref">7.2.1</a>.  <a href="#name-expert-review" class="internal xref">Expert Review</a></p>
+                    <p id="section-toc.1-1.7.2.2.2.1.1"><a href="#section-7.2.1" class="auto internal xref">7.2.1</a>.  <a href="#name-mimi-content-extension-keys" class="internal xref">MIMI Content Extension Keys registry</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2.2.2">
+                    <p id="section-toc.1-1.7.2.2.2.2.1"><a href="#section-7.2.2" class="auto internal xref">7.2.2</a>.  <a href="#name-mimi-content-disposition-re" class="internal xref">MIMI Content Disposition registry</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2.2.3">
+                    <p id="section-toc.1-1.7.2.2.2.3.1"><a href="#section-7.2.3" class="auto internal xref">7.2.3</a>.  <a href="#name-expert-review" class="internal xref">Expert Review</a></p>
 </li>
                 </ul>
 </li>
@@ -1693,7 +1699,7 @@ value = any .size (0..4095)
 
 </pre><a href="#section-4.3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-4.3-3">An IANA registry <a href="#keys-registry" class="auto internal xref">Section 7.2</a> is defined for
+<p id="section-4.3-3">An IANA registry <a href="#keys-registry" class="auto internal xref">Section 7.2.1</a> is defined for
 positive integer keys. Negative integer and text string keys are only for
 private use.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
 </section>
@@ -1788,7 +1794,7 @@ part.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
 for any part, including for nested parts. The disposition represents
 the intended semantics of the body part or a set of nested parts.
 It is inspired by the values in the Content-Disposition MIME header
-<span>[<a href="#RFC2183" class="cite xref">RFC2183</a>]</span>.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
+<span>[<a href="#RFC2183" class="cite xref">RFC2183</a>]</span>. Disposition values are defined in <a href="#dispo-registry" class="auto internal xref">Section 7.2.2</a>.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.4-8">
 <pre>baseDispos = &amp;(
     unspecified: 0,
@@ -2909,129 +2915,229 @@ Person &amp; email address to contact for further information:
 </div>
 </section>
 </div>
-<div id="keys-registry">
+<div id="more-instant-messaging-interoperability-mimi-group-heading">
 <section id="section-7.2">
-        <h3 id="name-mimi-content-extension-keys">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-mimi-content-extension-keys" class="section-name selfRef">MIMI Content Extension Keys registry</a>
+        <h3 id="name-more-instant-messaging-inte">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-more-instant-messaging-inte" class="section-name selfRef">"More Instant Messaging Interoperability (MIMI)" Group Heading</a>
         </h3>
-<p id="section-7.2-1">This document requests the creation of a new MIMI Content Extension Keys
+<div id="keys-registry">
+<section id="section-7.2.1">
+          <h4 id="name-mimi-content-extension-keys">
+<a href="#section-7.2.1" class="section-number selfRef">7.2.1. </a><a href="#name-mimi-content-extension-keys" class="section-name selfRef">MIMI Content Extension Keys registry</a>
+          </h4>
+<p id="section-7.2.1-1">This document requests the creation of a new MIMI Content Extension Keys
 registry.
-The registry should be under the heading of "More Instant Messaging Interoperability (MIMI)".<a href="#section-7.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.2-2">The MIMI Content format defined in this document, contains an extensions map in
+The registry should be under the group heading of "More Instant Messaging Interoperability (MIMI)".<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-2">The MIMI Content format defined in this document, contains an extensions map in
 each message. The keys in the extensions map can be (positive or negative)
 integers, or text strings. Text strings and negative integer keys are reserved
 for private use. Positive integer keys are assigned in the registry under the
 Expert Review policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>. Integer keys between 1 and 255 are restricted
-to IETF consensus specifications.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
-<p id="section-7.2-3">The columns in the registry are as follows:<a href="#section-7.2-3" class="pilcrow">¶</a></p>
+to IETF consensus specifications.<a href="#section-7.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-3">The columns in the registry are as follows:<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.2-4.1">Key: The extension map key positive integer assigned to the MIMI content extension.<a href="#section-7.2-4.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.2.1-4.1">Key: The extension map key positive integer assigned to the MIMI content extension.<a href="#section-7.2.1-4.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-7.2-4.2">Name: a short descriptive name for the MIMI content extension.<a href="#section-7.2-4.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.2.1-4.2">Name: a short descriptive name for the MIMI content extension.<a href="#section-7.2.1-4.2" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-7.2-4.3">Type: The CBOR data type of the value corresponding to the key. Applications
+            <li class="compact" id="section-7.2.1-4.3">Type: The CBOR data type of the value corresponding to the key. Applications
 with multiple, related data items are encouraged to register a map type that
-contains all the related fields.<a href="#section-7.2-4.3" class="pilcrow">¶</a>
+contains all the related fields.<a href="#section-7.2.1-4.3" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-7.2-4.4">
-            <p id="section-7.2-4.4.1">Recommended: Whether support for this MIMI content extension is recommended by
+            <li class="compact" id="section-7.2.1-4.4">
+              <p id="section-7.2.1-4.4.1">Recommended: Whether support for this MIMI content extension is recommended by
 the IETF. Valid values are "Y", "N", and "D", as described below. The default
 value of the "Recommended" column is "N". Setting the Recommended item to "Y" or
 "D", or changing an item whose current value is "Y" or "D", requires Standards
-Action <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-7.2-4.4.1" class="pilcrow">¶</a></p>
+Action <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-7.2.1-4.4.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.2-4.4.2.1">Y: Indicates that the IETF has consensus, and that the item is
+<li class="compact" id="section-7.2.1-4.4.2.1">Y: Indicates that the IETF has consensus, and that the item is
 RECOMMENDED. This only means that the associated mechanism is fit for the
 purpose for which it was defined. Careful reading of the documentation for the
 mechanism is necessary to understand the applicability of that mechanism. The
 IETF could recommend mechanisms that have limited applicability, but will
 provide applicability statements that describe any limitations of the mechanism
-or necessary constraints on its use.<a href="#section-7.2-4.4.2.1" class="pilcrow">¶</a>
+or necessary constraints on its use.<a href="#section-7.2.1-4.4.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.2-4.4.2.2">N: Indicates that the item has not been evaluated by the IETF and that the
+                <li class="compact" id="section-7.2.1-4.4.2.2">N: Indicates that the item has not been evaluated by the IETF and that the
 IETF has made no statement about the suitability of the associated mechanism.
 This does not necessarily mean that the mechanism is flawed, only that no
 consensus exists. The IETF might have consensus to leave an item marked as "N"
-on the basis of it having limited applicability or usage constraints.<a href="#section-7.2-4.4.2.2" class="pilcrow">¶</a>
+on the basis of it having limited applicability or usage constraints.<a href="#section-7.2.1-4.4.2.2" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.2-4.4.2.3">D: Indicates that the item is discouraged and SHOULD NOT or MUST NOT be
+                <li class="compact" id="section-7.2.1-4.4.2.3">D: Indicates that the item is discouraged and SHOULD NOT or MUST NOT be
 used. This marking could be used to identify mechanisms that might result in
 problems if they are used, such as a weak cryptographic algorithm or a mechanism
-that might cause interoperability problems in deployment.<a href="#section-7.2-4.4.2.3" class="pilcrow">¶</a>
+that might cause interoperability problems in deployment.<a href="#section-7.2.1-4.4.2.3" class="pilcrow">¶</a>
 </li>
-            </ul>
+              </ul>
 </li>
-          <li class="compact" id="section-7.2-4.5">Reference: The document where this MIMI content extension is defined<a href="#section-7.2-4.5" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.2.1-4.5">Reference: The document where this MIMI content extension is defined<a href="#section-7.2.1-4.5" class="pilcrow">¶</a>
 </li>
-        </ul>
-<p id="section-7.2-5">Initial Contents:<a href="#section-7.2-5" class="pilcrow">¶</a></p>
+          </ul>
+<p id="section-7.2.1-5">Initial Contents:<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
 <table class="center" id="table-1">
-          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+            <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
 <thead>
-            <tr>
-              <th class="text-left" rowspan="1" colspan="1">Key</th>
-              <th class="text-left" rowspan="1" colspan="1">Name</th>
-              <th class="text-left" rowspan="1" colspan="1">Description</th>
-              <th class="text-left" rowspan="1" colspan="1">Type</th>
-              <th class="text-left" rowspan="1" colspan="1">R</th>
-              <th class="text-left" rowspan="1" colspan="1">Reference</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">0</td>
-              <td class="text-left" rowspan="1" colspan="1">(reserved)</td>
-              <td class="text-left" rowspan="1" colspan="1">N/A</td>
-              <td class="text-left" rowspan="1" colspan="1">-</td>
-              <td class="text-left" rowspan="1" colspan="1">-</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">1</td>
-              <td class="text-left" rowspan="1" colspan="1">sender_uri</td>
-              <td class="text-left" rowspan="1" colspan="1">the sender as a MIMI participant</td>
-              <td class="text-left" rowspan="1" colspan="1">tstr</td>
-              <td class="text-left" rowspan="1" colspan="1">Y</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">2</td>
-              <td class="text-left" rowspan="1" colspan="1">room_uri</td>
-              <td class="text-left" rowspan="1" colspan="1">the MIMI room URI</td>
-              <td class="text-left" rowspan="1" colspan="1">tstr</td>
-              <td class="text-left" rowspan="1" colspan="1">Y</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
-            </tr>
-          </tbody>
-        </table>
-<div id="expert-review">
-<section id="section-7.2.1">
-          <h4 id="name-expert-review">
-<a href="#section-7.2.1" class="section-number selfRef">7.2.1. </a><a href="#name-expert-review" class="section-name selfRef">Expert Review</a>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Key</th>
+                <th class="text-left" rowspan="1" colspan="1">Name</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+                <th class="text-left" rowspan="1" colspan="1">Type</th>
+                <th class="text-left" rowspan="1" colspan="1">R</th>
+                <th class="text-left" rowspan="1" colspan="1">Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0</td>
+                <td class="text-left" rowspan="1" colspan="1">(reserved)</td>
+                <td class="text-left" rowspan="1" colspan="1">N/A</td>
+                <td class="text-left" rowspan="1" colspan="1">-</td>
+                <td class="text-left" rowspan="1" colspan="1">-</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">1</td>
+                <td class="text-left" rowspan="1" colspan="1">sender_uri</td>
+                <td class="text-left" rowspan="1" colspan="1">the sender as a MIMI participant</td>
+                <td class="text-left" rowspan="1" colspan="1">tstr</td>
+                <td class="text-left" rowspan="1" colspan="1">Y</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">2</td>
+                <td class="text-left" rowspan="1" colspan="1">room_uri</td>
+                <td class="text-left" rowspan="1" colspan="1">the MIMI room URI</td>
+                <td class="text-left" rowspan="1" colspan="1">tstr</td>
+                <td class="text-left" rowspan="1" colspan="1">Y</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+            </tbody>
+          </table>
+</section>
+</div>
+<div id="dispo-registry">
+<section id="section-7.2.2">
+          <h4 id="name-mimi-content-disposition-re">
+<a href="#section-7.2.2" class="section-number selfRef">7.2.2. </a><a href="#name-mimi-content-disposition-re" class="section-name selfRef">MIMI Content Disposition registry</a>
           </h4>
-<p id="section-7.2.1-1">Expert Review <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> registry requests are registered
+<p id="section-7.2.2-1">This document requests the creation of a new MIMI Disposition
+registry.
+The registry should be under the group heading of "More Instant Messaging Interoperability (MIMI)".<a href="#section-7.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2.2-2">The MIMI Content format defined in this document, contains a disposition field
+for each message part, represented by an integer in the range of 0 to 255.
+These values are assigned in the registry under the Expert Review policy
+<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-7.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.2.2-3">The columns in the registry are as follows:<a href="#section-7.2.2-3" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.2.2-4.1">Name: a short descriptive name for the MIMI disposition.<a href="#section-7.2.2-4.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-7.2.2-4.2">Value: The positive integer assigned to the MIMI disposition.<a href="#section-7.2.2-4.2" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-7.2.2-4.3">Semantics: The semantics of the MIMI disposition.<a href="#section-7.2.2-4.3" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-7.2.2-4.4">Reference: The document where this MIMI disposition is defined<a href="#section-7.2.2-4.4" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-7.2.2-5">The initial contents of the registry are below:<a href="#section-7.2.2-5" class="pilcrow">¶</a></p>
+<table class="center" id="table-2">
+            <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Name</th>
+                <th class="text-left" rowspan="1" colspan="1">Value</th>
+                <th class="text-left" rowspan="1" colspan="1">Semantics</th>
+                <th class="text-left" rowspan="1" colspan="1">Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">unspecified</td>
+                <td class="text-left" rowspan="1" colspan="1">0</td>
+                <td class="text-left" rowspan="1" colspan="1">no disposition hint provided</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">render</td>
+                <td class="text-left" rowspan="1" colspan="1">1</td>
+                <td class="text-left" rowspan="1" colspan="1">render to the user according to local policy</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">reaction</td>
+                <td class="text-left" rowspan="1" colspan="1">2</td>
+                <td class="text-left" rowspan="1" colspan="1">a single reaction to another message</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">profile</td>
+                <td class="text-left" rowspan="1" colspan="1">3</td>
+                <td class="text-left" rowspan="1" colspan="1">representing a profile of a participant or room</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">inline</td>
+                <td class="text-left" rowspan="1" colspan="1">4</td>
+                <td class="text-left" rowspan="1" colspan="1">rendered "inline" directly in the chat interface</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">icon</td>
+                <td class="text-left" rowspan="1" colspan="1">5</td>
+                <td class="text-left" rowspan="1" colspan="1">an icon such as an avatar image</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">attachment</td>
+                <td class="text-left" rowspan="1" colspan="1">6</td>
+                <td class="text-left" rowspan="1" colspan="1">intended to be downloaded instead of rendered immediately</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">session</td>
+                <td class="text-left" rowspan="1" colspan="1">7</td>
+                <td class="text-left" rowspan="1" colspan="1">a description of a multimedia session, or URI to join one</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">preview</td>
+                <td class="text-left" rowspan="1" colspan="1">8</td>
+                <td class="text-left" rowspan="1" colspan="1">a sender-generated preview, ex: image or link contents</td>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+              </tr>
+            </tbody>
+          </table>
+</section>
+</div>
+<div id="expert-review">
+<section id="section-7.2.3">
+          <h4 id="name-expert-review">
+<a href="#section-7.2.3" class="section-number selfRef">7.2.3. </a><a href="#name-expert-review" class="section-name selfRef">Expert Review</a>
+          </h4>
+<p id="section-7.2.3-1">Expert Review <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> registry requests are registered
 after a three-week review period on the MIMI Designated Expert (DE) mailing list
-<a href="mailto:mimi-reg-review@ietf.org">mimi-reg-review@ietf.org</a> on the advice of one or more of the MIMI DEs.<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-2">Registration requests sent to the MIMI DEs' mailing list for review
+<a href="mailto:mimi-reg-review@ietf.org">mimi-reg-review@ietf.org</a> on the advice of one or more of the MIMI DEs.<a href="#section-7.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.2.3-2">Registration requests sent to the MIMI DEs' mailing list for review
 SHOULD use an appropriate subject (e.g., "Request to register value
-in MIMI Content Extensions Keys registry").<a href="#section-7.2.1-2" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-3">Within the review period, the MIMI DEs will either approve or deny
+in MIMI Content Extensions Keys registry").<a href="#section-7.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.2.3-3">Within the review period, the MIMI DEs will either approve or deny
 the registration request, communicating this decision to the MIMI DEs'
 mailing list and IANA. Denials SHOULD include an explanation and, if
 applicable, suggestions as to how to make the request successful.
 Registration requests that are undetermined for a period longer than
 21 days can be brought to the IESG's attention for resolution using
-the <a href="mailto:iesg@ietf.org">iesg@ietf.org</a> mailing list.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-4">Criteria that SHOULD be applied by the MIMI DEs includes determining
+the <a href="mailto:iesg@ietf.org">iesg@ietf.org</a> mailing list.<a href="#section-7.2.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.2.3-4">Criteria that SHOULD be applied by the MIMI DEs includes determining
 whether the proposed registration duplicates existing functionality,
 whether it is likely to be of general applicability or useful only
 for a single application, and whether the registration description
-is clear.<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-5">IANA MUST only accept registry updates from the MIMI DEs and SHOULD
-direct all requests for registration to the MIMI DEs' mailing list.<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-6">In cases where a registration decision could be perceived as creating a conflict
+is clear.<a href="#section-7.2.3-4" class="pilcrow">¶</a></p>
+<p id="section-7.2.3-5">IANA MUST only accept registry updates from the MIMI DEs and SHOULD
+direct all requests for registration to the MIMI DEs' mailing list.<a href="#section-7.2.3-5" class="pilcrow">¶</a></p>
+<p id="section-7.2.3-6">In cases where a registration decision could be perceived as creating a conflict
 of interest for a particular MIMI DE, that MIMI DE SHOULD defer to the judgment
-of the other MIMI DEs.<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
+of the other MIMI DEs.<a href="#section-7.2.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

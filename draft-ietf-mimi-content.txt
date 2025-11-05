@@ -84,8 +84,11 @@ Table of Contents
      6.2.  Use of proprietary media types
    7.  IANA Considerations
      7.1.  MIME subtype registration of application/mimi-content
-     7.2.  MIMI Content Extension Keys registry
-       7.2.1.  Expert Review
+     7.2.  "More Instant Messaging Interoperability (MIMI)" Group
+           Heading
+       7.2.1.  MIMI Content Extension Keys registry
+       7.2.2.  MIMI Content Disposition registry
+       7.2.3.  Expert Review
      7.3.  GFM-MIMI Markdown variant
    8.  Security Considerations
      8.1.  General handling
@@ -427,7 +430,7 @@ Table of Contents
    name = int / tstr .size (1..255)
    value = any .size (0..4095)
 
-   An IANA registry Section 7.2 is defined for positive integer keys.
+   An IANA registry Section 7.2.1 is defined for positive integer keys.
    Negative integer and text string keys are only for private use.
 
 4.4.  Message Bodies
@@ -519,7 +522,7 @@ Table of Contents
    for any part, including for nested parts.  The disposition represents
    the intended semantics of the body part or a set of nested parts.  It
    is inspired by the values in the Content-Disposition MIME header
-   [RFC2183].
+   [RFC2183].  Disposition values are defined in Section 7.2.2.
 
    baseDispos = &(
        unspecified: 0,
@@ -1521,11 +1524,13 @@ Table of Contents
    Person & email address to contact for further information:
       IETF MIMI Working Group mimi@ietf.org
 
-7.2.  MIMI Content Extension Keys registry
+7.2.  "More Instant Messaging Interoperability (MIMI)" Group Heading
+
+7.2.1.  MIMI Content Extension Keys registry
 
    This document requests the creation of a new MIMI Content Extension
-   Keys registry.  The registry should be under the heading of "More
-   Instant Messaging Interoperability (MIMI)".
+   Keys registry.  The registry should be under the group heading of
+   "More Instant Messaging Interoperability (MIMI)".
 
    The MIMI Content format defined in this document, contains an
    extensions map in each message.  The keys in the extensions map can
@@ -1588,7 +1593,63 @@ Table of Contents
 
                                  Table 1
 
-7.2.1.  Expert Review
+7.2.2.  MIMI Content Disposition registry
+
+   This document requests the creation of a new MIMI Disposition
+   registry.  The registry should be under the group heading of "More
+   Instant Messaging Interoperability (MIMI)".
+
+   The MIMI Content format defined in this document, contains a
+   disposition field for each message part, represented by an integer in
+   the range of 0 to 255.  These values are assigned in the registry
+   under the Expert Review policy [RFC8126].
+
+   The columns in the registry are as follows:
+
+   *  Name: a short descriptive name for the MIMI disposition.
+   *  Value: The positive integer assigned to the MIMI disposition.
+   *  Semantics: The semantics of the MIMI disposition.
+   *  Reference: The document where this MIMI disposition is defined
+
+   The initial contents of the registry are below:
+
+   +=============+=======+=================================+===========+
+   | Name        | Value | Semantics                       | Reference |
+   +=============+=======+=================================+===========+
+   | unspecified | 0     | no disposition hint             | RFCXXXX   |
+   |             |       | provided                        |           |
+   +-------------+-------+---------------------------------+-----------+
+   | render      | 1     | render to the user              | RFCXXXX   |
+   |             |       | according to local policy       |           |
+   +-------------+-------+---------------------------------+-----------+
+   | reaction    | 2     | a single reaction to            | RFCXXXX   |
+   |             |       | another message                 |           |
+   +-------------+-------+---------------------------------+-----------+
+   | profile     | 3     | representing a profile of       | RFCXXXX   |
+   |             |       | a participant or room           |           |
+   +-------------+-------+---------------------------------+-----------+
+   | inline      | 4     | rendered "inline" directly      | RFCXXXX   |
+   |             |       | in the chat interface           |           |
+   +-------------+-------+---------------------------------+-----------+
+   | icon        | 5     | an icon such as an avatar       | RFCXXXX   |
+   |             |       | image                           |           |
+   +-------------+-------+---------------------------------+-----------+
+   | attachment  | 6     | intended to be downloaded       | RFCXXXX   |
+   |             |       | instead of rendered             |           |
+   |             |       | immediately                     |           |
+   +-------------+-------+---------------------------------+-----------+
+   | session     | 7     | a description of a              | RFCXXXX   |
+   |             |       | multimedia session, or URI      |           |
+   |             |       | to join one                     |           |
+   +-------------+-------+---------------------------------+-----------+
+   | preview     | 8     | a sender-generated              | RFCXXXX   |
+   |             |       | preview, ex: image or link      |           |
+   |             |       | contents                        |           |
+   +-------------+-------+---------------------------------+-----------+
+
+                                  Table 2
+
+7.2.3.  Expert Review
 
    Expert Review [RFC8126] registry requests are registered after a
    three-week review period on the MIMI Designated Expert (DE) mailing
