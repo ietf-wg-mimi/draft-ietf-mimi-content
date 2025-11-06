@@ -1154,6 +1154,12 @@ Additional information:
 
 Person & email address to contact for further information:
    IETF MIMI Working Group mimi@ietf.org
+
+Author:
+   See the Authors' Addresses section of RFC XXXX.
+
+Change controller:
+   Internet Engineering Task Force (iesg@ietf.org).
 ~~~~~~~
 
 ## "More Instant Messaging Interoperability (MIMI)" Group Heading
@@ -1169,7 +1175,8 @@ each message. The keys in the extensions map can be (positive or negative)
 integers, or text strings. Text strings and negative integer keys are reserved
 for private use. Positive integer keys are assigned in the registry under the
 Expert Review policy [@!RFC8126]. Integer keys between 1 and 255 are restricted
-to IETF consensus specifications.
+to IETF Stream RFCs, as specified by the IETF Review registration procedure
+defined in [@!RFC8126].
 
 The columns in the registry are as follows:
 
