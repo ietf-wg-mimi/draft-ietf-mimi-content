@@ -5,8 +5,8 @@ targets := $(cbor) $(pretty)
 current_dir := $(shell pwd)
 .SECONDARY: $(%.diag)
 #cbortemp    := $(patsubst %.edn,%.cbor.tmp,$(wildcard *.edn))
-cborcontent := $(filter-out report.cbor implied-original.cbor,$(cbor))
-edncontent  := $(filter-out report.edn  implied-original.edn ,$(edn))
+cborcontent := $(filter-out implied-original.cbor,$(cbor))
+edncontent  := $(filter-out implied-original.edn ,$(edn))
 
 # fix multiline concatenated strings before converting from EDN to CBOR:
 #   gsed -z -r -e "s/' [+]\n +'//g"
@@ -27,7 +27,7 @@ all: $(targets)
 #	cmp $@ `basename $@ .tmp`
 #        rm $@
 
-validate-all: validate-content validate-report validate-implied
+validate-all: validate-content validate-edn validate-implied
 
 validate-content: $(cborcontent)
 	cddl-rs compile-cddl --cddl ../mimi-content.cddl
@@ -36,10 +36,11 @@ validate-content: $(cborcontent)
 validate-edn: $(edncontent)
 	for c in $(edncontent); do ./compare_edn_to_cbor.sh $${c}; done
 
-validate-report: report.cbor
-	cddl-rs compile-cddl --cddl ../delivery-report.cddl
-	cddl ../delivery-report.cddl validate report.cbor
-	#cddl-rs validate -d ../delivery-report.cddl -c report.cbor
+# application/mimi-message-status has moved to another document
+#validate-report: report.cbor
+#	cddl-rs compile-cddl --cddl ../delivery-report.cddl
+#	cddl ../delivery-report.cddl validate report.cbor
+#	#cddl-rs validate -d ../delivery-report.cddl -c report.cbor
 
 validate-implied: implied-original.cbor
 	cddl-rs compile-cddl --cddl ../implied.cddl
