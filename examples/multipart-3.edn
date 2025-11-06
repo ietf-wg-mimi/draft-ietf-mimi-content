@@ -1,6 +1,6 @@
 # MULTIPART-3
-# message ID = h'011c6794e5c4ee607f40f4c8485a0dab
-#                5fd8be7331459b1d09e4f59693ca32b3'
+# message ID = h'01cfebeadbdb83c1eefb6403ba4852da
+#                f8bbbf9cd53bf5035a74d5d741950c9f'
 # timestamp  = not specified in example
 [
   h'b8362793168d18c049b882d4642a2274', # salt
@@ -75,7 +75,7 @@
             1,                           # disposition = render
             "",                          # language
             3,                           # cardinality = multi
-            0,                           # partSemantics = chooseOne
+            0                            # partSemantics = chooseOne
             [
               [                          # partIndex = 8
                 1,                       # disposition = render

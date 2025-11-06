@@ -1,6 +1,6 @@
 # ATTACHMENT
-# message ID = h'01ad825f6116adeb437a7b1f95a9d9ac
-#                bcc708f83f5df505d32af9c2826e8b5f'
+# message ID = h'0176180c7d19a925021fe446d241134d
+#                05c38e0d999cdc0f39c391d2377ed9d1'
 # timestamp  = not specified in example
 [
   h'18fac6371e4e53f1aeaf8a013155c166', # salt
@@ -26,7 +26,7 @@
     h'c86cf2c33f21527d1dd76f5b',         # nonce
     h'',                                 # aad
     1,                                   # hashAlg = sha256
-    h'9ab17a8cf0890baaae7ee016c7312fcc   / content hash /
+    h'9ab17a8cf0890baaae7ee016c7312fcc   # content hash
       080ba46498389458ee44f0276e783163',
     "2 hours of key signing video",      # description
     "bigfile.mp4"                        # filename
