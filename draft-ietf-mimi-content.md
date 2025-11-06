@@ -709,7 +709,14 @@ Both indicate that the intended disposition of the
 contents of the message is a reaction.
 
 The content in the sample message is a single Unicode heart character (U+2665)
-which is expressed in UTF-8 as 0xe299a5.
+which is expressed in UTF-8 as the three octet sequence 0xe299a5.
+Often a single text reaction consists of multiple Unicode characters. For
+example, the five Unicode characters for a medium skin-toned, female health
+worker (U+1F469 U+1F3FD U+200D U+2695 U+FE0F: woman, medium skin tone, combined
+with, staff of Aesculapius, present as image) are typically rendered as a single
+glyph. This sequence is expressed in UTF-8 as the 17-octet sequence
+0xf09f91a9f09f8fbde2808de29a95efb88f.
+
 Discovering the range of characters each implementation could render as a
 reaction can occur out-of-band and is not within the scope of this proposal.
 However, an implementation which receives a reaction character string it
@@ -717,7 +724,14 @@ does not recognize could render the reaction as a reply, possibly prefixing
 with a localized string such as "Reaction: ".  Note that a reaction could
 be another media type (ex: image, audio, or video), although
 not as universally implemented in instant messaging systems.
+
 Note that many systems allow multiple independent reactions per sender.
+When multiple reactions are supported, each reaction could be represented
+either as a separate part inside a MultiPart with `processAll` semantics, or as
+a separate message. The ensemble of multiple text reactions MUST NOT be
+represented as a single text part. Due to the semantics of Unicode characters,
+concatenating reactions could change their semantics, resulting in unexpected or
+misleading rendering, or even avenues for attack.
 
 Below is the annotated message in EDN and pretty printed CBOR:
 
