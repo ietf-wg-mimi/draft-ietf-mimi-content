@@ -232,7 +232,7 @@ is a replacement or update to a previous message whose message ID
 is in the `replaces` data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
- If the `replaces` field is absent, the receiver
+If the `replaces` field is null, the receiver
 assumes that the current message has not identified any special
 relationship with another previous message.
 
@@ -715,8 +715,8 @@ reaction can occur out-of-band and is not within the scope of this proposal.
 However, an implementation which receives a reaction character string it
 does not recognize could render the reaction as a reply, possibly prefixing
 with a localized string such as "Reaction: ".  Note that a reaction could
-theoretically even be another media type (ex: image, audio, or video), although
-not currently implemented in major instant messaging systems.
+be another media type (ex: image, audio, or video), although
+not as universally implemented in instant messaging systems.
 Note that many systems allow multiple independent reactions per sender.
 
 Below is the annotated message in EDN and pretty printed CBOR:
@@ -794,6 +794,11 @@ message is read) but shows a visual indication that it has been edited.
 The `replaces` data field includes the message ID of the message to
 edit/replace. The message included in the body is a replacement for the message
 with the replaced message ID.
+If the same message is placed more than once, the `replaces` data field refers
+to the message ID of the first instance of the message. This allows maximum
+correlation of different version of the same message, even if the receiver was
+not privy to all of the original versions.
+
 
 Here Bob Jones corrects a typo in his original message:
 
@@ -813,7 +818,9 @@ retracted the message, regardless if other users have read the message
 or not. Typically, a placeholder remains in the user interface showing
 that a message was deleted. Replies which reference a deleted message
 typically hide the quoted portion and reflect that the original message
-was deleted.
+was deleted. To delete a message which was previously edited, the `replaces`
+header field refers to the message ID of the first instance of the message to
+be deleted.
 
 If Bob deleted his message instead of modifying it, we would represent it
 using the `replaces` data field, and using an empty body (NullPart),
