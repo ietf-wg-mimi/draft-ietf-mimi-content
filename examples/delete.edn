@@ -1,15 +1,15 @@
 # DELETE
-# message ID = h'01b85744b443e9db85de5bb826c04bcd
-#                65b625e53d17839dc8a3f21321421088'
+# message ID = h'011d9efc78d04d4dcf4d82b07d5199bb
+#                ef37011c1f0c7e004b6111c6dda504b4'
 # timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
 [
   h'0a590d73b2c7761c39168be5ebf7f2e6', # salt
-  h'01a419aef4e16d43cfc06c28235ecfbe    / replaces /
-    9faebc740d0148e7ca20b22150930836',  #   Reply
+  h'015354973c2b65ca937bf1e035ae53a5   # replaces =
+    ab80e947afa43d46920d4202e5cc0b27', #   Reply
   h'',                                 # topicId
   null,                                # expires
-  h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-    229c4fffe8f6c3594c905f47779e5a79', #   Original
+  h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+    2716d0ed0a3d249ca63ace7d82a096f4', #   Original
   {                                    # extensions
     1: "mimi://example.com/u/bob-jones",
     2: "mimi://example.com/r/engineering_team"

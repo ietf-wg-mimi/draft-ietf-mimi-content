@@ -149,13 +149,17 @@ room URI.
 Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
 [IANA hash algorithm registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg).
-The sender URI, room URI, the entire MIMI message content (including
-the salt), and the salt again are all concatenated, and then hashed with the
-algorithm identified in the first octet. The first 31 octets of the hash_output
-is appended to the hash function ID.
+The senderUriLength and roomUriLength are big-endian unsigned 16-bit integers
+representing the length of the sender URI, and the room URI, respectively.
+The senderUriLength, sender URI, roomUriLength, room URI, the entire MIMI
+message content (including the salt), and the salt (again) are all concatenated,
+and then hashed with the algorithm identified in the first octet. The first 31
+octets of the hash_output is appended to the hash function ID.
 
 ~~~
-hash_output = hash( senderUri || roomUri || message || salt )
+hash_output = hash( senderUriLength || senderUri ||
+                    roomUriLength   || roomUri   ||
+                    message         || salt )
 messageId = hashAlg || hash_output[0..30]
 ~~~
 
@@ -1638,7 +1642,7 @@ to avoid confusion
 * use CBOR as the binary encoding
 * add multipart examples
 
-## Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-content-05
+## Changes between draft-ietf-mimi-content-04 and draft-ietf-mimi-content-05
 
 * change message ID construction, and add salt
 * remove partIndex and make it implied
@@ -1650,7 +1654,7 @@ considerations
 * add specificity about markdown support / create GFM-MIMI Markdown variant
 * remove tag from URLs in ExternalPart and implied headers
 
-## Changes between draft-mahy-mimi-content-05 and draft-mahy-mimi-content-06
+## Changes between draft-ietf-mimi-content-05 and draft-ietf-mimi-content-06
 
 * remove lastSeen field
 * improve guidance on processing MultiPart with content ID URIs
@@ -1661,9 +1665,15 @@ considerations
 * rebuild all the examples from a script. make sure the EDN and CBOR correspond
 and the CDDL validates the CBOR.
 
-## Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-content-07
+## Changes between draft-ietf-mimi-content-06 and draft-ietf-mimi-content-07
 
 * fixed a bug in the generation of message IDs; regenerated them correctly.
 * moved MIMI message status format into draft-mahy-mimi-message-status
 * clarified that the salt is always 16 octets
 * make examples uses the correct CBOR map key for room
+
+## Changes between draft-ietf-mimi-content-07 and draft-ietf-mimi-content-08
+
+* add an explicit length before the sender URI and room URI in the input to the message ID hash input (Issue #61/PR#70)
+* make the inline CDDL examples consistent with the complete CDDL (PR#69)
+* add IANA registry for disposition values (Issue #64/PR#71)

@@ -79,6 +79,7 @@ def indent(string, num_spaces=4):
 # ****** MIMI content specific
 
 def message_id(message_array):
+    import struct
     if type(message_array) is not list:
         raise Exception("message_array needs to be a list")
     if type(message_array[0]) is not bytes or len(message_array[0]) != 16:
@@ -87,13 +88,17 @@ def message_id(message_array):
         raise Exception("extensions element not found in array")
     if SENDER in message_array[5]:
         sender_uri = message_array[5][SENDER]
+        sender_length_bytes = struct.pack('!H',len(sender_uri))
     if ROOM in message_array[5]:
         room_uri = message_array[5][ROOM]
+        room_length_bytes = struct.pack('!H',len(room_uri))
     if type(sender_uri) is not str or type(room_uri) is not str:
         raise Exception("sender_uri and room_uri must be text strings")
     hash_output = sha256(
-        sender_uri.encode('utf-8') +
-        room_uri.encode('utf-8') +
+        sender_length_bytes +
+        sender_uri.encode('ascii') +
+        room_length_bytes +
+        room_uri.encode('ascii') +
         cbor2.dumps(message_array) +
         message_array[0]  # salt
     )

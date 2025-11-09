@@ -1,6 +1,6 @@
 # CONFERENCING
-# message ID = h'01d8dab2e22b75dee4f5e52bb181d2d7
-#                32008a235b80375113803e36b32a5f06'
+# message ID = h'01496d15a8dba28d7397f9868b70768e
+#                4a67f765d5b5b1ae9e03848c5fdeb0ba'
 # timestamp  = not specified in example
 [
   h'678ac6cd54de049c3e9665cd212470fa', # salt
