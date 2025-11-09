@@ -4,8 +4,8 @@
 
 MIMI                                                             R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                           6 November 2025
-Expires: 10 May 2026
+Intended status: Informational                           9 November 2025
+Expires: 13 May 2026
 
 
      More Instant Messaging Interoperability (MIMI) message content
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 May 2026.
+   This Internet-Draft will expire on 13 May 2026.
 
 Copyright Notice
 
