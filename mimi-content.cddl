@@ -4,7 +4,7 @@ mimiContent = [
   topicId: bstr,
   expires: null / Expiration,
   inReplyTo: null / MessageId,
-  extensions: {* name => value },
+  mimiExtensions: extensions,
   nestedPart: NestedPart
 ]
 
@@ -66,8 +66,18 @@ unknownDispos = &( unknown: 9..255 )
 ; MessageId is derived from SHA256 hash
 MessageId = bstr .size 32
 
+extensions = {
+  ? &(senderUri: 1) ^ => tstr,
+  ? &(roomUri: 2) ^ => tstr,
+  * $$otherKnownExtensions,
+  * unknownExtension
+}
+
+unknownExtension = (
+   name => value
+)
 name = int / tstr .size (1..255)
-value = any .size (0..4095)
+value = any .size (0..4096)
 
 nullpart = 0
 single   = 1
