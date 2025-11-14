@@ -220,7 +220,7 @@ mimiContent = [
   topicId: bstr,                    ; {2}
   expires: null / Expiration,       ; {3}
   inReplyTo: null / MessageId,      ; {4}
-  extensions: {* name => value },   ; {6}
+  mimiExtensions: extensions,       ; {6}
   nestedPart: NestedPart            ; {7}
 ]
 
@@ -313,10 +313,20 @@ extension fields in the message format {6}. Each extension has a CBOR map key
 which is a positive integer, negative integer, or text string containing between
 1 and 255 octets of UTF-8. The value can be any CBOR (including combinations of
 maps and arrays) which can be represented in between 0 and 4096 octets.
-The message content `extensions` field MUST NOT include more than one
+The message content `mimiExtensions` field MUST NOT include more than one
 extension field with the same map key.
 
 ``` cddl
+extensions = {
+  ? &(senderUri: 1) ^ => tstr,
+  ? &(roomUri: 2) ^ => tstr,
+  * $$otherKnownExtensions,
+  * unknownExtension
+}
+
+unknownExtension = (
+   name => value
+)
 name = int / tstr .size (1..255)
 value = any .size (0..4095)
 ```
@@ -1217,8 +1227,8 @@ Initial Contents:
 | Key | Name       | Description                      | Type  | R | Reference |
 |:----|:-----------|:---------------------------------|:------|:--|:----------|
 | 0   | (reserved) | N/A                              | -     | - | RFCXXXX   |
-| 1   | sender_uri | the sender as a MIMI participant | tstr  | Y | RFCXXXX   |
-| 2   | room_uri   | the MIMI room URI                | tstr  | Y | RFCXXXX   |
+| 1   | senderUri  | the sender as a MIMI participant | tstr  | Y | RFCXXXX   |
+| 2   | roomUri    | the MIMI room URI                | tstr  | Y | RFCXXXX   |
 
 ### MIMI Content Disposition registry {#dispo-registry}
 
