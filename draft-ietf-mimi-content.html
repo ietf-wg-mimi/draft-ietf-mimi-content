@@ -3780,7 +3780,7 @@ unknownExtension = (
    name =&gt; value
 )
 name = int / tstr .size (1..255)
-value = any .size (0..4096)
+value = any
 
 nullpart = 0
 single   = 1
@@ -4292,6 +4292,10 @@ and the CDDL validates the CBOR.<a href="#appendix-C.8-1.7" class="pilcrow">¶</
           <li class="compact" id="appendix-C.10-1.2">make the inline CDDL examples consistent with the complete CDDL (PR#69)<a href="#appendix-C.10-1.2" class="pilcrow">¶</a>
 </li>
           <li class="compact" id="appendix-C.10-1.3">add IANA registry for disposition values (Issue #64/PR#71)<a href="#appendix-C.10-1.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.10-1.4">add CBOR encoding, data model, and depth restrictions section (Issue #76/PR#79)<a href="#appendix-C.10-1.4" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.10-1.5">removed the maximum length of MIMI content extensions<a href="#appendix-C.10-1.5" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>

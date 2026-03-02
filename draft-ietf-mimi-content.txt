@@ -2228,7 +2228,7 @@ A.1.  Complete Message Format Schema
       name => value
    )
    name = int / tstr .size (1..255)
-   value = any .size (0..4096)
+   value = any
 
    nullpart = 0
    single   = 1
@@ -2624,6 +2624,9 @@ C.10.  Changes between draft-ietf-mimi-content-07 and draft-ietf-mimi-
    *  make the inline CDDL examples consistent with the complete CDDL
       (PR#69)
    *  add IANA registry for disposition values (Issue #64/PR#71)
+   *  add CBOR encoding, data model, and depth restrictions section
+      (Issue #76/PR#79)
+   *  removed the maximum length of MIMI content extensions
 
 Author's Address
 
