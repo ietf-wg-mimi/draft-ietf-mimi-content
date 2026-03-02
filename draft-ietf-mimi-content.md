@@ -236,7 +236,7 @@ is a replacement or update to a previous message whose message ID
 is in the `replaces` data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
- If the `replaces` field is absent, the receiver
+If the `replaces` field is null, the receiver
 assumes that the current message has not identified any special
 relationship with another previous message.
 
@@ -723,15 +723,29 @@ Both indicate that the intended disposition of the
 contents of the message is a reaction.
 
 The content in the sample message is a single Unicode heart character (U+2665)
-which is expressed in UTF-8 as 0xe299a5.
+which is expressed in UTF-8 as the three octet sequence 0xe299a5.
+Often a single text reaction consists of multiple Unicode characters. For
+example, the five Unicode characters for a medium skin-toned, female health
+worker (U+1F469 U+1F3FD U+200D U+2695 U+FE0F: woman, medium skin tone, combined
+with, staff of Aesculapius, present as image) are typically rendered as a single
+glyph. This sequence is expressed in UTF-8 as the 17-octet sequence
+0xf09f91a9f09f8fbde2808de29a95efb88f.
+
 Discovering the range of characters each implementation could render as a
 reaction can occur out-of-band and is not within the scope of this proposal.
 However, an implementation which receives a reaction character string it
 does not recognize could render the reaction as a reply, possibly prefixing
 with a localized string such as "Reaction: ".  Note that a reaction could
-theoretically even be another media type (ex: image, audio, or video), although
-not currently implemented in major instant messaging systems.
+be another media type (ex: image, audio, or video), although
+not as universally implemented in instant messaging systems.
+
 Note that many systems allow multiple independent reactions per sender.
+When multiple reactions are supported, each reaction could be represented
+either as a separate part inside a MultiPart with `processAll` semantics, or as
+a separate message. The ensemble of multiple text reactions MUST NOT be
+represented as a single text part. Due to the semantics of Unicode characters,
+concatenating reactions could change their semantics, resulting in unexpected or
+misleading rendering, or even avenues for attack.
 
 Below is the annotated message in EDN and pretty printed CBOR:
 
@@ -808,6 +822,11 @@ message is read) but shows a visual indication that it has been edited.
 The `replaces` data field includes the message ID of the message to
 edit/replace. The message included in the body is a replacement for the message
 with the replaced message ID.
+If the same message is placed more than once, the `replaces` data field refers
+to the message ID of the first instance of the message. This allows maximum
+correlation of different version of the same message, even if the receiver was
+not privy to all of the original versions.
+
 
 Here Bob Jones corrects a typo in his original message:
 
@@ -827,7 +846,9 @@ retracted the message, regardless if other users have read the message
 or not. Typically, a placeholder remains in the user interface showing
 that a message was deleted. Replies which reference a deleted message
 typically hide the quoted portion and reflect that the original message
-was deleted.
+was deleted. To delete a message which was previously edited, the `replaces`
+header field refers to the message ID of the first instance of the message to
+be deleted.
 
 If Bob deleted his message instead of modifying it, we would represent it
 using the `replaces` data field, and using an empty body (NullPart),
