@@ -1753,3 +1753,5 @@ and the CDDL validates the CBOR.
 * add an explicit length before the sender URI and room URI in the input to the message ID hash input (Issue #61/PR#70)
 * make the inline CDDL examples consistent with the complete CDDL (PR#69)
 * add IANA registry for disposition values (Issue #64/PR#71)
+* add CBOR encoding, data model, and depth restrictions section (Issue #76/PR#79)
+* removed the maximum length of MIMI content extensions
