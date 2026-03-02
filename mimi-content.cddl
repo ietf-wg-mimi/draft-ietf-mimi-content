@@ -77,7 +77,7 @@ unknownExtension = (
    name => value
 )
 name = int / tstr .size (1..255)
-value = any .size (0..4096)
+value = any
 
 nullpart = 0
 single   = 1
