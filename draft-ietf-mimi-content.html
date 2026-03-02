@@ -23,14 +23,14 @@ interoperability of messages end-to-end encrypted inside the MLS
     Python 3.12.12
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
-    intervaltree 3.1.0
+    intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 5.3.1
-    platformdirs 4.5.0
+    lxml 6.0.2
+    platformdirs 4.5.1
     pycountry 24.6.1
-    PyYAML 6.0.2
+    PyYAML 6.0.3
     requests 2.32.5
-    wcwidth 0.2.14
+    wcwidth 0.3.0
 -->
 <link href="draft-ietf-mimi-content.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -171,7 +171,7 @@ interoperability of messages end-to-end encrypted inside the MLS
   font-weight: 400;
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
   font-family: 'Oxygen Mono';
@@ -179,7 +179,8 @@ interoperability of messages end-to-end encrypted inside the MLS
   font-weight: 400;
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 }
 
 @font-face {
@@ -571,6 +572,7 @@ aside, blockquote {
 }
 blockquote {
   margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
 }
 cite {
   display: block;
@@ -641,7 +643,7 @@ a.pilcrow {
   }
 }
 @media not print {
-  :hover > a.pilcrow {
+  :hover > a.pilcrow, a.pilcrow:focus {
     opacity: 1;
   }
   a.pilcrow[href]:hover {
@@ -1049,11 +1051,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">MIMI Content</td>
-<td class="right">November 2025</td>
+<td class="right">March 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Mahy</td>
-<td class="center">Expires 18 May 2026</td>
+<td class="center">Expires 3 September 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-mimi-content-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-11-14" class="published">14 November 2025</time>
+<time datetime="2026-03-02" class="published">2 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-05-18">18 May 2026</time></dd>
+<dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1108,7 +1110,7 @@ interoperability of messages end-to-end encrypted inside the MLS
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 3 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1117,7 +1119,7 @@ interoperability of messages end-to-end encrypted inside the MLS
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2025 IETF Trust and the persons identified as the
+            Copyright (c) 2026 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1620,7 +1622,7 @@ is a replacement or update to a previous message whose message ID
 is in the <code>replaces</code> data field. It is used to edit previously-sent
 messages, delete previously-sent messages, and adjust reactions to
 messages to which the client previously reacted.
- If the <code>replaces</code> field is absent, the receiver
+If the <code>replaces</code> field is null, the receiver
 assumes that the current message has not identified any special
 relationship with another previous message.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 <p id="section-4.1-4">The <code>topicId</code> {2} data field indicates that the current message is
@@ -2209,17 +2211,29 @@ modeled on the reaction Content-Disposition token defined in <span>[<a href="#RF
 Both indicate that the intended disposition of the
 contents of the message is a reaction.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.3-2">The content in the sample message is a single Unicode heart character (U+2665)
-which is expressed in UTF-8 as 0xe299a5.
-Discovering the range of characters each implementation could render as a
+which is expressed in UTF-8 as the three octet sequence 0xe299a5.
+Often a single text reaction consists of multiple Unicode characters. For
+example, the five Unicode characters for a medium skin-toned, female health
+worker (U+1F469 U+1F3FD U+200D U+2695 U+FE0F: woman, medium skin tone, combined
+with, staff of Aesculapius, present as image) are typically rendered as a single
+glyph. This sequence is expressed in UTF-8 as the 17-octet sequence
+0xf09f91a9f09f8fbde2808de29a95efb88f.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+<p id="section-5.3-3">Discovering the range of characters each implementation could render as a
 reaction can occur out-of-band and is not within the scope of this proposal.
 However, an implementation which receives a reaction character string it
 does not recognize could render the reaction as a reply, possibly prefixing
 with a localized string such as "Reaction: ".  Note that a reaction could
-theoretically even be another media type (ex: image, audio, or video), although
-not currently implemented in major instant messaging systems.
-Note that many systems allow multiple independent reactions per sender.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
-<p id="section-5.3-3">Below is the annotated message in EDN and pretty printed CBOR:<a href="#section-5.3-3" class="pilcrow">¶</a></p>
-<div class="lang-edn sourcecode" id="section-5.3-4">
+be another media type (ex: image, audio, or video), although
+not as universally implemented in instant messaging systems.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<p id="section-5.3-4">Note that many systems allow multiple independent reactions per sender.
+When multiple reactions are supported, each reaction could be represented
+either as a separate part inside a MultiPart with <code>processAll</code> semantics, or as
+a separate message. The ensemble of multiple text reactions MUST NOT be
+represented as a single text part. Due to the semantics of Unicode characters,
+concatenating reactions could change their semantics, resulting in unexpected or
+misleading rendering, or even avenues for attack.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.3-5">Below is the annotated message in EDN and pretty printed CBOR:<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+<div class="lang-edn sourcecode" id="section-5.3-6">
 <pre># REACTION
 # message ID = h'0158c4288911e50a8f6be3f47746b668
 #                2f10fd91bc8c05557aa589a3157aff68'
@@ -2244,9 +2258,9 @@ Note that many systems allow multiple independent reactions per sender.<a href="
   ]
 ]
 
-</pre><a href="#section-5.3-4" class="pilcrow">¶</a>
+</pre><a href="#section-5.3-6" class="pilcrow">¶</a>
 </div>
-<div class="alignLeft art-text artwork" id="section-5.3-5">
+<div class="alignLeft art-text artwork" id="section-5.3-7">
 <pre>87                                      # array(7)
    50                                   # bytes(16)
       d37bc0e6a8b4f04e9e6382375f587bf6
@@ -2281,7 +2295,7 @@ Note that many systems allow multiple independent reactions per sender.<a href="
       43                                # bytes(3)
          e29da4                         # "❤"
 
-</pre><a href="#section-5.3-5" class="pilcrow">¶</a>
+</pre><a href="#section-5.3-7" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -2350,7 +2364,11 @@ is replaced in the user interface of the receivers (even after the original
 message is read) but shows a visual indication that it has been edited.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 <p id="section-5.5-2">The <code>replaces</code> data field includes the message ID of the message to
 edit/replace. The message included in the body is a replacement for the message
-with the replaced message ID.<a href="#section-5.5-2" class="pilcrow">¶</a></p>
+with the replaced message ID.
+If the same message is placed more than once, the <code>replaces</code> data field refers
+to the message ID of the first instance of the message. This allows maximum
+correlation of different version of the same message, even if the receiver was
+not privy to all of the original versions.<a href="#section-5.5-2" class="pilcrow">¶</a></p>
 <p id="section-5.5-3">Here Bob Jones corrects a typo in his original message:<a href="#section-5.5-3" class="pilcrow">¶</a></p>
 <div class="lang-edn sourcecode" id="section-5.5-4">
 <pre># EDIT
@@ -2398,7 +2416,9 @@ retracted the message, regardless if other users have read the message
 or not. Typically, a placeholder remains in the user interface showing
 that a message was deleted. Replies which reference a deleted message
 typically hide the quoted portion and reflect that the original message
-was deleted.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
+was deleted. To delete a message which was previously edited, the <code>replaces</code>
+header field refers to the message ID of the first instance of the message to
+be deleted.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
 <p id="section-5.6-2">If Bob deleted his message instead of modifying it, we would represent it
 using the <code>replaces</code> data field, and using an empty body (NullPart),
 as shown below.<a href="#section-5.6-2" class="pilcrow">¶</a></p>
