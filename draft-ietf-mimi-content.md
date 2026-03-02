@@ -312,7 +312,7 @@ In order to add additional functionality to MIMI, senders can include
 extension fields in the message format {6}. Each extension has a CBOR map key
 which is a positive integer, negative integer, or text string containing between
 1 and 255 octets of UTF-8. The value can be any CBOR (including combinations of
-maps and arrays) which can be represented in between 0 and 4096 octets.
+maps and arrays).
 The message content `mimiExtensions` field MUST NOT include more than one
 extension field with the same map key.
 
