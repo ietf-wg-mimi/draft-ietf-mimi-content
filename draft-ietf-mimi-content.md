@@ -1083,6 +1083,51 @@ one message has the same timestamp, the lexically lowest message ID
 sorts earlier.
 
 
+# CBOR Data Model and Encoding Restrictions
+
+## Encoding restrictions
+
+MIMI content documents MUST be encoded using CBOR "deterministic" serialization as defined in Section 4.2.1 of [@!RFC8949].
+
+In summary, this consists of:
+
+- using the shortest CBOR encoding of integers, tags, and floats, and the shortest encoding of the length of byte strings, text strings, arrays, and maps.
+- representing bigints as regular integers when they fit
+- never using indefinite length encoding of byte strings, text strings, arrays, and maps
+- sorting map keys according to the third bullet point of that section
+
+Most CBOR libraries automatically use the shortest form and use definite length. Support for bigints is optional and is not required by any if the values built into the MIMI Content specification. Most implementations of CBOR which support bigints can automatically reduce to regular ints.
+
+The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in 4.2.1, but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in RFC7094 "canonical" order.
+
+## Data model restrictions
+
+- map keys for MIMI content extensions MUST be either integers, or text strings up to 255 octets long
+- map keys for any maps at any level of nesting inside a MIMI content extension MUST only be integers, text strings, or byte strings.
+- integer keys MUST be representable as a double float without loss of precision: uints 0..9007199254740991 (2^53 - 1), and negints (-(2^53) + 1) -9007199254740991..-1
+- the only floating point NaN values permitted are the half-width quiet NaN (CBOR encoding 0xF97E00), or floating point values inside tags 80-87 (representing arrays of various fixed-sized IEEE floating point types)
+- text strings used anywhere inside MIMI content MUST be valid UTF-8 sequences.
+- use of floating point values inside MIMI content is strongly discouraged
+
+## Depth restrictions
+
+`NestedParts` MUST NOT be nested more than 4-levels deep.
+
+MIMI content extensions MUST NOT contain any combination of tags, maps, or arrays at more than 4 levels of depth.
+Specifically the MIMI content extensions map shown below has 4 levels of depth.
+The extensions map is at level 1, the array inside map key 256 is at level 2, the array inside that array is at level 3, the URI inside tag 32 is at level 4.
+
+```
+{
+    /sender URI/ 1: "mimi://a.example/u/alice",
+    256: [
+        [h'1234', 32("http://example.com")],
+        [h'3456', 5771]
+    ]
+}
+```
+
+
 # Support for Specific Media Types
 
 ## MIMI Required and Recommended media types
