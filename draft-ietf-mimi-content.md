@@ -61,7 +61,7 @@ SIP [@?RFC3261] and XMPP [@?RFC6120].  For a variety of practical reasons, inter
 end-to-end encryption between IM systems was never deployed commercially.
 
 There are now several instant messaging vendors implementing MLS. The MIMI (More Instant Messaging Interoperability) architecture [@?I-D.ietf-mimi-arch] describes an MLS profile and a provide-to-provider protocol ([@?I-D.ietf-mimi-protocol]), a policy mechanism [@?I-D.ietf-mimi-room-policy], and an extensible interoperable messaging format (this specification) for common features.
-The MIMI content format is designed to be conveyed "inside" MLS application messages, but it is sufficient flexible that it can be used in other contexts, including without encryption.
+The MIMI content format is designed to be conveyed "inside" MLS application messages, but it is sufficiently flexible that it can be used in other contexts, including without encryption.
 
 When used with MLS, this specification assumes that MLS clients advertise media types they support, and can determine what media types are required in a specific MLS group, by using the content advertisement extensions in Section 6.2 of [@!I-D.ietf-mls-extensions].
 It allows implementations to define media type requirements per group, and allows MLS clients to send extended or proprietary messages that would be interpreted by some members of the group while assuring that an interoperable end-to-end encrypted baseline is available to all members, even when the group spans multiple systems or vendors.
@@ -81,7 +81,7 @@ Below is a list of some features commonly found in IM group chat systems:
 * message threading
 
 Delivery notifications and read receipts are addressed in
-[?I-D.mahy-mimi-message-status]. Calling and conferencing will also be
+[@?I-D.mahy-mimi-message-status]. Calling and conferencing will also be
 addressed in another document.
 
 # Overview
