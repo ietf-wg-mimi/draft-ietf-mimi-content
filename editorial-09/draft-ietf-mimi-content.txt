@@ -178,8 +178,8 @@ Table of Contents
    [I-D.ietf-mimi-room-policy], and an extensible interoperable
    messaging format (this specification) for common features.  The MIMI
    content format is designed to be conveyed "inside" MLS application
-   messages, but it is sufficient flexible that it can be used in other
-   contexts, including without encryption.
+   messages, but it is sufficiently flexible that it can be used in
+   other contexts, including without encryption.
 
    When used with MLS, this specification assumes that MLS clients
    advertise media types they support, and can determine what media
@@ -207,9 +207,9 @@ Table of Contents
    *  calling / conferencing
    *  message threading
 
-   Delivery notifications and read receipts are addressed in [?I-D.mahy-
-   mimi-message-status].  Calling and conferencing will also be
-   addressed in another document.
+   Delivery notifications and read receipts are addressed in
+   [I-D.mahy-mimi-message-status].  Calling and conferencing will also
+   be addressed in another document.
 
 3.  Overview
 

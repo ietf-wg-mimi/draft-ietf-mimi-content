@@ -1420,7 +1420,7 @@ assumed standalone encryption of each message using a protocol such as S/MIME
 SIP <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> and XMPP <span>[<a href="#RFC6120" class="cite xref">RFC6120</a>]</span>.  For a variety of practical reasons, interoperable
 end-to-end encryption between IM systems was never deployed commercially.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <p id="section-2-4">There are now several instant messaging vendors implementing MLS. The MIMI (More Instant Messaging Interoperability) architecture <span>[<a href="#I-D.ietf-mimi-arch" class="cite xref">I-D.ietf-mimi-arch</a>]</span> describes an MLS profile and a provide-to-provider protocol (<span>[<a href="#I-D.ietf-mimi-protocol" class="cite xref">I-D.ietf-mimi-protocol</a>]</span>), a policy mechanism <span>[<a href="#I-D.ietf-mimi-room-policy" class="cite xref">I-D.ietf-mimi-room-policy</a>]</span>, and an extensible interoperable messaging format (this specification) for common features.
-The MIMI content format is designed to be conveyed "inside" MLS application messages, but it is sufficient flexible that it can be used in other contexts, including without encryption.<a href="#section-2-4" class="pilcrow">¶</a></p>
+The MIMI content format is designed to be conveyed "inside" MLS application messages, but it is sufficiently flexible that it can be used in other contexts, including without encryption.<a href="#section-2-4" class="pilcrow">¶</a></p>
 <p id="section-2-5">When used with MLS, this specification assumes that MLS clients advertise media types they support, and can determine what media types are required in a specific MLS group, by using the content advertisement extensions in Section 6.2 of <span>[<a href="#I-D.ietf-mls-extensions" class="cite xref">I-D.ietf-mls-extensions</a>]</span>.
 It allows implementations to define media type requirements per group, and allows MLS clients to send extended or proprietary messages that would be interpreted by some members of the group while assuring that an interoperable end-to-end encrypted baseline is available to all members, even when the group spans multiple systems or vendors.<a href="#section-2-5" class="pilcrow">¶</a></p>
 <p id="section-2-6">Below is a list of some features commonly found in IM group chat systems:<a href="#section-2-6" class="pilcrow">¶</a></p>
@@ -1449,7 +1449,7 @@ It allows implementations to define media type requirements per group, and allow
 </li>
       </ul>
 <p id="section-2-8">Delivery notifications and read receipts are addressed in
-[?I-D.mahy-mimi-message-status]. Calling and conferencing will also be
+<span>[<a href="#I-D.mahy-mimi-message-status" class="cite xref">I-D.mahy-mimi-message-status</a>]</span>. Calling and conferencing will also be
 addressed in another document.<a href="#section-2-8" class="pilcrow">¶</a></p>
 </section>
 </div>
