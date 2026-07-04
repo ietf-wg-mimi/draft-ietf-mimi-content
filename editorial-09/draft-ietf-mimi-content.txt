@@ -4,8 +4,8 @@
 
 MIMI                                                             R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                           6 November 2025
-Expires: 10 May 2026
+Intended status: Informational                               4 July 2026
+Expires: 5 January 2027
 
 
      More Instant Messaging Interoperability (MIMI) message content
@@ -33,11 +33,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 May 2026.
+   This Internet-Draft will expire on 5 January 2027.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -78,25 +78,32 @@ Table of Contents
      5.9.  Attachments
      5.10. Conferencing
      5.11. Topics / Threading
-   6.  Support for Specific Media Types
-     6.1.  MIMI Required and Recommended media types
-       6.1.1.  Specifics of Github Flavored Markdown in MIMI
-     6.2.  Use of proprietary media types
-   7.  IANA Considerations
-     7.1.  MIME subtype registration of application/mimi-content
-     7.2.  MIMI Content Extension Keys registry
-       7.2.1.  Expert Review
-     7.3.  GFM-MIMI Markdown variant
-   8.  Security Considerations
-     8.1.  General handling
-     8.2.  Generating the random salt
-     8.3.  Rendering and authorization of edits and deletes
-     8.4.  Validation of timestamp
-     8.5.  Alternate content rendering
-     8.6.  Link and Mention handling
-   9.  References
-     9.1.  Normative References
-     9.2.  Informative References
+   6.  CBOR Data Model and Encoding Restrictions
+     6.1.  Encoding restrictions
+     6.2.  Data model restrictions
+     6.3.  Depth restrictions
+   7.  Support for Specific Media Types
+     7.1.  MIMI Required and Recommended media types
+       7.1.1.  Specifics of Github Flavored Markdown in MIMI
+     7.2.  Use of proprietary media types
+   8.  IANA Considerations
+     8.1.  MIME subtype registration of application/mimi-content
+     8.2.  "More Instant Messaging Interoperability (MIMI)" Group
+           Heading
+       8.2.1.  MIMI Content Extension Keys registry
+       8.2.2.  MIMI Content Disposition registry
+       8.2.3.  Expert Review
+     8.3.  GFM-MIMI Markdown variant
+   9.  Security Considerations
+     9.1.  General handling
+     9.2.  Generating the random salt
+     9.3.  Rendering and authorization of edits and deletes
+     9.4.  Validation of timestamp
+     9.5.  Alternate content rendering
+     9.6.  Link and Mention handling
+   10. References
+     10.1.  Normative References
+     10.2.  Informative References
    Appendix A.  CDDL Schemas
      A.1.  Complete Message Format Schema
      A.2.  Implied Message Fields
@@ -106,23 +113,27 @@ Table of Contents
      B.3.  Complicated Nested Example
    Appendix C.  Changelog
      C.1.  Changes between draft-mahy-mimi-content-01 and
-           draft-mahy-mimi-content-02
+            draft-mahy-mimi-content-02
      C.2.  Changes between draft-mahy-mimi-content-02 and
-           draft-ietf-mimi-content-00
+            draft-ietf-mimi-content-00
      C.3.  Changes between draft-ietf-mimi-content-00 and
-           draft-ietf-mimi-content-01
+            draft-ietf-mimi-content-01
      C.4.  Changes between draft-ietf-mimi-content-01 and
-           draft-ietf-mimi-content-02
+            draft-ietf-mimi-content-02
      C.5.  Changes between draft-ietf-mimi-content-02 and
-           draft-ietf-mimi-content-03
+            draft-ietf-mimi-content-03
      C.6.  Changes between draft-ietf-mimi-content-03 and
-           draft-ietf-mimi-content-04
-     C.7.  Changes between draft-mahy-mimi-content-04 and
-           draft-mahy-mimi-content-05
-     C.8.  Changes between draft-mahy-mimi-content-05 and
-           draft-mahy-mimi-content-06
-     C.9.  Changes between draft-mahy-mimi-content-06 and
-           draft-mahy-mimi-content-07
+            draft-ietf-mimi-content-04
+     C.7.  Changes between draft-ietf-mimi-content-04 and
+            draft-ietf-mimi-content-05
+     C.8.  Changes between draft-ietf-mimi-content-05 and
+            draft-ietf-mimi-content-06
+     C.9.  Changes between draft-ietf-mimi-content-06 and
+            draft-ietf-mimi-content-07
+     C.10. Changes between draft-ietf-mimi-content-07 and
+            draft-ietf-mimi-content-08
+     C.11. Changes between draft-ietf-mimi-content-08 and
+            draft-ietf-mimi-content-09
    Author's Address
 
 1.  Terminology
@@ -132,10 +143,6 @@ Table of Contents
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
-
-   The terms MLS client, MLS group, and KeyPackage have the same
-   meanings as in the MLS protocol [RFC9420].  Other relevant
-   terminology can be found in [I-D.ietf-mimi-arch].
 
 2.  Introduction
 
@@ -164,20 +171,26 @@ Table of Contents
    [RFC6120].  For a variety of practical reasons, interoperable end-to-
    end encryption between IM systems was never deployed commercially.
 
-   There are now several instant messaging vendors implementing MLS, and
-   the MIMI (More Instant Messaging Interoperability) Working Group is
-   chartered to standardize an extensible interoperable messaging format
-   for common features to be conveyed "inside" MLS application messages.
+   There are now several instant messaging vendors implementing MLS.
+   The MIMI (More Instant Messaging Interoperability) architecture
+   [I-D.ietf-mimi-arch] describes an MLS profile and a provide-to-
+   provider protocol ([I-D.ietf-mimi-protocol]), a policy mechanism
+   [I-D.ietf-mimi-room-policy], and an extensible interoperable
+   messaging format (this specification) for common features.  The MIMI
+   content format is designed to be conveyed "inside" MLS application
+   messages, but it is sufficient flexible that it can be used in other
+   contexts, including without encryption.
 
-   This document assumes that MLS clients advertise media types they
-   support and can determine what media types are required to join a
-   specific MLS group using the content advertisement extensions in
-   Section 2.3 of [I-D.ietf-mls-extensions].  It allows implementations
-   to define MLS groups with different media type requirements and
-   allows MLS clients to send extended or proprietary messages that
-   would be interpreted by some members of the group while assuring that
-   an interoperable end-to-end encrypted baseline is available to all
-   members, even when the group spans multiple systems or vendors.
+   When used with MLS, this specification assumes that MLS clients
+   advertise media types they support, and can determine what media
+   types are required in a specific MLS group, by using the content
+   advertisement extensions in Section 6.2 of [I-D.ietf-mls-extensions].
+   It allows implementations to define media type requirements per
+   group, and allows MLS clients to send extended or proprietary
+   messages that would be interpreted by some members of the group while
+   assuring that an interoperable end-to-end encrypted baseline is
+   available to all members, even when the group spans multiple systems
+   or vendors.
 
    Below is a list of some features commonly found in IM group chat
    systems:
@@ -194,8 +207,8 @@ Table of Contents
    *  calling / conferencing
    *  message threading
 
-   Delivery notifications and read receipts are addressed in {{?I-
-   D.mahy-mimi-message-status}}. Calling and conferencing will also be
+   Delivery notifications and read receipts are addressed in [?I-D.mahy-
+   mimi-message-status].  Calling and conferencing will also be
    addressed in another document.
 
 3.  Overview
@@ -212,7 +225,7 @@ Table of Contents
       (ex: images).  This rules out using JSON to carry the binary data.
 
    All examples start with an instance document annotated in the CBOR
-   Extended Diagnostic Notation (described in [Appendix G of @!RFC8610]
+   Extended Diagnostic Notation (described in Appendix G of [RFC8610]
    and more rigorously specified in [I-D.ietf-cbor-edn-literals]), and
    then include a hex dump of the CBOR data in the pretty printed format
    popularized by the CBOR playground website (https://cbor.me
@@ -241,8 +254,9 @@ Table of Contents
       described as the MLS group URL in the examples.
 
    This proposal relies on URIs for naming and identifiers.  All the
-   example use the im: URI scheme (defined in [RFC3862]), but any
-   instant messaging scheme could be used.
+   examples use the mimi: URI scheme (as described in Table 1 of
+   [I-D.ietf-mimi-protocol]), but any instant messaging scheme could be
+   used, such as the im: URI scheme ([RFC3862]).
 
 3.3.  Message ID
 
@@ -256,20 +270,25 @@ Table of Contents
    Calculation of the message ID works as follows.  The first octet of
    the MessageID is the hash function ID from the IANA hash algorithm
    registry (https://www.iana.org/assignments/named-information/named-
-   information.xhtml#hash-alg).  The sender URI, room URI, the entire
-   MIMI message content (including the salt), and the salt again are all
+   information.xhtml#hash-alg).  The senderUriLength and roomUriLength
+   are big-endian unsigned 16-bit integers representing the length of
+   the sender URI (in octets), and the room URI, respectively.  The
+   senderUriLength, sender URI, roomUriLength, room URI, the entire MIMI
+   message content (including the salt), and the salt (again) are all
    concatenated, and then hashed with the algorithm identified in the
    first octet.  The first 31 octets of the hash_output is appended to
    the hash function ID.
 
-   hash_output = hash( senderUri || roomUri || message || salt )
+   hash_output = hash( senderUriLength || senderUri ||
+                       roomUriLength   || roomUri   ||
+                       message         || salt )
    messageId = hashAlg || hash_output[0..30]
 
    The MIMI content format uses the SHA-256 hash algorithm (identifier
    0x01) by default, regardless of the hash algorithm of the cipher
    suite of a room's MLS group.  The initial octet allows the MIMI
    protocol to deprecate SHA-256 and specify a new default algorithm in
-   the future (for example if a practical birthday attack on SHA_256
+   the future (for example if a practical birthday attack on SHA-256
    becomes feasible).
 
    |  The salt is duplicated in the input to the hash to avoid a SHA-256
@@ -326,7 +345,7 @@ Table of Contents
      topicId: bstr,                    ; {2}
      expires: null / Expiration,       ; {3}
      inReplyTo: null / MessageId,      ; {4}
-     extensions: {* name => value },   ; {6}
+     mimiExtensions: extensions,       ; {6}
      nestedPart: NestedPart            ; {7}
    ]
 
@@ -334,7 +353,7 @@ Table of Contents
 
    The first data field is the per-message unique salt which MUST be
    cryptographically random.  An example algorithm for generating the
-   salt is described in Section 8.2.
+   salt is described in Section 9.2.
 
    The replaces {1} data field indicates that the current message is a
    replacement or update to a previous message whose message ID is in
@@ -409,8 +428,8 @@ Table of Contents
    If clients want to detect messages sent out of order by the hub, they
    require notification of message delivery at the MLS level (ex: the
    AppAck mechanism provided in [I-D.ietf-mls-extensions]) or at the
-   MIMI level, such as the format defined in {{?I-D.mahy-mimi-message-
-   status}}.
+   MIMI level, such as the format defined in
+   [I-D.mahy-mimi-message-status].
 
 4.3.  Extension Fields
 
@@ -418,15 +437,24 @@ Table of Contents
    extension fields in the message format {6}. Each extension has a CBOR
    map key which is a positive integer, negative integer, or text string
    containing between 1 and 255 octets of UTF-8.  The value can be any
-   CBOR (including combinations of maps and arrays) which can be
-   represented in between 0 and 4096 octets.  The message content
-   extensions field MUST NOT include more than one extension field with
-   the same map key.
+   CBOR (including combinations of maps and arrays).  The message
+   content mimiExtensions field MUST NOT include more than one extension
+   field with the same map key.
 
+   extensions = {
+     ? &(senderUri: 1) ^ => tstr,
+     ? &(roomUri: 2) ^ => tstr,
+     * $$otherKnownExtensions,
+     * unknownExtension
+   }
+
+   unknownExtension = (
+      name => value
+   )
    name = int / tstr .size (1..255)
    value = any .size (0..4095)
 
-   An IANA registry Section 7.2 is defined for positive integer keys.
+   An IANA registry Section 8.2.1 is defined for positive integer keys.
    Negative integer and text string keys are only for private use.
 
 4.4.  Message Bodies
@@ -518,7 +546,7 @@ Table of Contents
    for any part, including for nested parts.  The disposition represents
    the intended semantics of the body part or a set of nested parts.  It
    is inspired by the values in the Content-Disposition MIME header
-   [RFC2183].
+   [RFC2183].  Disposition values are defined in Section 8.2.2.
 
    baseDispos = &(
        unspecified: 0,
@@ -636,13 +664,13 @@ Table of Contents
    In addition to fields which are contained in a MIMI content message,
    there is the hub accepted timestamp, which can be represented either
    as milliseconds since the start of the UNIX epoch, or for future
-   extensibility as a CBOR extended time tag as defined in {{Section 3
-   of !RFC9581}}. There are also two fields the implementation can
-   definitely derive: (the MLS group ID {12}, and the leaf index of the
-   sender {13}).  Many implementations could also determine one or more
-   of: the sender's client identifier URL {14}, the user identifier URL
-   of the credential associated with the sender {15}, and the identifier
-   URL for the MIMI room {16}.
+   extensibility as a CBOR extended time tag as defined in Section 3 of
+   [RFC9581].  There are also two fields the implementation using MLS
+   can definitely derive: (the MLS group ID {12}, and the leaf index of
+   the sender {13}).  Many implementations could also determine one or
+   more of: the sender's client identifier URL {14}, the user identifier
+   URL (from the credential associated with the sender) {15}, and the
+   identifier URL for the MIMI room {16}.
 
    MessageDerivedValues = [
        messageId: MessageId,
@@ -714,8 +742,8 @@ Table of Contents
    pretty printed CBOR.
 
    # ORIGINAL
-   # message ID = h'01b0084467273cc43d6f0ebeac13eb84
-   #                229c4fffe8f6c3594c905f47779e5a79'
+   # message ID = h'017ce54837404c3696e0c747b985cb17
+   #                2716d0ed0a3d249ca63ace7d82a096f4'
    # timestamp  = 1644387225019 = 2022-02-09T06:13:45.019Z
    [
      h'5eed9406c2545547ab6f09f20a18b003', # salt
@@ -776,8 +804,8 @@ Table of Contents
 
    [
      / messageId = Original message /
-     h'01b0084467273cc43d6f0ebeac13eb84
-       229c4fffe8f6c3594c905f47779e5a79',
+     h'017ce54837404c3696e0c747b985cb17
+       2716d0ed0a3d249ca63ace7d82a096f4',
 
      / hubAcceptedTimestamp = 2022-02-08T22:13:45.019Z /
      1644387225019,
@@ -810,16 +838,16 @@ Table of Contents
    annotated EDN follows, then the pretty printed CBOR.
 
    # REPLY
-   # message ID = h'01a419aef4e16d43cfc06c28235ecfbe
-   #                9faebc740d0148e7ca20b22150930836'
+   # message ID = h'015354973c2b65ca937bf1e035ae53a5
+   #                ab80e947afa43d46920d4202e5cc0b27'
    # timestamp  = 1644387237492 = 2022-02-09T06:13:57.492Z
    [
      h'11a458c73b8dd2cf404db4b378b8fe4d', # salt
      null,                                # replaces
      h'',                                 # topicId
      null,                                # expires
-     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-       229c4fffe8f6c3594c905f47779e5a79', #   Original
+     h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+       2716d0ed0a3d249ca63ace7d82a096f4', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/bob-jones",
        2: "mimi://example.com/r/engineering_team"
@@ -908,16 +936,16 @@ Table of Contents
    Below is the annotated message in EDN and pretty printed CBOR:
 
    # REACTION
-   # message ID = h'01b1a14a88f4480e1336be86987854f8
-   #                38a3ec82944d4533d8d4088578550ed7'
+   # message ID = h'0158c4288911e50a8f6be3f47746b668
+   #                2f10fd91bc8c05557aa589a3157aff68'
    # timestamp  = 1644387237728 = 2022-02-08T22:13:57.728Z
    [
      h'd37bc0e6a8b4f04e9e6382375f587bf6', # salt
      null,                                # replaces
      h'',                                 # topicId
      null,                                # expires
-     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-       229c4fffe8f6c3594c905f47779e5a79', #   Original
+     h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+       2716d0ed0a3d249ca63ace7d82a096f4', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/cathy-washington",
        2: "mimi://example.com/r/engineering_team"
@@ -979,16 +1007,16 @@ Table of Contents
    Markdown is indicated below.
 
    # MENTION
-   # message ID = h'01cbc26869928fd13edf55ace00f9976
-   #                8ca4e62ad17fede45520eaca58f69d02'
+   # message ID = h'018d825adf9f6be00dcafc5704c4102f
+   #                5022e74219d0b603e4ba7622654042af'
    # timestamp  = 1644387243008 = 2022-02-08T22:14:03.008Z
    [
      h'04f290e215d0f82d1750bfa8b7dc089d', # salt
      null,                                # replaces
      h'',                                 # topicId
      null,                                # expires
-     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-       229c4fffe8f6c3594c905f47779e5a79', #   Original
+     h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+       2716d0ed0a3d249ca63ace7d82a096f4', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/cathy-washington",
        2: "mimi://example.com/r/engineering_team"
@@ -1023,25 +1051,25 @@ Table of Contents
    The replaces data field includes the message ID of the message to
    edit/replace.  The message included in the body is a replacement for
    the message with the replaced message ID.  If the same message is
-   placed more than once, the replaces data field refers to the message
-   ID of the first instance of the message.  This allows maximum
+   replaced more than once, the replaces data field refers to the
+   message ID of the first instance of the message.  This allows maximum
    correlation of different version of the same message, even if the
    receiver was not privy to all of the original versions.
 
    Here Bob Jones corrects a typo in his original message:
 
    # EDIT
-   # message ID = h'01fdcd2f418e4b16f6ba319800a44c12
-   #                b3b0730871f29385bdc6d151b15751ad'
+   # message ID = h'014028c0deddbdea56bec26172f6ede9
+   #                53d11024cb82b8192b5e2aea62d7fb47'
    # timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
    [
-     h'b8c2e6d8800ecf45df39be6c45f4c042',  # salt
-     h'01a419aef4e16d43cfc06c28235ecfbe    / replaces /
-       9faebc740d0148e7ca20b22150930836',  #   Reply
+     h'b8c2e6d8800ecf45df39be6c45f4c042', # salt
+     h'015354973c2b65ca937bf1e035ae53a5   # replaces =
+       ab80e947afa43d46920d4202e5cc0b27', #   Reply
      h'',                                 # topicId
      null,                                # expires
-     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-       229c4fffe8f6c3594c905f47779e5a79', #   Original
+     h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+       2716d0ed0a3d249ca63ace7d82a096f4', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/bob-jones",
        2: "mimi://example.com/r/engineering_team"
@@ -1078,17 +1106,17 @@ Table of Contents
    (NullPart), as shown below.
 
    # DELETE
-   # message ID = h'01b85744b443e9db85de5bb826c04bcd
-   #                65b625e53d17839dc8a3f21321421088'
+   # message ID = h'011d9efc78d04d4dcf4d82b07d5199bb
+   #                ef37011c1f0c7e004b6111c6dda504b4'
    # timestamp  = 1644387248621 = 2022-02-08T22:14:08.621Z
    [
      h'0a590d73b2c7761c39168be5ebf7f2e6', # salt
-     h'01a419aef4e16d43cfc06c28235ecfbe    / replaces /
-       9faebc740d0148e7ca20b22150930836',  #   Reply
+     h'015354973c2b65ca937bf1e035ae53a5   # replaces =
+       ab80e947afa43d46920d4202e5cc0b27', #   Reply
      h'',                                 # topicId
      null,                                # expires
-     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-       229c4fffe8f6c3594c905f47779e5a79', #   Original
+     h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+       2716d0ed0a3d249ca63ace7d82a096f4', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/bob-jones",
        2: "mimi://example.com/r/engineering_team"
@@ -1112,17 +1140,17 @@ Table of Contents
    which created the reaction, as shown below.
 
    # UNLIKE
-   # message ID = h'01f4777df96bb04a66eabbe77b9a264f
-   #                e725f03d2905281dbb37a8b61484d791'
+   # message ID = h'013aadbb8f313253c8930f4e93c6ca54
+   #                b2ed06d258185bdcec3870534c8a4ec4'
    # timestamp  = 1644387250389 = 2022-02-08T22:14:10.389Z
    [
      h'c5ba86dc9fd272e58ca52ec805b79199', # salt
-     h'01b1a14a88f4480e1336be86987854f8   / replaces /
-       38a3ec82944d4533d8d4088578550ed7'  #   Reaction
+     h'0158c4288911e50a8f6be3f47746b668   # replaces =
+       2f10fd91bc8c05557aa589a3157aff68', #   Reaction
      h'',                                 # topicId
      null,                                # expires
-     h'01b0084467273cc43d6f0ebeac13eb84   # inReplyTo =
-       229c4fffe8f6c3594c905f47779e5a79', #   Original
+     h'017ce54837404c3696e0c747b985cb17   # inReplyTo =
+       2716d0ed0a3d249ca63ace7d82a096f4', #   Original
      {                                    # extensions
        1: "mimi://example.com/u/cathy-washington",
        2: "mimi://example.com/r/engineering_team"
@@ -1130,7 +1158,7 @@ Table of Contents
      [                                    # body (NestedPart)
        2,                                   # disposition = reaction
        "",                                  # language
-       0,                                   # cardinality = null part
+       0                                    # cardinality = null part
      ]
    ]
 
@@ -1147,8 +1175,8 @@ Table of Contents
 
    As with manually deleted messages, there is no guarantee that an
    uncooperative client or a determined user will not save the content
-   of the message.  The goal instead is to allow cooperating client that
-   respect the convention to signal expiration times clearly.
+   of the message.  The goal instead is to allow cooperating clients
+   that respect the convention to signal expiration times clearly.
 
    The expires data field contains the absolute timestamp when, or
    relative amount of time after reading, after which the message can be
@@ -1157,8 +1185,8 @@ Table of Contents
    without user interaction or network connectivity necessary.
 
    # EXPIRING
-   # message ID = h'0106308e2c03346eba95b24abdfa9fe6
-   #                43aa247debfb7192feae647155316920'
+   # message ID = h'01e59db8173939facc2c8a4a0f0ae8d0
+   #                c7a11a81239626630c9464a8d6717a03'
    # timestamp  = 1644389403227 = 2022-02-08T22:49:06.227Z
    [
      h'33be993eb39f418f9295afc2ae160d2d', # salt
@@ -1166,8 +1194,8 @@ Table of Contents
      h'',                                 # topicId
      [                                    # expires
        false,                               # absolute, not relative
-       1644390004,          # expires = 10 minutes after it was sent
-     ]
+       1644390004           # expires = 10 minutes after it was sent
+     ],
      null,                                # inReplyTo
      {                                    # extensions
        1: "mimi://example.com/u/alice-smith",
@@ -1234,8 +1262,8 @@ Table of Contents
    separately.
 
    # ATTACHMENT
-   # message ID = h'01ad825f6116adeb437a7b1f95a9d9ac
-   #                bcc708f83f5df505d32af9c2826e8b5f'
+   # message ID = h'0176180c7d19a925021fe446d241134d
+   #                05c38e0d999cdc0f39c391d2377ed9d1'
    # timestamp  = not specified in example
    [
      h'18fac6371e4e53f1aeaf8a013155c166', # salt
@@ -1261,7 +1289,7 @@ Table of Contents
        h'c86cf2c33f21527d1dd76f5b',         # nonce
        h'',                                 # aad
        1,                                   # hashAlg = sha256
-       h'9ab17a8cf0890baaae7ee016c7312fcc   / content hash /
+       h'9ab17a8cf0890baaae7ee016c7312fcc   # content hash
          080ba46498389458ee44f0276e783163',
        "2 hours of key signing video",      # description
        "bigfile.mp4"                        # filename
@@ -1333,8 +1361,8 @@ Table of Contents
    and conferencing functionality is out-of-scope of this document.
 
    # CONFERENCING
-   # message ID = h'01d8dab2e22b75dee4f5e52bb181d2d7
-   #                32008a235b80375113803e36b32a5f06'
+   # message ID = h'01496d15a8dba28d7397f9868b70768e
+   #                4a67f765d5b5b1ae9e03848c5fdeb0ba'
    # timestamp  = not specified in example
    [
      h'678ac6cd54de049c3e9665cd212470fa', # salt
@@ -1427,9 +1455,79 @@ Table of Contents
    message has the same timestamp, the lexically lowest message ID sorts
    earlier.
 
-6.  Support for Specific Media Types
+6.  CBOR Data Model and Encoding Restrictions
 
-6.1.  MIMI Required and Recommended media types
+6.1.  Encoding restrictions
+
+   MIMI content documents MUST be encoded using CBOR "deterministic"
+   serialization as defined in Section 4.2.1 of [RFC8949].
+
+   In summary, this consists of:
+
+   *  using the shortest CBOR encoding of integers, tags, and floats,
+      and the shortest encoding of the length of byte strings, text
+      strings, arrays, and maps.
+   *  representing bigints as regular integers when they fit
+   *  never using indefinite length encoding of byte strings, text
+      strings, arrays, and maps
+   *  sorting map keys according to the third bullet point of that
+      section
+
+   Most CBOR libraries automatically use the shortest form and use
+   definite length.  Support for bigints is optional and is not required
+   by any if the values built into the MIMI Content specification.  Most
+   implementations of CBOR which support bigints can automatically
+   reduce to regular ints.
+
+   The only map inside the MIMI content format is the extensions map.
+   Many popular implementations of CBOR do not yet support map sorting
+   in the order described in Section 4.2.1 of [RFC8949], but preserve
+   map order.  Therefore it should be straightforward for MIMI content
+   extensions to present their maps in the correct order.
+   Implementations MUST NOT send MIMI content in [RFC7094] "canonical"
+   order.
+
+6.2.  Data model restrictions
+
+   *  map keys for MIMI content extensions MUST be either integers, or
+      text strings up to 255 octets long
+   *  map keys for any maps at any level of nesting inside a MIMI
+      content extension MUST only be integers, text strings, or byte
+      strings.
+   *  integer keys MUST be representable as a double float without loss
+      of precision: uints 0..9007199254740991 (2^53 - 1), and negints
+      (-(2^53) + 1) -9007199254740991..-1
+   *  the only floating point NaN values permitted are the half-width
+      quiet NaN (CBOR encoding 0xF97E00), or floating point values
+      inside tags 80-87 (representing arrays of various fixed-sized IEEE
+      floating point types)
+   *  text strings used anywhere inside MIMI content MUST be valid UTF-8
+      sequences.
+   *  use of floating point values inside MIMI content is strongly
+      discouraged
+
+6.3.  Depth restrictions
+
+   NestedParts MUST NOT be nested more than 4-levels deep.
+
+   MIMI content extensions MUST NOT contain any combination of tags,
+   maps, or arrays at more than 4 levels of depth.  Specifically the
+   MIMI content extensions map shown below has 4 levels of depth.  The
+   extensions map is at level 1, the array inside map key 256 is at
+   level 2, the array inside that array is at level 3, the URI inside
+   tag 32 is at level 4.
+
+   {
+       /sender URI/ 1: "mimi://a.example/u/alice",
+       256: [
+           [h'1234', 32("http://example.com")],
+           [h'3456', 5771]
+       ]
+   }
+
+7.  Support for Specific Media Types
+
+7.1.  MIMI Required and Recommended media types
 
    As the MIMI Content container is just a container, the plain text or
    rich text messages sent inside, and any image or other formats needs
@@ -1440,7 +1538,7 @@ Table of Contents
       (described in this document)
    *  text/plain;charset=utf-8
    *  text/markdown;variant=GFM-MIMI -- Github Flavored Markdown for
-      MIMI, defined in Section 6.1.1
+      MIMI, defined in Section 7.1.1
 
    Note that it is acceptable to render the contents of a received
    markdown document as plain text.
@@ -1457,7 +1555,7 @@ Table of Contents
    ExternalParts with http and https URLs, and decrypt downloaded
    content encrypted with the AES-128-GCM AEAD algorithm.
 
-6.1.1.  Specifics of Github Flavored Markdown in MIMI
+7.1.1.  Specifics of Github Flavored Markdown in MIMI
 
    A MIMI content client supports GitHub Flavored Markdown as defined in
    [GFM], with two changes: the Autolink extension is not supported; and
@@ -1489,7 +1587,7 @@ Table of Contents
    Note that rendering Markdown as plain text is an acceptable form of
    "support".
 
-6.2.  Use of proprietary media types
+7.2.  Use of proprietary media types
 
    As most messaging systems are proprietary, standalone systems, it is
    useful to allow clients to send and receive proprietary formats among
@@ -1499,12 +1597,12 @@ Table of Contents
    simultaneously over the same group with end-to-end encryption.  An
    example is given in the Appendix.
 
-7.  IANA Considerations
+8.  IANA Considerations
 
    RFC EDITOR: Please replace XXXX throughout with the RFC number
    assigned to this document.
 
-7.1.  MIME subtype registration of application/mimi-content
+8.1.  MIME subtype registration of application/mimi-content
 
    This document proposes registration of a media subtype with IANA.
 
@@ -1542,11 +1640,19 @@ Table of Contents
    Person & email address to contact for further information:
       IETF MIMI Working Group mimi@ietf.org
 
-7.2.  MIMI Content Extension Keys registry
+   Author:
+      See the Authors' Addresses section of RFC XXXX.
+
+   Change controller:
+      Internet Engineering Task Force (iesg@ietf.org).
+
+8.2.  "More Instant Messaging Interoperability (MIMI)" Group Heading
+
+8.2.1.  MIMI Content Extension Keys registry
 
    This document requests the creation of a new MIMI Content Extension
-   Keys registry.  The registry should be under the heading of "More
-   Instant Messaging Interoperability (MIMI)".
+   Keys registry.  The registry should be under the group heading of
+   "More Instant Messaging Interoperability (MIMI)".
 
    The MIMI Content format defined in this document, contains an
    extensions map in each message.  The keys in the extensions map can
@@ -1554,7 +1660,8 @@ Table of Contents
    and negative integer keys are reserved for private use.  Positive
    integer keys are assigned in the registry under the Expert Review
    policy [RFC8126].  Integer keys between 1 and 255 are restricted to
-   IETF consensus specifications.
+   IETF Stream RFCs, as specified by the IETF Review registration
+   procedure defined in [RFC8126].
 
    The columns in the registry are as follows:
 
@@ -1600,16 +1707,72 @@ Table of Contents
       +=====+============+==================+======+===+===========+
       | 0   | (reserved) | N/A              | -    | - | RFCXXXX   |
       +-----+------------+------------------+------+---+-----------+
-      | 1   | sender_uri | the sender as a  | tstr | Y | RFCXXXX   |
+      | 1   | senderUri  | the sender as a  | tstr | Y | RFCXXXX   |
       |     |            | MIMI participant |      |   |           |
       +-----+------------+------------------+------+---+-----------+
-      | 2   | room_uri   | the MIMI room    | tstr | Y | RFCXXXX   |
+      | 2   | roomUri    | the MIMI room    | tstr | Y | RFCXXXX   |
       |     |            | URI              |      |   |           |
       +-----+------------+------------------+------+---+-----------+
 
                                  Table 1
 
-7.2.1.  Expert Review
+8.2.2.  MIMI Content Disposition registry
+
+   This document requests the creation of a new MIMI Disposition
+   registry.  The registry should be under the group heading of "More
+   Instant Messaging Interoperability (MIMI)".
+
+   The MIMI Content format defined in this document, contains a
+   disposition field for each message part, represented by an integer in
+   the range of 0 to 255.  These values are assigned in the registry
+   under the Expert Review policy [RFC8126].
+
+   The columns in the registry are as follows:
+
+   *  Name: a short descriptive name for the MIMI disposition.
+   *  Value: The positive integer assigned to the MIMI disposition.
+   *  Semantics: The semantics of the MIMI disposition.
+   *  Reference: The document where this MIMI disposition is defined
+
+   The initial contents of the registry are below:
+
+   +=============+=======+=================================+===========+
+   | Name        | Value | Semantics                       | Reference |
+   +=============+=======+=================================+===========+
+   | unspecified | 0     | no disposition hint             | RFCXXXX   |
+   |             |       | provided                        |           |
+   +-------------+-------+---------------------------------+-----------+
+   | render      | 1     | render to the user              | RFCXXXX   |
+   |             |       | according to local policy       |           |
+   +-------------+-------+---------------------------------+-----------+
+   | reaction    | 2     | a single reaction to            | RFCXXXX   |
+   |             |       | another message                 |           |
+   +-------------+-------+---------------------------------+-----------+
+   | profile     | 3     | representing a profile of       | RFCXXXX   |
+   |             |       | a participant or room           |           |
+   +-------------+-------+---------------------------------+-----------+
+   | inline      | 4     | rendered "inline" directly      | RFCXXXX   |
+   |             |       | in the chat interface           |           |
+   +-------------+-------+---------------------------------+-----------+
+   | icon        | 5     | an icon such as an avatar       | RFCXXXX   |
+   |             |       | image                           |           |
+   +-------------+-------+---------------------------------+-----------+
+   | attachment  | 6     | intended to be downloaded       | RFCXXXX   |
+   |             |       | instead of rendered             |           |
+   |             |       | immediately                     |           |
+   +-------------+-------+---------------------------------+-----------+
+   | session     | 7     | a description of a              | RFCXXXX   |
+   |             |       | multimedia session, or URI      |           |
+   |             |       | to join one                     |           |
+   +-------------+-------+---------------------------------+-----------+
+   | preview     | 8     | a sender-generated              | RFCXXXX   |
+   |             |       | preview, ex: image or link      |           |
+   |             |       | contents                        |           |
+   +-------------+-------+---------------------------------+-----------+
+
+                                  Table 2
+
+8.2.3.  Expert Review
 
    Expert Review [RFC8126] registry requests are registered after a
    three-week review period on the MIMI Designated Expert (DE) mailing
@@ -1642,7 +1805,7 @@ Table of Contents
    a conflict of interest for a particular MIMI DE, that MIMI DE SHOULD
    defer to the judgment of the other MIMI DEs.
 
-7.3.  GFM-MIMI Markdown variant
+8.3.  GFM-MIMI Markdown variant
 
    This document registers a new Markdown variant in the IANA Markdown
    Variants registry.  The registration template below conforms with
@@ -1660,9 +1823,9 @@ References: RFCXXXX
 Contact Information:
    IETF MIMI Working Group <mimi@ietf.org>
 
-8.  Security Considerations
+9.  Security Considerations
 
-8.1.  General handling
+9.1.  General handling
 
    The following cases are examples of nonsensical values that most
    likely represent malicious messages.  These should be logged and
@@ -1701,22 +1864,22 @@ Contact Information:
          a message could have been sent before the local client joined.
    *  body
       -  where a body part contains an unrecognized Disposition value.
-         The unknown value should be treated as if it where render.
+         The unknown value should be treated as if it were render.
       -  where a contentType is unrecognized or unsupported.
       -  where a language tag is unrecognized or unsupported.
 
-8.2.  Generating the random salt
+9.2.  Generating the random salt
 
    To ensure a strong source of entropy for the per-message unique salt
    required in each message, the client can export a secret from the MLS
    key schedule, for example with the label salt_base_secret and
    calculate the salt as the first 16-octets of the HMAC of a locally
-   generated nonce and the franking_base_secret.
+   generated nonce and the salt_base_secret.
 
    hash_output = HMAC_SHA256( salt_base_secret, nonce )
    salt = hash_output[0..15]
 
-8.3.  Rendering and authorization of edits and deletes
+9.3.  Rendering and authorization of edits and deletes
 
    This content format allows clients to send new versions of previously
    sent messages, effectively replacing ("editing") or retracting
@@ -1749,8 +1912,10 @@ Contact Information:
    Likewise, even the original sender of a message MUST NOT be able to
    change the semantics of any other portion of the message except for
    the contents of the NestedPart, without specific authorization.
+   Specific authorization capabilities are described in
+   [I-D.ietf-mimi-room-policy].
 
-8.4.  Validation of timestamp
+9.4.  Validation of timestamp
 
    The timestamp is the time a message is accepted by the hub provider.
    As such, the hub provider can manipulate the timestamp, and the
@@ -1759,10 +1924,7 @@ Contact Information:
    mechanism discussed in Section 5.4.1.2 of [I-D.ietf-mimi-protocol]
    prevents follower servers from modifying the timestamp.
 
-   |  *TODO*: Discuss how to sanity check lastSeen, timestamp and the
-   |  MLS epoch and generation, and the limitations of this approach.
-
-8.5.  Alternate content rendering
+9.5.  Alternate content rendering
 
    This document includes a mechanism where the sender can offer
    alternate versions of content in a single message.  For example, the
@@ -1787,7 +1949,7 @@ Contact Information:
    Reply sent by Alice
    Alice: Yes please.
 
-8.6.  Link and Mention handling
+9.6.  Link and Mention handling
 
    Both Markdown and HTML support links.  Using the example of an https
    link, if the rendered text and the link target match exactly or are
@@ -1833,9 +1995,9 @@ Contact Information:
    If the client does not support special rendering of mentions, the
    application, should render the text like any other link.
 
-9.  References
+10.  References
 
-9.1.  Normative References
+10.1.  Normative References
 
    [GFM]      GitHub, "GitHub Flavored Markdown Spec, Version 0.29-gfm",
               6 March 2019, <https://github.github.com/gfm/>.
@@ -1848,11 +2010,6 @@ Contact Information:
    [RFC2392]  Levinson, E., "Content-ID and Message-ID Uniform Resource
               Locators", RFC 2392, DOI 10.17487/RFC2392, August 1998,
               <https://www.rfc-editor.org/info/rfc2392>.
-
-   [RFC3862]  Klyne, G. and D. Atkins, "Common Presence and Instant
-              Messaging (CPIM): Message Format", RFC 3862,
-              DOI 10.17487/RFC3862, August 2004,
-              <https://www.rfc-editor.org/info/rfc3862>.
 
    [RFC5116]  McGrew, D., "An Interface and Algorithms for Authenticated
               Encryption", RFC 5116, DOI 10.17487/RFC5116, January 2008,
@@ -1887,13 +2044,18 @@ Contact Information:
               Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
               July 2023, <https://www.rfc-editor.org/info/rfc9420>.
 
+   [RFC9581]  Bormann, C., Gamari, B., and H. Birkholz, "Concise Binary
+              Object Representation (CBOR) Tags for Time, Duration, and
+              Period", RFC 9581, DOI 10.17487/RFC9581, August 2024,
+              <https://www.rfc-editor.org/info/rfc9581>.
+
    [W3C.CR-html52-20170808]
               Faulkner, S., Eicholz, A., Leithead, T., Danilo, A., and
               S. Moon, "HTML 5.2", World Wide Web Consortium CR CR-
               html52-20170808, 8 August 2017,
               <https://www.w3.org/TR/2017/CR-html52-20170808>.
 
-9.2.  Informative References
+10.2.  Informative References
 
    [DoubleRatchet]
               Perrin, T. and M. Marlinspike, "The Double Ratchet
@@ -1901,11 +2063,10 @@ Contact Information:
               <https://signal.org/docs/specifications/doubleratchet/>.
 
    [I-D.ietf-cbor-edn-literals]
-              Bormann, C., "CBOR Extended Diagnostic Notation (EDN)",
-              Work in Progress, Internet-Draft, draft-ietf-cbor-edn-
-              literals-19, 16 October 2025,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-cbor-
-              edn-literals-19>.
+              Bormann, C., "Concise Diagnostic Notation (CDN)", Work in
+              Progress, Internet-Draft, draft-ietf-cbor-edn-literals-26,
+              15 June 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-cbor-edn-literals-26>.
 
    [I-D.ietf-mimi-arch]
               Barnes, R., "An Architecture for More Instant Messaging
@@ -1918,16 +2079,23 @@ Contact Information:
               Barnes, R., Hodgson, M., Kohbrok, K., Mahy, R., Ralston,
               T., and R. Robert, "More Instant Messaging
               Interoperability (MIMI) using HTTPS and MLS", Work in
-              Progress, Internet-Draft, draft-ietf-mimi-protocol-05, 20
-              October 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-mimi-protocol-05>.
+              Progress, Internet-Draft, draft-ietf-mimi-protocol-06, 25
+              April 2026, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-mimi-protocol-06>.
+
+   [I-D.ietf-mimi-room-policy]
+              Mahy, R., "Room Policy for the More Instant Messaging
+              Interoperability (MIMI) Protocol", Work in Progress,
+              Internet-Draft, draft-ietf-mimi-room-policy-03, 18
+              December 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-mimi-room-policy-03>.
 
    [I-D.ietf-mls-extensions]
               Robert, R., "The Messaging Layer Security (MLS)
               Extensions", Work in Progress, Internet-Draft, draft-ietf-
-              mls-extensions-08, 21 July 2025,
+              mls-extensions-09, 2 March 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
-              extensions-08>.
+              extensions-09>.
 
    [I-D.mahy-mimi-identity]
               Mahy, R., "More Instant Messaging Interoperability (MIMI)
@@ -1935,6 +2103,13 @@ Contact Information:
               draft-mahy-mimi-identity-04, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-mahy-mimi-
               identity-04>.
+
+   [I-D.mahy-mimi-message-status]
+              Mahy, R., "A Message Status format for the More Instant
+              Messaging Interoperability (MIMI) content format", Work in
+              Progress, Internet-Draft, draft-mahy-mimi-message-status-
+              01, 2 March 2026, <https://datatracker.ietf.org/doc/html/
+              draft-mahy-mimi-message-status-01>.
 
    [RFC2046]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
               Extensions (MIME) Part Two: Media Types", RFC 2046,
@@ -1955,8 +2130,13 @@ Contact Information:
    [RFC3261]  Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston,
               A., Peterson, J., Sparks, R., Handley, M., and E.
               Schooler, "SIP: Session Initiation Protocol", RFC 3261,
-              DOI 10.17487/RFC3261, June 2002,
+              DOI 10.17487/RFC3261, July 2002,
               <https://www.rfc-editor.org/info/rfc3261>.
+
+   [RFC3862]  Klyne, G. and D. Atkins, "Common Presence and Instant
+              Messaging (CPIM): Message Format", RFC 3862,
+              DOI 10.17487/RFC3862, August 2004,
+              <https://www.rfc-editor.org/info/rfc3862>.
 
    [RFC5545]  Desruisseaux, B., Ed., "Internet Calendaring and
               Scheduling Core Object Specification (iCalendar)",
@@ -1970,6 +2150,11 @@ Contact Information:
    [RFC6350]  Perreault, S., "vCard Format Specification", RFC 6350,
               DOI 10.17487/RFC6350, August 2011,
               <https://www.rfc-editor.org/info/rfc6350>.
+
+   [RFC7094]  McPherson, D., Oran, D., Thaler, D., and E. Osterweil,
+              "Architectural Considerations of IP Anycast", RFC 7094,
+              DOI 10.17487/RFC7094, January 2014,
+              <https://www.rfc-editor.org/info/rfc7094>.
 
    [RFC7763]  Leonard, S., "The text/markdown Media Type", RFC 7763,
               DOI 10.17487/RFC7763, March 2016,
@@ -1998,7 +2183,7 @@ A.1.  Complete Message Format Schema
      topicId: bstr,
      expires: null / Expiration,
      inReplyTo: null / MessageId,
-     extensions: {* name => value },
+     mimiExtensions: extensions,
      nestedPart: NestedPart
    ]
 
@@ -2060,8 +2245,18 @@ A.1.  Complete Message Format Schema
    ; MessageId is derived from SHA256 hash
    MessageId = bstr .size 32
 
+   extensions = {
+     ? &(senderUri: 1) ^ => tstr,
+     ? &(roomUri: 2) ^ => tstr,
+     * $$otherKnownExtensions,
+     * unknownExtension
+   }
+
+   unknownExtension = (
+      name => value
+   )
    name = int / tstr .size (1..255)
-   value = any .size (0..4095)
+   value = any
 
    nullpart = 0
    single   = 1
@@ -2126,8 +2321,8 @@ B.1.  Proprietary and Common formats sent as alternatives
    proprietary messaging format simultaneously.
 
    # MULTIPART-1
-   # message ID = h'015c0469c52da0938c27cfa16702e277
-   #                35a4729746be5f64bc5838f754828464'
+   # message ID = h'01da5a515ec5db42cc4dcc19b90c3c31
+   #                245d8a1cfcce11318f24eb11dce0990e'
    # timestamp  = not specified in example
    [
      h'261c953e178af653fe3d42641b91d814', # salt
@@ -2171,8 +2366,8 @@ B.2.  Multiple Reactions Example
    This example shows sending a reaction with multiple separate emojis.
 
    # MULTIPART-2
-   # message ID = h'016d4d9acef39420bfcb686bcc6e5d3f
-   #                f70cc06b3229c051bdeba37fe0055dbc'
+   # message ID = h'01d65918c6c51c8e76546337276ae6f4
+   #                bfd873d867d5cb57c76bcdca3d999dd7'
    # timestamp  = not specified in example
    [
      h'8528dc2d92e4f1944d62042907ab94d0', # salt
@@ -2236,8 +2431,8 @@ B.3.  Complicated Nested Example
    10        PNG
 
    # MULTIPART-3
-   # message ID = h'011c6794e5c4ee607f40f4c8485a0dab
-   #                5fd8be7331459b1d09e4f59693ca32b3'
+   # message ID = h'01cfebeadbdb83c1eefb6403ba4852da
+   #                f8bbbf9cd53bf5035a74d5d741950c9f'
    # timestamp  = not specified in example
    [
      h'b8362793168d18c049b882d4642a2274', # salt
@@ -2312,7 +2507,7 @@ B.3.  Complicated Nested Example
                1,                           # disposition = render
                "",                          # language
                3,                           # cardinality = multi
-               0,                           # partSemantics = chooseOne
+               0                            # partSemantics = chooseOne
                [
                  [                          # partIndex = 8
                    1,                       # disposition = render
@@ -2412,7 +2607,7 @@ C.6.  Changes between draft-ietf-mimi-content-03 and draft-ietf-mimi-
    *  use CBOR as the binary encoding
    *  add multipart examples
 
-C.7.  Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-
+C.7.  Changes between draft-ietf-mimi-content-04 and draft-ietf-mimi-
       content-05
 
    *  change message ID construction, and add salt
@@ -2426,7 +2621,7 @@ C.7.  Changes between draft-mahy-mimi-content-04 and draft-mahy-mimi-
       variant
    *  remove tag from URLs in ExternalPart and implied headers
 
-C.8.  Changes between draft-mahy-mimi-content-05 and draft-mahy-mimi-
+C.8.  Changes between draft-ietf-mimi-content-05 and draft-ietf-mimi-
       content-06
 
    *  remove lastSeen field
@@ -2439,7 +2634,7 @@ C.8.  Changes between draft-mahy-mimi-content-05 and draft-mahy-mimi-
    *  rebuild all the examples from a script. make sure the EDN and CBOR
       correspond and the CDDL validates the CBOR.
 
-C.9.  Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-
+C.9.  Changes between draft-ietf-mimi-content-06 and draft-ietf-mimi-
       content-07
 
    *  fixed a bug in the generation of message IDs; regenerated them
@@ -2448,6 +2643,34 @@ C.9.  Changes between draft-mahy-mimi-content-06 and draft-mahy-mimi-
       status
    *  clarified that the salt is always 16 octets
    *  make examples uses the correct CBOR map key for room
+
+C.10.  Changes between draft-ietf-mimi-content-07 and draft-ietf-mimi-
+       content-08
+
+   *  add an explicit length before the sender URI and room URI in the
+      input to the message ID hash input (Issue #61/PR#70)
+   *  make the inline CDDL examples consistent with the complete CDDL
+      (PR#69)
+   *  add IANA registry for disposition values (Issue #64/PR#71)
+   *  add CBOR encoding, data model, and depth restrictions section
+      (Issue #76/PR#79)
+   *  removed the maximum length of MIMI content extensions
+
+C.11.  Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-
+       content-09
+
+   *  update and fix references; add reference to MIMI room policy
+   *  make clear that MIMI content could be used without MLS or the rest
+      of MIMI
+   *  speak about how MIMI content fits with MIMI generally instead of
+      referring to WG charter
+   *  give correct reference to mimi: URLs; move mention to im: URIs
+      later
+   *  clarify that the URI lengths in the Message ID calculation
+      algorithm are in octets, not characters
+   *  refer to the salt_base_secret instead of the franking_base_secret
+   *  remove a TODO related to lastSeen, which was long ago removed
+   *  fix some typos
 
 Author's Address
 
