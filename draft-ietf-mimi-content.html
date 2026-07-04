@@ -12,25 +12,26 @@ systems and describes a profile suitable for instant messaging
 interoperability of messages end-to-end encrypted inside the MLS
 (Message Layer Security) Protocol. 
     " name="description">
-<meta content="xml2rfc 3.31.0" name="generator">
+<meta content="xml2rfc 3.34.0" name="generator">
 <meta content="mimi" name="keyword">
 <meta content="content" name="keyword">
 <meta content="mls" name="keyword">
 <meta content="mime" name="keyword">
 <meta content="draft-ietf-mimi-content-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.31.0
-    Python 3.12.12
-    ConfigArgParse 1.7
+  xml2rfc 3.34.0
+    Python 3.14.5
+    ConfigArgParse 1.7.5
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 6.0.2
-    platformdirs 4.5.1
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
     pycountry 24.6.1
     PyYAML 6.0.3
-    requests 2.32.5
-    wcwidth 0.3.0
+    requests 2.33.1
+    wcwidth 0.8.2
 -->
 <link href="draft-ietf-mimi-content.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -297,16 +298,19 @@ h1, h2, h3, h4, h5, h6 {
   font-size-adjust: 0.5;
   color: var(--title-color);
 }
-h1#title {
-  font-size: 32px;
-  line-height: 40px;
-  clear: both;
-}
-h1#title, h1#rfcnum {
-  margin: 1.5em 0 0.2em;
-}
-h1#rfcnum + h1#title {
-  margin: 0.2em 0;
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
 }
 
 h1, h2, h3 {
@@ -326,10 +330,10 @@ h4, h5, h6 {
 #abstract+p {
   font-size: 18px;
   line-height: 24px;
-}
-#abstract+p code, #abstract+p samp, #abstract+p tt {
-  font-size: 16px;
-  line-height: 0;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
 }
 
 p {
@@ -340,59 +344,59 @@ p {
 div {
   margin: 0;
 }
-.alignRight.art-text {
-  background-color: var(--highlight-color);
-  border: 1px solid var(--line-color);
-  border-radius: 3px;
-  padding: 0.5em 1em 0;
-  margin-bottom: 0.5em;
-}
-.alignRight.art-text pre {
-  padding: 0;
-  width: auto;
-}
 .alignRight {
   margin: 1em 0;
-}
-.alignRight > *:first-child {
-  border: none;
-  margin: 0;
-  float: right;
-  clear: both;
-}
-.alignRight > *:nth-child(2) {
-  clear: both;
-  display: block;
-  border: none;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
 }
 svg {
   display: block;
-}
-/* font-family isn't space-separated, but =~ will have to do */
-svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
-  font-family: var(--font-mono);
-}
-.alignCenter.art-text {
-  background-color: var(--highlight-color);
-  border: 1px solid var(--line-color);
-  border-radius: 3px;
-  padding: 0.5em 1em 0;
-  margin-bottom: 0.5em;
-}
-.alignCenter.art-text pre {
-  padding: 0;
-  width: auto;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
 }
 .alignCenter {
   margin: 1em 0;
-}
-.alignCenter > *:first-child {
-  border: none;
-  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
-     support flexbox yet.
-  */
-  display: table;
-  margin: 0 auto;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
 }
 
 /* lists */
@@ -430,26 +434,25 @@ dl {
     --indent: 5ch;
     & > dt {
       min-width: calc(var(--indent) - 2ch);
+      float: none;
     }
-  }
-  &.olPercent > dt {
-    float: none;
   }
 
   dl > dd > & {
     margin-top: 0.5em;
     margin-bottom: 0;
   }
-}
-dl:not(.dlNewline) > dt {
-  float: left;
-  margin-right: 2ch;
-  min-width: 8ch;
-}
-dl > dd {
-  margin-bottom: .8em;
-  margin-left: var(--indent) !important; /* stupid element overrides */
-  min-height: 2ex;
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
 }
 :is(dl.compact, .dlCompact) > dd {
   margin-bottom: 0;
@@ -465,20 +468,22 @@ dl > dd {
 }
 
 /* links */
-a, a[href].selfRef:hover {
+a {
   text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
 }
-a[href] {
-  color: var(--link-color);
-}
-a[href].selfRef, .iref + a[href].internal {
+.iref + a[href].internal {
   color: var(--text-color);
-}
-a[href]:hover {
-  text-decoration: underline;
-}
-a[href].selfRef:hover {
-  background-color: var(--highlight-color);
 }
 a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
   white-space: nowrap;
@@ -514,9 +519,9 @@ img {
 figure {
   margin: 0.5em 0;
   padding: 0;
-}
-figure blockquote {
-  margin: 0.8em 0.4em 0.4em;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
 }
 figcaption, caption {
   font-style: italic;
@@ -526,17 +531,19 @@ figcaption, caption {
 }
 @media screen {
   /* Auto-collapse boilerplate. */
-  :is(#status-of-memo, #copyright) p {
-    margin: -2px 0;
-    max-height: 0;
-    transition: max-height 2s ease, margin 0.5s ease 0.5s;
-    overflow: hidden;
-  }
-  :is(#status-of-memo, #copyright):hover p,
-  :is(#status-of-memo, #copyright) h2:target ~ p {
-    margin: 0.5em 0;
-    max-height: 500px;
-    overflow: auto;
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
   }
   pre, svg {
     display: inline-block;
@@ -586,25 +593,17 @@ table {
   max-width: 100%;
   margin: 0 0 1em;
   border-collapse: collapse;
-}
-table.right {
-  margin-left: auto;
-}
-table.center {
-  margin-left: auto;
-  margin-right: auto;
-}
-table.left {
-  margin-right: auto;
-}
-table .text-left {
-  text-align: left;
-}
-table .text-center {
-  text-align: center;
-}
-table .text-right {
-  text-align: right;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
 }
 
 thead, tbody {
@@ -624,13 +623,6 @@ th {
 :is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
   background-color: var(--highlight-color);
 }
-table caption {
-  margin: 0;
-  padding: 3px 0 3px 1em;
-}
-table p {
-  margin: 0;
-}
 
 /* pilcrow */
 a.pilcrow {
@@ -641,18 +633,16 @@ a.pilcrow {
     color: var(--pilcrow-weak);
     &:hover { text-decoration: none; }
   }
-}
-@media not print {
-  :hover > a.pilcrow, a.pilcrow:focus {
-    opacity: 1;
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
   }
-  a.pilcrow[href]:hover {
-    color: var(--pilcrow-strong);
-    background-color: transparent;
-  }
-}
-@media print {
-  a.pilcrow {
+  @media print {
     display: none;
   }
 }
@@ -711,9 +701,9 @@ sub, sup {
   font-size: 0.9em;
   font-style: italic;
   margin-top: 2em;
-}
-.docInfo .prepared {
-  float: right;
+  & .prepared {
+    float: right;
+  }
 }
 
 /* table of contents */
@@ -803,23 +793,27 @@ hr.addr {
   max-width: calc(100% - 16px);
 }
 @media (min-width: 500px) {
-  #authors-addresses > section {
-    column-count: 2;
-    column-gap: 20px;
-  }
-  #authors-addresses > section > h2 {
-    column-span: all;
-  }
-  /* hack for break-inside: avoid-column */
-  #authors-addresses address {
-    display: inline-block;
-    break-inside: avoid-column;
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
   }
 }
 
 /* Comments */
-.rfcEditorRemove p:first-of-type {
-  font-style: italic;
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
 }
 .cref {
   background-color: rgba(249, 232, 105, 0.3);
@@ -830,19 +824,21 @@ hr.addr {
 }
 
 @media screen {
-  #toc nav {
-    font-family: var(--font-title);
-    font-weight: 360;
-    & > ul { margin-bottom: 2em; }
-    & ul {
-      margin: 0 0 0 4px;
-      & :is(p, li) {
-        margin: 2px 0;
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
       }
     }
-  }
-  #toc a.toplink {
-    float: right;
+    & a.toplink {
+      float: right;
+    }
   }
 }
 @media not screen {
@@ -863,54 +859,54 @@ hr.addr {
     margin: 0;
     border-bottom: 1px solid #ccc;
     opacity: 0.6;
-  }
-  #toc h2 {
-    margin: 0;
-    padding: 2px 0 2px 6px;
-    padding-right: 1em;
-    font-size: 18px;
-    line-height: 24px;
-    min-width: 190px;
-    text-align: right;
-    background-color: #444;
-    color: white;
-    cursor: pointer;
-    &::before { /* css hamburger */
-      float: right;
-      position: relative;
-      width: 1em;
-      height: 1px;
-      left: -164px;
-      margin: 8px 0 0 0;
-      background: white none repeat scroll 0 0;
-      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
-      content: "";
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
     }
-  }
-  #toc nav {
-    display: none;
-    background-color: var(--background-color);
-    padding: 0.5em 1em 1em;
-    overflow: auto;
-    overscroll-behavior: contain;
-    height: calc(100vh - 48px);
-    border-left: 1px solid #ddd;
-  }
-  #toc.active {
-    opacity: 1;
-    & nav { display: block; }
-  }
-  /* Make the collapsed ToC header render white on gray also when it's a link */
-  #toc h2 a,
-  #toc h2 a:is(:link, :focus, :hover),
-  #toc a.toplink,
-  #toc a.toplink:hover {
-    color: white;
-    background-color: #444;
-    text-decoration: none;
-  }
-  #toc a.toplink {
-    margin: 2px 0.5em 0;
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
   }
 }
 
@@ -929,26 +925,26 @@ hr.addr {
     margin: 0;
     padding: 0;
     z-index: 1;
-  }
-  #toc h2 {
-    margin: 0;
-    padding: 0.25em 1em 1em 0;
-  }
-  #toc nav {
-    display: block;
-    height: calc(90vh - 84px);
-    bottom: 0;
-    padding: 0.5em 0 2em;
-    overflow: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
   }
   img { /* future proofing */
     max-width: 100%;
     height: auto;
-  }
-  #toc a.toplink {
-    margin: 8px 0.5em 0;
   }
 }
 
@@ -964,12 +960,13 @@ hr.addr {
   #n-copyright-notice {
     border-bottom: none;
   }
-  #toc, #n-introduction {
-    page-break-before: always;
-  }
   #toc {
+    page-break-before: always;
     border-top: none;
     padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
   }
   figure, pre, .vcard {
     page-break-inside: avoid;
@@ -1031,17 +1028,19 @@ hr.addr {
 }
 
 /* SVG Trick: a prefix match works because only black and white are allowed */
-svg :is([stroke="black"], [stroke^="#000"]) {
-  stroke: var(--text-color);
-}
-svg :is([stroke="white"], [stroke^="#fff"]) {
-  stroke: var(--background-color);
-}
-svg :is([fill="black"], [fill^="#000"], :not([fill])) {
-  fill: var(--text-color);
-}
-svg :is([fill="white"], [fill^="#fff"]) {
-  fill: var(--background-color);
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
 }
 </style>
 
@@ -1051,11 +1050,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">MIMI Content</td>
-<td class="right">March 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Mahy</td>
-<td class="center">Expires 3 September 2026</td>
+<td class="center">Expires 5 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-mimi-content-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-03-02" class="published">2 March 2026</time>
+<time datetime="2026-07-04" class="published">4 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
+<dd class="expires"><time datetime="2027-01-05">5 January 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1110,7 +1109,7 @@ interoperability of messages end-to-end encrypted inside the MLS
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1373,6 +1372,9 @@ interoperability of messages end-to-end encrypted inside the MLS
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.10">
                 <p id="section-toc.1-1.13.2.10.1"><a href="#appendix-C.10" class="auto internal xref">C.10</a>. <a href="#name-changes-between-draft-ietf-mimi-co" class="internal xref">Changes between draft-ietf-mimi-content-07 and draft-ietf-mimi-content-08</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.11">
+                <p id="section-toc.1-1.13.2.11.1"><a href="#appendix-C.11" class="auto internal xref">C.11</a>. <a href="#name-changes-between-draft-ietf-mimi-con" class="internal xref">Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
@@ -1391,9 +1393,6 @@ interoperability of messages end-to-end encrypted inside the MLS
 "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when,
 and only when, they appear in all capitals, as shown here.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">The terms MLS client, MLS group, and KeyPackage have the same meanings as in
-the MLS protocol <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>. Other relevant terminology can be
-found in <span>[<a href="#I-D.ietf-mimi-arch" class="cite xref">I-D.ietf-mimi-arch</a>]</span>.<a href="#section-1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="introduction">
@@ -1420,19 +1419,10 @@ assumed standalone encryption of each message using a protocol such as S/MIME
 <span>[<a href="#RFC8551" class="cite xref">RFC8551</a>]</span> or PGP <span>[<a href="#RFC3156" class="cite xref">RFC3156</a>]</span> to interoperate between IM protocols such as
 SIP <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> and XMPP <span>[<a href="#RFC6120" class="cite xref">RFC6120</a>]</span>.  For a variety of practical reasons, interoperable
 end-to-end encryption between IM systems was never deployed commercially.<a href="#section-2-3" class="pilcrow">¶</a></p>
-<p id="section-2-4">There are now several instant messaging vendors implementing MLS, and the
-MIMI (More Instant Messaging Interoperability) Working Group is chartered
-to standardize an extensible interoperable messaging format for common
-features to be conveyed "inside" MLS application messages.<a href="#section-2-4" class="pilcrow">¶</a></p>
-<p id="section-2-5">This document assumes that MLS clients advertise media types they support
-and can determine what media types are required to join a
-specific MLS group using the content advertisement extensions in Section 2.3 of
-<span>[<a href="#I-D.ietf-mls-extensions" class="cite xref">I-D.ietf-mls-extensions</a>]</span>. It allows implementations to define MLS groups
-with different media type requirements and allows MLS clients to send
-extended or proprietary messages that would be interpreted by some members
-of the group while assuring that an interoperable end-to-end encrypted
-baseline is available to all members, even when the group spans multiple
-systems or vendors.<a href="#section-2-5" class="pilcrow">¶</a></p>
+<p id="section-2-4">There are now several instant messaging vendors implementing MLS. The MIMI (More Instant Messaging Interoperability) architecture <span>[<a href="#I-D.ietf-mimi-arch" class="cite xref">I-D.ietf-mimi-arch</a>]</span> describes an MLS profile and a provide-to-provider protocol (<span>[<a href="#I-D.ietf-mimi-protocol" class="cite xref">I-D.ietf-mimi-protocol</a>]</span>), a policy mechanism <span>[<a href="#I-D.ietf-mimi-room-policy" class="cite xref">I-D.ietf-mimi-room-policy</a>]</span>, and an extensible interoperable messaging format (this specification) for common features.
+The MIMI content format is designed to be conveyed "inside" MLS application messages, but it is sufficiently flexible that it can be used in other contexts, including without encryption.<a href="#section-2-4" class="pilcrow">¶</a></p>
+<p id="section-2-5">When used with MLS, this specification assumes that MLS clients advertise media types they support, and can determine what media types are required in a specific MLS group, by using the content advertisement extensions in Section 6.2 of <span>[<a href="#I-D.ietf-mls-extensions" class="cite xref">I-D.ietf-mls-extensions</a>]</span>.
+It allows implementations to define media type requirements per group, and allows MLS clients to send extended or proprietary messages that would be interpreted by some members of the group while assuring that an interoperable end-to-end encrypted baseline is available to all members, even when the group spans multiple systems or vendors.<a href="#section-2-5" class="pilcrow">¶</a></p>
 <p id="section-2-6">Below is a list of some features commonly found in IM group chat systems:<a href="#section-2-6" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-2-7.1">plain text and rich text messaging<a href="#section-2-7.1" class="pilcrow">¶</a>
@@ -1459,7 +1449,7 @@ systems or vendors.<a href="#section-2-5" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-2-8">Delivery notifications and read receipts are addressed in
-{{?I-D.mahy-mimi-message-status}}. Calling and conferencing will also be
+<span>[<a href="#I-D.mahy-mimi-message-status" class="cite xref">I-D.mahy-mimi-message-status</a>]</span>. Calling and conferencing will also be
 addressed in another document.<a href="#section-2-8" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1484,7 +1474,7 @@ types (ex: images). This rules out using JSON to carry the binary data.<a href="
 </li>
         </ul>
 <p id="section-3.1-3">All examples start with an instance document annotated in the CBOR
-Extended Diagnostic Notation (described in [Appendix G of @!RFC8610] and
+Extended Diagnostic Notation (described in Appendix G of <span>[<a href="#RFC8610" class="cite xref">RFC8610</a>]</span> and
 more rigorously specified in <span>[<a href="#I-D.ietf-cbor-edn-literals" class="cite xref">I-D.ietf-cbor-edn-literals</a>]</span>), and then
 include a hex dump of the CBOR data in the pretty printed format popularized
 by the CBOR playground website (<a href="https://cbor.me">https://cbor.me</a>) with some minor whitespace
@@ -1513,9 +1503,8 @@ of identifier described as the senderClientUrl in the examples.<a href="#section
 This is the type of identifier described as the MLS group URL in the examples.<a href="#section-3.2-2.3" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-3.2-3">This proposal relies on URIs for naming and identifiers. All the example use
-the <code>im:</code> URI scheme (defined in <span>[<a href="#RFC3862" class="cite xref">RFC3862</a>]</span>), but any instant messaging scheme
-could be used.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">This proposal relies on URIs for naming and identifiers. All the examples use
+the <code>mimi:</code> URI scheme (as described in Table 1 of <span>[<a href="#I-D.ietf-mimi-protocol" class="cite xref">I-D.ietf-mimi-protocol</a>]</span>), but any instant messaging scheme could be used, such as the <code>im:</code> URI scheme (<span>[<a href="#RFC3862" class="cite xref">RFC3862</a>]</span>).<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="message-id">
@@ -1532,9 +1521,8 @@ room URI.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
 <p id="section-3.3-2">Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
 <a href="https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg">IANA hash algorithm registry</a>.
-The senderUriLength and roomUriLength are big-endian unsigned 16-bit integers
-representing the length of the sender URI, and the room URI, respectively.
-The senderUriLength, sender URI, roomUriLength, room URI, the entire MIMI
+The <code>senderUriLength</code> and <code>roomUriLength</code> are big-endian unsigned 16-bit integers representing the length of the sender URI (in octets), and the room URI, respectively.
+The <code>senderUriLength</code>, sender URI, <code>roomUriLength</code>, room URI, the entire MIMI
 message content (including the salt), and the salt (again) are all concatenated,
 and then hashed with the algorithm identified in the first octet. The first 31
 octets of the hash_output is appended to the hash function ID.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
@@ -1550,7 +1538,7 @@ messageId = hashAlg || hash_output[0..30]
 default, regardless of the hash algorithm of the cipher suite of a room's MLS
 group. The initial octet allows the MIMI protocol to deprecate SHA-256 and
 specify a new default algorithm in the future (for example if a practical
-birthday attack on SHA_256 becomes feasible).<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+birthday attack on SHA-256 becomes feasible).<a href="#section-3.3-4" class="pilcrow">¶</a></p>
 <blockquote id="section-3.3-5">
           <p id="section-3.3-5.1">The salt is duplicated in the input to the hash to avoid a SHA-256 length
 extension attack.<a href="#section-3.3-5.1" class="pilcrow">¶</a></p>
@@ -1701,7 +1689,7 @@ Bob might just send a message saying he doesn't like pineapple on pizza.<a href=
 <p id="section-4.2-3">If clients want to detect messages sent out of order by the hub, they
 require notification of message delivery at the MLS level (ex: the AppAck
 mechanism provided in <span>[<a href="#I-D.ietf-mls-extensions" class="cite xref">I-D.ietf-mls-extensions</a>]</span>) or at the MIMI level,
-such as the format defined in {{?I-D.mahy-mimi-message-status}}.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+such as the format defined in <span>[<a href="#I-D.mahy-mimi-message-status" class="cite xref">I-D.mahy-mimi-message-status</a>]</span>.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="extension-fields">
@@ -1948,12 +1936,12 @@ algorithm.<a href="#section-4.5-8" class="pilcrow">¶</a></p>
 <p id="section-4.6-1">In addition to fields which are contained in a MIMI content message,
 there is the hub accepted timestamp, which can be represented either
 as milliseconds since the start of the UNIX epoch, or for future
-extensibility as a CBOR extended time tag as defined in {{Section 3 of
-!RFC9581}}. There are also two fields the implementation can definitely derive:
+extensibility as a CBOR extended time tag as defined in Section 3 of
+<span>[<a href="#RFC9581" class="cite xref">RFC9581</a>]</span>. There are also two fields the implementation using MLS can definitely derive:
 (the MLS group ID {12}, and the leaf index of the sender {13}). Many
 implementations could also determine one or more of: the sender's client
-identifier URL {14}, the user identifier URL of the credential associated
-with the sender {15}, and the identifier URL for the MIMI room {16}.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
+identifier URL {14}, the user identifier URL (from the credential associated
+with the sender) {15}, and the identifier URL for the MIMI room {16}.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.6-2">
 <pre>MessageDerivedValues = [
     messageId: MessageId,
@@ -2379,7 +2367,7 @@ message is read) but shows a visual indication that it has been edited.<a href="
 <p id="section-5.5-2">The <code>replaces</code> data field includes the message ID of the message to
 edit/replace. The message included in the body is a replacement for the message
 with the replaced message ID.
-If the same message is placed more than once, the <code>replaces</code> data field refers
+If the same message is replaced more than once, the <code>replaces</code> data field refers
 to the message ID of the first instance of the message. This allows maximum
 correlation of different version of the same message, even if the receiver was
 not privy to all of the original versions.<a href="#section-5.5-2" class="pilcrow">¶</a></p>
@@ -2516,7 +2504,7 @@ relative expiration.<a href="#section-5.8-1" class="pilcrow">¶</a></p>
 receiving client at a certain time whether they have been read or not.<a href="#section-5.8-2" class="pilcrow">¶</a></p>
 <p id="section-5.8-3">As with manually deleted messages, there is no guarantee that an uncooperative
 client or a determined user will not save the content of the message. The goal
-instead is to allow cooperating client that respect the convention to signal
+instead is to allow cooperating clients that respect the convention to signal
 expiration times clearly.<a href="#section-5.8-3" class="pilcrow">¶</a></p>
 <p id="section-5.8-4">The <code>expires</code> data field contains the absolute timestamp when, or relative
 amount of time after reading, after which the message can be deleted.
@@ -2851,7 +2839,7 @@ sorts earlier.<a href="#section-5.11-1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.1-4">Most CBOR libraries automatically use the shortest form and use definite length. Support for bigints is optional and is not required by any if the values built into the MIMI Content specification. Most implementations of CBOR which support bigints can automatically reduce to regular ints.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.1-5">The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in 4.2.1, but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in RFC7094 "canonical" order.<a href="#section-6.1-5" class="pilcrow">¶</a></p>
+<p id="section-6.1-5">The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in the order described in Section 4.2.1 of <span>[<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>, but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in <span>[<a href="#RFC7094" class="cite xref">RFC7094</a>]</span> "canonical" order.<a href="#section-6.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="data-model-restrictions">
@@ -3384,7 +3372,7 @@ Such a message could have been sent before the local client joined.<a href="#sec
             <p id="section-9.1-4.2.1">body<a href="#section-9.1-4.2.1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-9.1-4.2.2.1">where a body part contains an unrecognized Disposition value. The
-unknown value should be treated as if it where <code>render</code>.<a href="#section-9.1-4.2.2.1" class="pilcrow">¶</a>
+unknown value should be treated as if it were <code>render</code>.<a href="#section-9.1-4.2.2.1" class="pilcrow">¶</a>
 </li>
               <li class="compact" id="section-9.1-4.2.2.2">where a contentType is unrecognized or unsupported.<a href="#section-9.1-4.2.2.2" class="pilcrow">¶</a>
 </li>
@@ -3403,7 +3391,7 @@ unknown value should be treated as if it where <code>render</code>.<a href="#sec
 <p id="section-9.2-1">To ensure a strong source of entropy for the per-message unique salt required in
 each message, the client can export a secret from the MLS key schedule, for
 example with the label <code>salt_base_secret</code> and calculate the salt as the first
-16-octets of the HMAC of a locally generated nonce and the franking_base_secret.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+16-octets of the HMAC of a locally generated nonce and the <code>salt_base_secret</code>.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-9.2-2">
 <pre>hash_output = HMAC_SHA256( salt_base_secret, nonce )
 salt = hash_output[0..15]
@@ -3447,7 +3435,8 @@ original sender of a message to edit or delete that message, unless there is a
 specific, concrete authorization policy which allows it. Likewise, even the
 original sender of a message MUST NOT be able to change the semantics of any
 other portion of the message except for the contents of the NestedPart, without
-specific authorization.<a href="#section-9.3-4" class="pilcrow">¶</a></p>
+specific authorization.
+Specific authorization capabilities are described in <span>[<a href="#I-D.ietf-mimi-room-policy" class="cite xref">I-D.ietf-mimi-room-policy</a>]</span>.<a href="#section-9.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="validation-of-timestamp">
@@ -3462,10 +3451,6 @@ be later.
 Note that the optional franking mechanism discussed in Section 5.4.1.2 of
 <span>[<a href="#I-D.ietf-mimi-protocol" class="cite xref">I-D.ietf-mimi-protocol</a>]</span> prevents follower servers from modifying the
 timestamp.<a href="#section-9.4-1" class="pilcrow">¶</a></p>
-<blockquote id="section-9.4-2">
-          <p id="section-9.4-2.1"><strong>TODO</strong>: Discuss how to sanity check lastSeen, timestamp and the MLS
-epoch and generation, and the limitations of this approach.<a href="#section-9.4-2.1" class="pilcrow">¶</a></p>
-</blockquote>
 </section>
 </div>
 <div id="alternate-content-rendering">
@@ -3578,10 +3563,6 @@ application, should render the text like any other link.<a href="#section-9.6-9"
         <dd>
 <span class="refAuthor">Levinson, E.</span>, <span class="refTitle">"Content-ID and Message-ID Uniform Resource Locators"</span>, <span class="seriesInfo">RFC 2392</span>, <span class="seriesInfo">DOI 10.17487/RFC2392</span>, <time datetime="1998-08" class="refDate">August 1998</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2392">https://www.rfc-editor.org/info/rfc2392</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC3862">[RFC3862]</dt>
-        <dd>
-<span class="refAuthor">Klyne, G.</span> and <span class="refAuthor">D. Atkins</span>, <span class="refTitle">"Common Presence and Instant Messaging (CPIM): Message Format"</span>, <span class="seriesInfo">RFC 3862</span>, <span class="seriesInfo">DOI 10.17487/RFC3862</span>, <time datetime="2004-08" class="refDate">August 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3862">https://www.rfc-editor.org/info/rfc3862</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC5116">[RFC5116]</dt>
         <dd>
 <span class="refAuthor">McGrew, D.</span>, <span class="refTitle">"An Interface and Algorithms for Authenticated Encryption"</span>, <span class="seriesInfo">RFC 5116</span>, <span class="seriesInfo">DOI 10.17487/RFC5116</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5116">https://www.rfc-editor.org/info/rfc5116</a>&gt;</span>. </dd>
@@ -3610,6 +3591,10 @@ application, should render the text like any other link.<a href="#section-9.6-9"
         <dd>
 <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9420">https://www.rfc-editor.org/info/rfc9420</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9581">[RFC9581]</dt>
+        <dd>
+<span class="refAuthor">Bormann, C.</span>, <span class="refAuthor">Gamari, B.</span>, and <span class="refAuthor">H. Birkholz</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR) Tags for Time, Duration, and Period"</span>, <span class="seriesInfo">RFC 9581</span>, <span class="seriesInfo">DOI 10.17487/RFC9581</span>, <time datetime="2024-08" class="refDate">August 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9581">https://www.rfc-editor.org/info/rfc9581</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="W3C.CR-html52-20170808">[W3C.CR-html52-20170808]</dt>
       <dd>
 <span class="refAuthor">Faulkner, S.</span>, <span class="refAuthor">Eicholz, A.</span>, <span class="refAuthor">Leithead, T.</span>, <span class="refAuthor">Danilo, A.</span>, and <span class="refAuthor">S. Moon</span>, <span class="refTitle">"HTML 5.2"</span>, <span class="seriesInfo">World Wide Web Consortium CR CR-html52-20170808</span>, <time datetime="2017-08-08" class="refDate">8 August 2017</time>, <span>&lt;<a href="https://www.w3.org/TR/2017/CR-html52-20170808">https://www.w3.org/TR/2017/CR-html52-20170808</a>&gt;</span>. </dd>
@@ -3627,7 +3612,7 @@ application, should render the text like any other link.<a href="#section-9.6-9"
 <dd class="break"></dd>
 <dt id="I-D.ietf-cbor-edn-literals">[I-D.ietf-cbor-edn-literals]</dt>
         <dd>
-<span class="refAuthor">Bormann, C.</span>, <span class="refTitle">"CBOR Extended Diagnostic Notation (EDN)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-cbor-edn-literals-19</span>, <time datetime="2025-10-16" class="refDate">16 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-cbor-edn-literals-19">https://datatracker.ietf.org/doc/html/draft-ietf-cbor-edn-literals-19</a>&gt;</span>. </dd>
+<span class="refAuthor">Bormann, C.</span>, <span class="refTitle">"Concise Diagnostic Notation (CDN)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-cbor-edn-literals-26</span>, <time datetime="2026-06-15" class="refDate">15 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-cbor-edn-literals-26">https://datatracker.ietf.org/doc/html/draft-ietf-cbor-edn-literals-26</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-mimi-arch">[I-D.ietf-mimi-arch]</dt>
         <dd>
@@ -3635,15 +3620,23 @@ application, should render the text like any other link.<a href="#section-9.6-9"
 <dd class="break"></dd>
 <dt id="I-D.ietf-mimi-protocol">[I-D.ietf-mimi-protocol]</dt>
         <dd>
-<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Hodgson, M.</span>, <span class="refAuthor">Kohbrok, K.</span>, <span class="refAuthor">Mahy, R.</span>, <span class="refAuthor">Ralston, T.</span>, and <span class="refAuthor">R. Robert</span>, <span class="refTitle">"More Instant Messaging Interoperability (MIMI) using HTTPS and MLS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mimi-protocol-05</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mimi-protocol-05">https://datatracker.ietf.org/doc/html/draft-ietf-mimi-protocol-05</a>&gt;</span>. </dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Hodgson, M.</span>, <span class="refAuthor">Kohbrok, K.</span>, <span class="refAuthor">Mahy, R.</span>, <span class="refAuthor">Ralston, T.</span>, and <span class="refAuthor">R. Robert</span>, <span class="refTitle">"More Instant Messaging Interoperability (MIMI) using HTTPS and MLS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mimi-protocol-06</span>, <time datetime="2026-04-25" class="refDate">25 April 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mimi-protocol-06">https://datatracker.ietf.org/doc/html/draft-ietf-mimi-protocol-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-mimi-room-policy">[I-D.ietf-mimi-room-policy]</dt>
+        <dd>
+<span class="refAuthor">Mahy, R.</span>, <span class="refTitle">"Room Policy for the More Instant Messaging Interoperability (MIMI) Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mimi-room-policy-03</span>, <time datetime="2025-12-18" class="refDate">18 December 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mimi-room-policy-03">https://datatracker.ietf.org/doc/html/draft-ietf-mimi-room-policy-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-mls-extensions">[I-D.ietf-mls-extensions]</dt>
         <dd>
-<span class="refAuthor">Robert, R.</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Extensions"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mls-extensions-08</span>, <time datetime="2025-07-21" class="refDate">21 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mls-extensions-08">https://datatracker.ietf.org/doc/html/draft-ietf-mls-extensions-08</a>&gt;</span>. </dd>
+<span class="refAuthor">Robert, R.</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Extensions"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-mls-extensions-09</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-mls-extensions-09">https://datatracker.ietf.org/doc/html/draft-ietf-mls-extensions-09</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.mahy-mimi-identity">[I-D.mahy-mimi-identity]</dt>
         <dd>
 <span class="refAuthor">Mahy, R.</span>, <span class="refTitle">"More Instant Messaging Interoperability (MIMI) Identity Concepts"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mahy-mimi-identity-04</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-mahy-mimi-identity-04">https://datatracker.ietf.org/doc/html/draft-mahy-mimi-identity-04</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.mahy-mimi-message-status">[I-D.mahy-mimi-message-status]</dt>
+        <dd>
+<span class="refAuthor">Mahy, R.</span>, <span class="refTitle">"A Message Status format for the More Instant Messaging Interoperability (MIMI) content format"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mahy-mimi-message-status-01</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-mahy-mimi-message-status-01">https://datatracker.ietf.org/doc/html/draft-mahy-mimi-message-status-01</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2046">[RFC2046]</dt>
         <dd>
@@ -3659,7 +3652,11 @@ application, should render the text like any other link.<a href="#section-9.6-9"
 <dd class="break"></dd>
 <dt id="RFC3261">[RFC3261]</dt>
         <dd>
-<span class="refAuthor">Rosenberg, J.</span>, <span class="refAuthor">Schulzrinne, H.</span>, <span class="refAuthor">Camarillo, G.</span>, <span class="refAuthor">Johnston, A.</span>, <span class="refAuthor">Peterson, J.</span>, <span class="refAuthor">Sparks, R.</span>, <span class="refAuthor">Handley, M.</span>, and <span class="refAuthor">E. Schooler</span>, <span class="refTitle">"SIP: Session Initiation Protocol"</span>, <span class="seriesInfo">RFC 3261</span>, <span class="seriesInfo">DOI 10.17487/RFC3261</span>, <time datetime="2002-06" class="refDate">June 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3261">https://www.rfc-editor.org/info/rfc3261</a>&gt;</span>. </dd>
+<span class="refAuthor">Rosenberg, J.</span>, <span class="refAuthor">Schulzrinne, H.</span>, <span class="refAuthor">Camarillo, G.</span>, <span class="refAuthor">Johnston, A.</span>, <span class="refAuthor">Peterson, J.</span>, <span class="refAuthor">Sparks, R.</span>, <span class="refAuthor">Handley, M.</span>, and <span class="refAuthor">E. Schooler</span>, <span class="refTitle">"SIP: Session Initiation Protocol"</span>, <span class="seriesInfo">RFC 3261</span>, <span class="seriesInfo">DOI 10.17487/RFC3261</span>, <time datetime="2002-07" class="refDate">July 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3261">https://www.rfc-editor.org/info/rfc3261</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3862">[RFC3862]</dt>
+        <dd>
+<span class="refAuthor">Klyne, G.</span> and <span class="refAuthor">D. Atkins</span>, <span class="refTitle">"Common Presence and Instant Messaging (CPIM): Message Format"</span>, <span class="seriesInfo">RFC 3862</span>, <span class="seriesInfo">DOI 10.17487/RFC3862</span>, <time datetime="2004-08" class="refDate">August 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3862">https://www.rfc-editor.org/info/rfc3862</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC5545">[RFC5545]</dt>
         <dd>
@@ -3672,6 +3669,10 @@ application, should render the text like any other link.<a href="#section-9.6-9"
 <dt id="RFC6350">[RFC6350]</dt>
         <dd>
 <span class="refAuthor">Perreault, S.</span>, <span class="refTitle">"vCard Format Specification"</span>, <span class="seriesInfo">RFC 6350</span>, <span class="seriesInfo">DOI 10.17487/RFC6350</span>, <time datetime="2011-08" class="refDate">August 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6350">https://www.rfc-editor.org/info/rfc6350</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7094">[RFC7094]</dt>
+        <dd>
+<span class="refAuthor">McPherson, D.</span>, <span class="refAuthor">Oran, D.</span>, <span class="refAuthor">Thaler, D.</span>, and <span class="refAuthor">E. Osterweil</span>, <span class="refTitle">"Architectural Considerations of IP Anycast"</span>, <span class="seriesInfo">RFC 7094</span>, <span class="seriesInfo">DOI 10.17487/RFC7094</span>, <time datetime="2014-01" class="refDate">January 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7094">https://www.rfc-editor.org/info/rfc7094</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC7763">[RFC7763]</dt>
         <dd>
@@ -4296,6 +4297,31 @@ and the CDDL validates the CBOR.<a href="#appendix-C.8-1.7" class="pilcrow">¶</
           <li class="compact" id="appendix-C.10-1.4">add CBOR encoding, data model, and depth restrictions section (Issue #76/PR#79)<a href="#appendix-C.10-1.4" class="pilcrow">¶</a>
 </li>
           <li class="compact" id="appendix-C.10-1.5">removed the maximum length of MIMI content extensions<a href="#appendix-C.10-1.5" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+<div id="changes-between-draft-ietf-mimi-content-08-and-draft-ietf-mimi-content-09">
+<section id="appendix-C.11">
+        <h3 id="name-changes-between-draft-ietf-mimi-con">
+<a href="#appendix-C.11" class="section-number selfRef">C.11. </a><a href="#name-changes-between-draft-ietf-mimi-con" class="section-name selfRef">Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09</a>
+        </h3>
+<ul class="compact">
+<li class="compact" id="appendix-C.11-1.1">update and fix references; add reference to MIMI room policy<a href="#appendix-C.11-1.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.2">make clear that MIMI content could be used without MLS or the rest of MIMI<a href="#appendix-C.11-1.2" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.3">speak about how MIMI content fits with MIMI generally instead of referring to WG charter<a href="#appendix-C.11-1.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.4">give correct reference to mimi: URLs; move mention to im: URIs later<a href="#appendix-C.11-1.4" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.5">clarify that the URI lengths in the Message ID calculation algorithm are in octets, not characters<a href="#appendix-C.11-1.5" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.6">refer to the salt_base_secret instead of the franking_base_secret<a href="#appendix-C.11-1.6" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.7">remove a TODO related to lastSeen, which was long ago removed<a href="#appendix-C.11-1.7" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.11-1.8">fix some typos<a href="#appendix-C.11-1.8" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
