@@ -36,10 +36,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] when,
 and only when, they appear in all capitals, as shown here.
 
-The terms MLS client, MLS group, and KeyPackage have the same meanings as in
-the MLS protocol [@!RFC9420]. Other relevant terminology can be
-found in [@?I-D.ietf-mimi-arch].
-
 # Introduction
 
 RFC EDITOR: PLEASE REMOVE THE FOLLOWING PARAGRAPH. The source for
@@ -64,20 +60,11 @@ assumed standalone encryption of each message using a protocol such as S/MIME
 SIP [@?RFC3261] and XMPP [@?RFC6120].  For a variety of practical reasons, interoperable
 end-to-end encryption between IM systems was never deployed commercially.
 
-There are now several instant messaging vendors implementing MLS, and the
-MIMI (More Instant Messaging Interoperability) Working Group is chartered
-to standardize an extensible interoperable messaging format for common
-features to be conveyed "inside" MLS application messages.
+There are now several instant messaging vendors implementing MLS. The MIMI (More Instant Messaging Interoperability) architecture [@?I-D.ietf-mimi-arch] describes an MLS profile and a provide-to-provider protocol ([@?I-D.ietf-mimi-protocol]), a policy mechanism [@?I-D.ietf-mimi-room-policy], and an extensible interoperable messaging format (this specification) for common features.
+The MIMI content format is designed to be conveyed "inside" MLS application messages, but it is sufficient flexible that it can be used in other contexts, including without encryption.
 
-This document assumes that MLS clients advertise media types they support
-and can determine what media types are required to join a
-specific MLS group using the content advertisement extensions in Section 2.3 of
-[@!I-D.ietf-mls-extensions]. It allows implementations to define MLS groups
-with different media type requirements and allows MLS clients to send
-extended or proprietary messages that would be interpreted by some members
-of the group while assuring that an interoperable end-to-end encrypted
-baseline is available to all members, even when the group spans multiple
-systems or vendors.
+When used with MLS, this specification assumes that MLS clients advertise media types they support, and can determine what media types are required in a specific MLS group, by using the content advertisement extensions in Section 6.2 of [@!I-D.ietf-mls-extensions].
+It allows implementations to define media type requirements per group, and allows MLS clients to send extended or proprietary messages that would be interpreted by some members of the group while assuring that an interoperable end-to-end encrypted baseline is available to all members, even when the group spans multiple systems or vendors.
 
 Below is a list of some features commonly found in IM group chat systems:
 
@@ -94,7 +81,7 @@ Below is a list of some features commonly found in IM group chat systems:
 * message threading
 
 Delivery notifications and read receipts are addressed in
-{{?I-D.mahy-mimi-message-status}}. Calling and conferencing will also be
+[?I-D.mahy-mimi-message-status]. Calling and conferencing will also be
 addressed in another document.
 
 # Overview
@@ -110,7 +97,7 @@ collisions. This rules out using multipart MIME types.
 types (ex: images). This rules out using JSON to carry the binary data.
 
 All examples start with an instance document annotated in the CBOR
-Extended Diagnostic Notation (described in [Appendix G of @!RFC8610] and
+Extended Diagnostic Notation (described in Appendix G of [@!RFC8610] and
 more rigorously specified in [@?I-D.ietf-cbor-edn-literals]), and then
 include a hex dump of the CBOR data in the pretty printed format popularized
 by the CBOR playground website (https://cbor.me) with some minor whitespace
@@ -133,9 +120,8 @@ of identifier described as the senderClientUrl in the examples.
 * group or room or conversation or channel name (either internal or external representation).
 This is the type of identifier described as the MLS group URL in the examples.
 
-This proposal relies on URIs for naming and identifiers. All the example use
-the `im:` URI scheme (defined in [@!RFC3862]), but any instant messaging scheme
-could be used.
+This proposal relies on URIs for naming and identifiers. All the examples use
+the `mimi:` URI scheme (as described in Table 1 of [@?I-D.ietf-mimi-protocol]), but any instant messaging scheme could be used, such as the `im:` URI scheme ([@?RFC3862]).
 
 ## Message ID
 
@@ -149,9 +135,8 @@ room URI.
 Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
 [IANA hash algorithm registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg).
-The senderUriLength and roomUriLength are big-endian unsigned 16-bit integers
-representing the length of the sender URI, and the room URI, respectively.
-The senderUriLength, sender URI, roomUriLength, room URI, the entire MIMI
+The `senderUriLength` and `roomUriLength` are big-endian unsigned 16-bit integers representing the length of the sender URI (in octets), and the room URI, respectively.
+The `senderUriLength`, sender URI, `roomUriLength`, room URI, the entire MIMI
 message content (including the salt), and the salt (again) are all concatenated,
 and then hashed with the algorithm identified in the first octet. The first 31
 octets of the hash_output is appended to the hash function ID.
@@ -167,7 +152,7 @@ The MIMI content format uses the SHA-256 hash algorithm (identifier 0x01) by
 default, regardless of the hash algorithm of the cipher suite of a room's MLS
 group. The initial octet allows the MIMI protocol to deprecate SHA-256 and
 specify a new default algorithm in the future (for example if a practical
-birthday attack on SHA_256 becomes feasible).
+birthday attack on SHA-256 becomes feasible).
 
 > The salt is duplicated in the input to the hash to avoid a SHA-256 length
 > extension attack.
@@ -304,7 +289,7 @@ Bob might just send a message saying he doesn't like pineapple on pizza.
 If clients want to detect messages sent out of order by the hub, they
 require notification of message delivery at the MLS level (ex: the AppAck
 mechanism provided in [@?I-D.ietf-mls-extensions]) or at the MIMI level,
-such as the format defined in {{?I-D.mahy-mimi-message-status}}.
+such as the format defined in [@?I-D.mahy-mimi-message-status].
 
 ## Extension Fields
 
@@ -549,12 +534,12 @@ algorithm.
 In addition to fields which are contained in a MIMI content message,
 there is the hub accepted timestamp, which can be represented either
 as milliseconds since the start of the UNIX epoch, or for future
-extensibility as a CBOR extended time tag as defined in {{Section 3 of
-!RFC9581}}. There are also two fields the implementation can definitely derive:
+extensibility as a CBOR extended time tag as defined in Section 3 of
+[@!RFC9581]. There are also two fields the implementation using MLS can definitely derive:
 (the MLS group ID {12}, and the leaf index of the sender {13}). Many
 implementations could also determine one or more of: the sender's client
-identifier URL {14}, the user identifier URL of the credential associated
-with the sender {15}, and the identifier URL for the MIMI room {16}.
+identifier URL {14}, the user identifier URL (from the credential associated
+with the sender) {15}, and the identifier URL for the MIMI room {16}.
 
 ``` cddl
 MessageDerivedValues = [
@@ -822,7 +807,7 @@ message is read) but shows a visual indication that it has been edited.
 The `replaces` data field includes the message ID of the message to
 edit/replace. The message included in the body is a replacement for the message
 with the replaced message ID.
-If the same message is placed more than once, the `replaces` data field refers
+If the same message is replaced more than once, the `replaces` data field refers
 to the message ID of the first instance of the message. This allows maximum
 correlation of different version of the same message, even if the receiver was
 not privy to all of the original versions.
@@ -882,7 +867,7 @@ receiving client at a certain time whether they have been read or not.
 
 As with manually deleted messages, there is no guarantee that an uncooperative
 client or a determined user will not save the content of the message. The goal
-instead is to allow cooperating client that respect the convention to signal
+instead is to allow cooperating clients that respect the convention to signal
 expiration times clearly.
 
 The `expires` data field contains the absolute timestamp when, or relative
@@ -1098,7 +1083,7 @@ In summary, this consists of:
 
 Most CBOR libraries automatically use the shortest form and use definite length. Support for bigints is optional and is not required by any if the values built into the MIMI Content specification. Most implementations of CBOR which support bigints can automatically reduce to regular ints.
 
-The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in 4.2.1, but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in RFC7094 "canonical" order.
+The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in the order described in Section 4.2.1 of [@!RFC8949], but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in [@?RFC7094] "canonical" order.
 
 ## Data model restrictions
 
@@ -1416,7 +1401,7 @@ cases, and should not be considered the result of a malicious sender.
     Such a message could have been sent before the local client joined.
 * body
   - where a body part contains an unrecognized Disposition value. The
-  unknown value should be treated as if it where `render`.
+  unknown value should be treated as if it were `render`.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
 
@@ -1425,7 +1410,7 @@ cases, and should not be considered the result of a malicious sender.
 To ensure a strong source of entropy for the per-message unique salt required in
 each message, the client can export a secret from the MLS key schedule, for
 example with the label `salt_base_secret` and calculate the salt as the first
-16-octets of the HMAC of a locally generated nonce and the franking_base_secret.
+16-octets of the HMAC of a locally generated nonce and the `salt_base_secret`.
 
 ~~~
 hash_output = HMAC_SHA256( salt_base_secret, nonce )
@@ -1462,6 +1447,7 @@ specific, concrete authorization policy which allows it. Likewise, even the
 original sender of a message MUST NOT be able to change the semantics of any
 other portion of the message except for the contents of the NestedPart, without
 specific authorization.
+Specific authorization capabilities are described in [@?I-D.ietf-mimi-room-policy].
 
 ## Validation of timestamp
 
@@ -1473,8 +1459,6 @@ Note that the optional franking mechanism discussed in Section 5.4.1.2 of
 [@?I-D.ietf-mimi-protocol] prevents follower servers from modifying the
 timestamp.
 
-> **TODO**: Discuss how to sanity check lastSeen, timestamp and the MLS
-> epoch and generation, and the limitations of this approach.
 
 ## Alternate content rendering
 
@@ -1755,3 +1739,14 @@ and the CDDL validates the CBOR.
 * add IANA registry for disposition values (Issue #64/PR#71)
 * add CBOR encoding, data model, and depth restrictions section (Issue #76/PR#79)
 * removed the maximum length of MIMI content extensions
+
+## Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09
+
+* update and fix references; add reference to MIMI room policy
+* make clear that MIMI content could be used without MLS or the rest of MIMI
+* speak about how MIMI content fits with MIMI generally instead of referring to WG charter
+* give correct reference to mimi: URLs; move mention to im: URIs later
+* clarify that the URI lengths in the Message ID calculation algorithm are in octets, not characters
+* refer to the salt_base_secret instead of the franking_base_secret
+* remove a TODO related to lastSeen, which was long ago removed
+* fix some typos
