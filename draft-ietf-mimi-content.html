@@ -1477,7 +1477,7 @@ include a hex dump of the CBOR data in the pretty printed format popularized
 by the CBOR playground website (<a href="https://cbor.me">https://cbor.me</a>) with some minor whitespace
 and comment reformatting. Finally, a message ID for the message is included
 for most messages.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">All the instance documents validate using the CDDL schemas in Appendix B and
+<p id="section-3.1-4">All the instance documents validate using the CDDL schemas in <a href="#cddl-schemas" class="auto internal xref">Appendix A</a> and
 are included in the examples directory in the github repo for this document.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1713,7 +1713,7 @@ unknownExtension = (
    name =&gt; value
 )
 name = int / tstr .size (1..255)
-value = any .size (0..4095)
+value = any
 
 </pre><a href="#section-4.3-2" class="pilcrow">¶</a>
 </div>
@@ -1890,7 +1890,7 @@ content does not expire.<a href="#section-4.5-2" class="pilcrow">¶</a></p>
 <pre>ExternalPart = (
     cardinality: external,
     contentType: tstr,     ; An IANA media type {8}
-    url: uri,              ; A URL where the content can be fetched
+    url: tstr,             ; A URL where the content can be fetched
     expires: uint .size 4, ; expiration in seconds since UNIX epoch
     size: uint .size 8,    ; size of content in octets
     encAlg: uint .size 2,  ; An IANA AEAD Algorithm number, or zero
@@ -1917,7 +1917,8 @@ IANA-registered Authenticated Encryption with Additional Data (AEAD)
 algorithm as described in <span>[<a href="#RFC5116" class="cite xref">RFC5116</a>]</span>. The key, nonce, and additional
 authenticated data (aad) values are set to the values used during the
 encryption. Unless modified by an extension, the default value of the
-<code>aad</code> is empty.<a href="#section-4.5-6" class="pilcrow">¶</a></p>
+<code>aad</code> is empty. The <code>contentHash</code> is computed over the content as stored
+at the URL, which is the ciphertext when <code>encAlg</code> is not zero.<a href="#section-4.5-6" class="pilcrow">¶</a></p>
 <p id="section-4.5-7">If the external URL is a service, or the external content is not considered
 private, the <code>encAlg</code> is set to zero, and the <code>key</code>, <code>nonce</code>, and <code>aad</code>
 fields are zero length.<a href="#section-4.5-7" class="pilcrow">¶</a></p>
@@ -1945,17 +1946,18 @@ with the sender) {15}, and the identifier URL for the MIMI room {16}.<a href="#s
     hubAcceptedTimestamp: Timestamp,
     mlsGroupId: bstr,                  ; value always available {12}
     senderLeafIndex: uint .size 4,     ; value always available {13}
-    senderClientUrl: uri               ; {14},
-    senderUserUrl: uri,                ; "From" {15}
-    roomUrl: uri                       ; "To"   {16}
+    senderClientUrl: MsgUri,           ; {14}
+    senderUserUrl: MsgUri,             ; "From" {15}
+    roomUrl: MsgUri                    ; "To"   {16}
 ]
 
+MsgUri = tstr
 MessageId = bstr .size 32
 Timestamp = MsecsSinceEpoch / ExtendedTime
 ; milliseconds since start of UNIX epoch
 MsecsSinceEpoch = uint .size 8
 ; extended time from RFC9581
-ExtendedTime = #6.1001({* name =&gt; value })
+ExtendedTime = #6.1001({* etimeKey =&gt; etimeValue })
 
 </pre><a href="#section-4.6-2" class="pilcrow">¶</a>
 </div>
@@ -1995,7 +1997,7 @@ hex dump of the CBOR data in the pretty printed format popularized by the
 CBOR playground website (<a href="https://cbor.me">https://cbor.me</a>) with some minor whitespace and
 comment reformatting. Finally, a message ID for the message is included for
 most messages.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">All the instance documents validate using the CDDL schemas in Appendix B and
+<p id="section-5-5">All the instance documents validate using the CDDL schemas in <a href="#cddl-schemas" class="auto internal xref">Appendix A</a> and
 are included in the examples directory in the github repo for this document.<a href="#section-5-5" class="pilcrow">¶</a></p>
 <div id="original-message">
 <section id="section-5.1">
@@ -2167,8 +2169,8 @@ The annotated EDN follows, then the pretty printed CBOR.<a href="#section-5.2-1"
    40                                   # bytes(0)
    f6                                   # primitive(22)
    58 20                                # bytes(32)
-      01b0084467273cc43d6f0ebeac13eb84
-      229c4fffe8f6c3594c905f47779e5a79
+      017ce54837404c3696e0c747b985cb17
+      2716d0ed0a3d249ca63ace7d82a096f4
    a2                                   # map(2)
       01                                # unsigned(1)
       78 1e                             # text(30)
@@ -2209,8 +2211,8 @@ The annotated EDN follows, then the pretty printed CBOR.<a href="#section-5.2-1"
 modeled on the reaction Content-Disposition token defined in <span>[<a href="#RFC9078" class="cite xref">RFC9078</a>]</span>.
 Both indicate that the intended disposition of the
 contents of the message is a reaction.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-<p id="section-5.3-2">The content in the sample message is a single Unicode heart character (U+2665)
-which is expressed in UTF-8 as the three octet sequence 0xe299a5.
+<p id="section-5.3-2">The content in the sample message is a single Unicode heart character (U+2764)
+which is expressed in UTF-8 as the three octet sequence 0xe29da4.
 Often a single text reaction consists of multiple Unicode characters. For
 example, the five Unicode characters for a medium skin-toned, female health
 worker (U+1F469 U+1F3FD U+200D U+2695 U+FE0F: woman, medium skin tone, combined
@@ -2253,7 +2255,7 @@ misleading rendering, or even avenues for attack.<a href="#section-5.3-4" class=
     "",                                  # language
     1,                                   # cardinality = single
     "text/plain;charset=utf-8",          # contentType
-    '❤'                                  # content = U+2665 (heart)
+    '❤'                                  # content = U+2764 (heart)
   ]
 ]
 
@@ -2267,8 +2269,8 @@ misleading rendering, or even avenues for attack.<a href="#section-5.3-4" class=
    40                                   # bytes(0)
    f6                                   # primitive(22)
    58 20                                # bytes(32)
-      01b0084467273cc43d6f0ebeac13eb84
-      229c4fffe8f6c3594c905f47779e5a79
+      017ce54837404c3696e0c747b985cb17
+      2716d0ed0a3d249ca63ace7d82a096f4
    a2                                   # map(2)
       01                                # unsigned(1)
       78 25                             # text(37)
@@ -2806,8 +2808,9 @@ Clients beginning a new "topic" populate the <code>topicId</code> with a unique
 opaque octet string. This could be the message ID of the first message
 sent related to the topic. Subsequent messages may include the same
 <code>topicId</code> for those messages to be associated with the same topic. The sort order
-for messages within a thread uses the timestamp field. If more than
-one message has the same timestamp, the lexically lowest message ID
+for messages within a thread uses its estimate of the sender timestamp. The hub
+accepted timestamp (<code>hubAcceptedTimestamp</code>) is preferred if it is available
+If more than one message has the same timestamp, the lexically lowest message ID
 sorts earlier.<a href="#section-5.11-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -3816,9 +3819,9 @@ Timestamp = MsecsSinceEpoch / ExtendedTime
 ; milliseconds since start of UNIX epoch
 MsecsSinceEpoch = uint .size 8
 ; extended time from RFC9581
-ExtendedTime = #6.1001({* name =&gt; value })
-name = int / tstr .size (1..255)
-value = any .size (0..4095)
+ExtendedTime = #6.1001({* etimeKey =&gt; etimeValue })
+etimeKey = int / tstr .size (1..255)
+etimeValue = any .size (0..4095)
 
 </pre><a href="#appendix-A.2-2" class="pilcrow">¶</a>
 </div>
