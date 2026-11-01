@@ -1484,7 +1484,7 @@ Table of Contents
    in the order described in Section 4.2.1 of [RFC8949], but preserve
    map order.  Therefore it should be straightforward for MIMI content
    extensions to present their maps in the correct order.
-   Implementations MUST NOT send MIMI content in [RFC7094] "canonical"
+   Implementations MUST NOT send MIMI content in [RFC7049] "canonical"
    order.
 
 6.2.  Data model restrictions
@@ -2151,10 +2151,9 @@ Contact Information:
               DOI 10.17487/RFC6350, August 2011,
               <https://www.rfc-editor.org/info/rfc6350>.
 
-   [RFC7094]  McPherson, D., Oran, D., Thaler, D., and E. Osterweil,
-              "Architectural Considerations of IP Anycast", RFC 7094,
-              DOI 10.17487/RFC7094, January 2014,
-              <https://www.rfc-editor.org/info/rfc7094>.
+   [RFC7049]  Bormann, C. and P. Hoffman, "Concise Binary Object
+              Representation (CBOR)", RFC 7049, DOI 10.17487/RFC7049,
+              October 2013, <https://www.rfc-editor.org/info/rfc7049>.
 
    [RFC7763]  Leonard, S., "The text/markdown Media Type", RFC 7763,
               DOI 10.17487/RFC7763, March 2016,
