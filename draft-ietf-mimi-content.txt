@@ -4,8 +4,8 @@
 
 MIMI                                                             R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                               4 July 2026
-Expires: 5 January 2027
+Intended status: Informational                           1 November 2026
+Expires: 5 May 2027
 
 
      More Instant Messaging Interoperability (MIMI) message content
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 January 2027.
+   This Internet-Draft will expire on 5 May 2027.
 
 Copyright Notice
 
@@ -2064,16 +2064,16 @@ Contact Information:
 
    [I-D.ietf-cbor-edn-literals]
               Bormann, C., "Concise Diagnostic Notation (CDN)", Work in
-              Progress, Internet-Draft, draft-ietf-cbor-edn-literals-26,
-              15 June 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-cbor-edn-literals-26>.
+              Progress, Internet-Draft, draft-ietf-cbor-edn-literals-29,
+              31 October 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-cbor-edn-literals-29>.
 
    [I-D.ietf-mimi-arch]
               Barnes, R., "An Architecture for More Instant Messaging
               Interoperability (MIMI)", Work in Progress, Internet-
-              Draft, draft-ietf-mimi-arch-02, 20 October 2025,
+              Draft, draft-ietf-mimi-arch-03, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mimi-
-              arch-02>.
+              arch-03>.
 
    [I-D.ietf-mimi-protocol]
               Barnes, R., Hodgson, M., Kohbrok, K., Mahy, R., Ralston,
@@ -2086,23 +2086,23 @@ Contact Information:
    [I-D.ietf-mimi-room-policy]
               Mahy, R., "Room Policy for the More Instant Messaging
               Interoperability (MIMI) Protocol", Work in Progress,
-              Internet-Draft, draft-ietf-mimi-room-policy-03, 18
-              December 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-mimi-room-policy-03>.
+              Internet-Draft, draft-ietf-mimi-room-policy-04, 6 July
+              2026, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              mimi-room-policy-04>.
 
    [I-D.ietf-mls-extensions]
               Robert, R., "The Messaging Layer Security (MLS)
               Extensions", Work in Progress, Internet-Draft, draft-ietf-
-              mls-extensions-09, 2 March 2026,
+              mls-extensions-10, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
-              extensions-09>.
+              extensions-10>.
 
    [I-D.mahy-mimi-identity]
               Mahy, R., "More Instant Messaging Interoperability (MIMI)
               Identity Concepts", Work in Progress, Internet-Draft,
-              draft-mahy-mimi-identity-04, 20 October 2025,
+              draft-mahy-mimi-identity-05, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-mahy-mimi-
-              identity-04>.
+              identity-05>.
 
    [I-D.mahy-mimi-message-status]
               Mahy, R., "A Message Status format for the More Instant
