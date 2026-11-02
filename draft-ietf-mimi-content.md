@@ -1068,8 +1068,7 @@ sent related to the topic. Subsequent messages may include the same
 for messages within a thread uses the client's estimate of the sender
 timestamp. The hub accepted timestamp (`hubAcceptedTimestamp`) is preferred
 if it is available. If more than one message has the same timestamp, the
-lexically lowest message ID
-sorts earlier.
+lexically lowest message ID sorts earlier.
 
 
 # CBOR Data Model and Encoding Restrictions
