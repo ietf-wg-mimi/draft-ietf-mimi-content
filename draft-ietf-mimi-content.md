@@ -1088,6 +1088,11 @@ Most CBOR libraries automatically use the shortest form and use definite length.
 
 The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in the order described in Section 4.2.1 of [@!RFC8949], but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in [@?RFC7049] "canonical" order.
 
+Receivers MUST reject a MIMI content document that uses indefinite length
+encoding or contains duplicate map keys. Because many CBOR libraries do not
+expose the specific encoding size or sent map order, receivers are not expected
+to strictly enforce these aspects of the received encoding.
+
 ## Data model restrictions
 
 - map keys for MIMI content extensions MUST be either integers, or text strings up to 255 octets long
@@ -1390,6 +1395,8 @@ represent malicious messages. These should be logged and discarded.
     expiration)
   - refers to a date more than a year in the future (possible with both
     relative and absolute expiration)
+* encoding
+  - uses indefinite length encoding or contains duplicate map keys
 * body
   - has too many body parts (more than 1024, counting every `NestedPart`,
     including each `MultiPart`)
