@@ -1099,7 +1099,7 @@ The only map inside the MIMI content format is the extensions map. Many popular 
 
 ## Depth restrictions
 
-`NestedParts` MUST NOT be nested more than 4-levels deep.
+`NestedParts` MUST NOT be nested more than 4-levels deep. The `body` is at level 1.
 
 MIMI content extensions MUST NOT contain any combination of tags, maps, or arrays at more than 4 levels of depth.
 Specifically the MIMI content extensions map shown below has 4 levels of depth.
@@ -1391,7 +1391,8 @@ represent malicious messages. These should be logged and discarded.
   - refers to a date more than a year in the future (possible with both
     relative and absolute expiration)
 * body
-  - has too many body parts (more than 1024)
+  - has too many body parts (more than 1024, counting every `NestedPart`,
+    including each `MultiPart`)
   - is nested too deeply (more than 4 levels deep)
   - is too large (according to local policy)
   - has an unknown PartSemantics value
