@@ -138,7 +138,7 @@ The `senderUri` represents the participant (the senderUserUrl) of the sender of
 the message, as made available by the enclosing protocol, complete with its
 scheme. The `roomUri` represents a URI for the group chat or "room", as made
 available by the enclosing protocol, complete with its scheme. One or both of
-these URIs MAY also be present in the MIMI content extensions (#extensions). Two
+these URIs MAY also be present in the MIMI content extensions (see (#extensions)). Two
 specific extensions are defined in (#keys-registry). If either a `senderUri` or
 a `roomUri` is present in such an extension, the extension value MUST match the
 URI in the enclosing protocol. The receiver of a MIMI content message MUST
@@ -1394,9 +1394,9 @@ represent malicious messages. These should be logged and discarded.
 
 * sender and destination of the message
   - where the apparent sender is not a member of the target MLS group
-  - where a `sender_uri` extension, if present, does not match the out-of-band
+  - where a `senderUri` extension, if present, does not match the out-of-band
     sender URI
-  - where a `room_uri` extension, if present, does not match the out-of-band
+  - where a `roomUri` extension, if present, does not match the out-of-band
     room URI
 * message IDs
   - which duplicate another message ID already encountered
@@ -1779,7 +1779,7 @@ and the CDDL validates the CBOR.
 * remove a TODO related to lastSeen, which was long ago removed
 * fix some typos
 
-## Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09
+## Changes between draft-ietf-mimi-content-09 and draft-ietf-mimi-content-10
 
 * clarify Message ID calc when `senderUri` or `roomUri` not in extensions;
   mismatch between out-of-band and extensions values is a hard error.
