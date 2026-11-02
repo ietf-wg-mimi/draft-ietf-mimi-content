@@ -1761,3 +1761,18 @@ and the CDDL validates the CBOR.
 * refer to the salt_base_secret instead of the franking_base_secret
 * remove a TODO related to lastSeen, which was long ago removed
 * fix some typos
+
+## Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09
+
+* clarify Message ID calc when `senderUri` or `roomUri` not in extensions
+* tighten up wording about nesting and body-part limits
+* made text about timestamps clearer
+* add receiver CBOR decoding language
+* make CDDL, text, and examples self-consistent
+  * fix CDDL: URLs are untagged
+  * fix CDDL: extensions no longer limited to 4096 bytes
+  * fix one old message ID in examples
+  * make the heart emoji comment consistent with example
+  * rename name/value in implied.cddl to avoid conflict with main CDDL
+* clarify calculation of `contentHash`
+* editorial pass, fix refs
