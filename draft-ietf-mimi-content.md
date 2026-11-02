@@ -1077,12 +1077,6 @@ sorts earlier.
 
 MIMI content documents MUST be encoded using CBOR "deterministic" serialization as defined in Section 4.2.1 of [@!RFC8949].
 
-Receivers MUST reject a MIMI content document that uses indefinite length
-encoding or contains duplicate map keys. Receivers SHOULD accept a document
-whose maps are unsorted or which does not use the shortest encoding. Many CBOR
-libraries do not expose these details when decoding, and accepting them keeps
-all members of a room seeing the same messages.
-
 In summary, this consists of:
 
 - using the shortest CBOR encoding of integers, tags, and floats, and the shortest encoding of the length of byte strings, text strings, arrays, and maps.
@@ -1093,6 +1087,11 @@ In summary, this consists of:
 Most CBOR libraries automatically use the shortest form and use definite length. Support for bigints is optional and is not required by any if the values built into the MIMI Content specification. Most implementations of CBOR which support bigints can automatically reduce to regular ints.
 
 The only map inside the MIMI content format is the extensions map. Many popular implementations of CBOR do not yet support map sorting in the order described in Section 4.2.1 of [@!RFC8949], but preserve map order. Therefore it should be straightforward for MIMI content extensions to present their maps in the correct order. Implementations MUST NOT send MIMI content in [@?RFC7049] "canonical" order.
+
+Receivers MUST reject a MIMI content document that uses indefinite length
+encoding or contains duplicate map keys. Because many CBOR libraries do not
+expose the specific encoding size or sent map order, receivers are not expected
+to strictly enforce these aspects of the received encoding.
 
 ## Data model restrictions
 
