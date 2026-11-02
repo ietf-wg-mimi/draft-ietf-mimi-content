@@ -1065,10 +1065,10 @@ Clients beginning a new "topic" populate the `topicId` with a unique
 opaque octet string. This could be the message ID of the first message
 sent related to the topic. Subsequent messages may include the same
 `topicId` for those messages to be associated with the same topic. The sort order
-for messages within a thread uses its estimate of the sender timestamp. The hub
-accepted timestamp (`hubAcceptedTimestamp`) is preferred if it is available
-If more than one message has the same timestamp, the lexically lowest message ID
-sorts earlier.
+for messages within a thread uses the client's estimate of the sender
+timestamp. The hub accepted timestamp (`hubAcceptedTimestamp`) is preferred
+if it is available. If more than one message has the same timestamp, the
+lexically lowest message ID sorts earlier.
 
 
 # CBOR Data Model and Encoding Restrictions
