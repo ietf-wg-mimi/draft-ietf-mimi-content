@@ -2868,7 +2868,7 @@ lexically lowest message ID sorts earlier.<a href="#section-5.11-1" class="pilcr
         <h3 id="name-depth-restrictions">
 <a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-depth-restrictions" class="section-name selfRef">Depth restrictions</a>
         </h3>
-<p id="section-6.3-1"><code>NestedParts</code> MUST NOT be nested more than 4-levels deep.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-1"><code>NestedParts</code> MUST NOT be nested more than 4-levels deep. The <code>body</code> is at level 1.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.3-2">MIMI content extensions MUST NOT contain any combination of tags, maps, or arrays at more than 4 levels of depth.
 Specifically the MIMI content extensions map shown below has 4 levels of depth.
 The extensions map is at level 1, the array inside map key 256 is at level 2, the array inside that array is at level 3, the URI inside tag 32 is at level 4.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
@@ -3346,7 +3346,8 @@ relative and absolute expiration)<a href="#section-9.1-2.5.2.2" class="pilcrow">
           <li class="compact" id="section-9.1-2.6">
             <p id="section-9.1-2.6.1">body<a href="#section-9.1-2.6.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-9.1-2.6.2.1">has too many body parts (more than 1024)<a href="#section-9.1-2.6.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-9.1-2.6.2.1">has too many body parts (more than 1024, counting every <code>NestedPart</code>,
+including each <code>MultiPart</code>)<a href="#section-9.1-2.6.2.1" class="pilcrow">¶</a>
 </li>
               <li class="compact" id="section-9.1-2.6.2.2">is nested too deeply (more than 4 levels deep)<a href="#section-9.1-2.6.2.2" class="pilcrow">¶</a>
 </li>
