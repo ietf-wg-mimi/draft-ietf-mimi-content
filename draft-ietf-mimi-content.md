@@ -120,8 +120,10 @@ of identifier described as the senderClientUrl in the examples.
 * group or room or conversation or channel name (either internal or external representation).
 This is the type of identifier described as the MLS group URL in the examples.
 
-This proposal relies on URIs for naming and identifiers. All the examples use
-the `mimi:` URI scheme (as described in Table 1 of [@?I-D.ietf-mimi-protocol]), but any instant messaging scheme could be used, such as the `im:` URI scheme ([@?RFC3862]).
+This proposal relies on the Uniform Resource Identifier (URI) [@!RFC3986] for
+naming and identifiers. All the examples in this document use the `mimi:` URI
+scheme (as described in Table 1 of [@?I-D.ietf-mimi-protocol]), but any instant
+messaging scheme could be used, such as the `im:` URI scheme ([@?RFC3862]).
 
 ## Message ID
 
@@ -131,6 +133,17 @@ messages. Every MIMI content message contains a 16-octet per-message
 cryptographically random salt, and has a 32-octet message ID which is calculated
 from the hash of the message (including the salt), the sender URI, and the
 room URI.
+
+The `senderUri` represents the participant (the senderUserUrl) of the sender of
+the message, as made available by the enclosing protocol, complete with its
+scheme. The `roomUri` represents a URI for the group chat or "room", as made
+available by the enclosing protocol, complete with its scheme. One or both of
+these URIs MAY also be present in the MIMI content extensions (#extensions). Two
+specific extensions are defined in (#keys-registry). If either a `senderUri` or
+a `roomUri` is present in such an extension, the extension value MUST match the
+URI in the enclosing protocol. The receiver of a MIMI content message MUST
+reject the message if either value in the extensions is present but does not
+match the URI in the enclosing protocol.
 
 Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
@@ -291,7 +304,7 @@ require notification of message delivery at the MLS level (ex: the AppAck
 mechanism provided in [@?I-D.ietf-mls-extensions]) or at the MIMI level,
 such as the format defined in [@?I-D.mahy-mimi-message-status].
 
-## Extension Fields
+## Extension Fields {#extensions}
 
 In order to add additional functionality to MIMI, senders can include
 extension fields in the message format {6}. Each extension has a CBOR map key
@@ -1379,8 +1392,12 @@ Contact Information:
 The following cases are examples of nonsensical values that most likely
 represent malicious messages. These should be logged and discarded.
 
-* sender of the message
+* sender and destination of the message
   - where the apparent sender is not a member of the target MLS group
+  - where a `sender_uri` extension, if present, does not match the out-of-band
+    sender URI
+  - where a `room_uri` extension, if present, does not match the out-of-band
+    room URI
 * message IDs
   - which duplicate another message ID already encountered
   - where the first octet of the message ID is an unknown hash algorithm.
@@ -1412,7 +1429,7 @@ cases, and should not be considered the result of a malicious sender.
     Such a message could have been sent before the local client joined.
 * body
   - where a body part contains an unrecognized Disposition value. The
-  unknown value should be treated as if it were `render`.
+    unknown value should be treated as if it were `render`.
   - where a contentType is unrecognized or unsupported.
   - where a language tag is unrecognized or unsupported.
 
@@ -1761,3 +1778,19 @@ and the CDDL validates the CBOR.
 * refer to the salt_base_secret instead of the franking_base_secret
 * remove a TODO related to lastSeen, which was long ago removed
 * fix some typos
+
+## Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09
+
+* clarify Message ID calc when `senderUri` or `roomUri` not in extensions;
+  mismatch between out-of-band and extensions values is a hard error.
+* tighten up wording about nesting and body-part limits
+* made text about timestamps clearer
+* add receiver CBOR decoding language
+* make CDDL, text, and examples self-consistent
+  * fix CDDL: URLs are untagged
+  * fix CDDL: extensions no longer limited to 4096 bytes
+  * fix one old message ID in examples
+  * make the heart emoji comment consistent with example
+  * rename name/value in implied.cddl to avoid conflict with main CDDL
+* clarify calculation of `contentHash`
+* editorial pass, fix refs
