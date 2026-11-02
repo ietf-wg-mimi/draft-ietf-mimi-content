@@ -134,6 +134,8 @@ Table of Contents
             draft-ietf-mimi-content-08
      C.11. Changes between draft-ietf-mimi-content-08 and
             draft-ietf-mimi-content-09
+     C.12. Changes between draft-ietf-mimi-content-08 and
+            draft-ietf-mimi-content-09
    Author's Address
 
 1.  Terminology
@@ -253,8 +255,9 @@ Table of Contents
       external representation).  This is the type of identifier
       described as the MLS group URL in the examples.
 
-   This proposal relies on URIs for naming and identifiers.  All the
-   examples use the mimi: URI scheme (as described in Table 1 of
+   This proposal relies on the Uniform Resource Identifier (URI)
+   [RFC3986] for naming and identifiers.  All the examples in this
+   document use the mimi: URI scheme (as described in Table 1 of
    [I-D.ietf-mimi-protocol]), but any instant messaging scheme could be
    used, such as the im: URI scheme ([RFC3862]).
 
@@ -266,6 +269,18 @@ Table of Contents
    per-message cryptographically random salt, and has a 32-octet message
    ID which is calculated from the hash of the message (including the
    salt), the sender URI, and the room URI.
+
+   The senderUri represents the participant (the senderUserUrl) of the
+   sender of the message, as made available by the enclosing protocol,
+   complete with its scheme.  The roomUri represents a URI for the group
+   chat or "room", as made available by the enclosing protocol, complete
+   with its scheme.  One or both of these URIs MAY also be present in
+   the MIMI content extensions Section 4.3.  Two specific extensions are
+   defined in Section 8.2.1.  If either a senderUri or a roomUri is
+   present in such an extension, the extension value MUST match the URI
+   in the enclosing protocol.  The receiver of a MIMI content message
+   MUST reject the message if either value in the extensions is present
+   but does not match the URI in the enclosing protocol.
 
    Calculation of the message ID works as follows.  The first octet of
    the MessageID is the hash function ID from the IANA hash algorithm
@@ -1841,9 +1856,13 @@ Contact Information:
    likely represent malicious messages.  These should be logged and
    discarded.
 
-   *  sender of the message
+   *  sender and destination of the message
       -  where the apparent sender is not a member of the target MLS
          group
+      -  where a sender_uri extension, if present, does not match the
+         out-of-band sender URI
+      -  where a room_uri extension, if present, does not match the out-
+         of-band room URI
    *  message IDs
       -  which duplicate another message ID already encountered
       -  where the first octet of the message ID is an unknown hash
@@ -2023,6 +2042,11 @@ Contact Information:
    [RFC2392]  Levinson, E., "Content-ID and Message-ID Uniform Resource
               Locators", RFC 2392, DOI 10.17487/RFC2392, August 1998,
               <https://www.rfc-editor.org/info/rfc2392>.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, DOI 10.17487/RFC3986, January 2005,
+              <https://www.rfc-editor.org/info/rfc3986>.
 
    [RFC5116]  McGrew, D., "An Interface and Algorithms for Authenticated
               Encryption", RFC 5116, DOI 10.17487/RFC5116, January 2008,
@@ -2683,6 +2707,25 @@ C.11.  Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-
    *  refer to the salt_base_secret instead of the franking_base_secret
    *  remove a TODO related to lastSeen, which was long ago removed
    *  fix some typos
+
+C.12.  Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-
+       content-09
+
+   *  clarify Message ID calc when senderUri or roomUri not in
+      extensions; mismatch between out-of-band and extensions values is
+      a hard error.
+   *  tighten up wording about nesting and body-part limits
+   *  made text about timestamps clearer
+   *  add receiver CBOR decoding language
+   *  make CDDL, text, and examples self-consistent
+      -  fix CDDL: URLs are untagged
+      -  fix CDDL: extensions no longer limited to 4096 bytes
+      -  fix one old message ID in examples
+      -  make the heart emoji comment consistent with example
+      -  rename name/value in implied.cddl to avoid conflict with main
+         CDDL
+   *  clarify calculation of contentHash
+   *  editorial pass, fix refs
 
 Author's Address
 

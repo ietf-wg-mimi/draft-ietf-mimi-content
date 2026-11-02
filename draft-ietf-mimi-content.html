@@ -1372,6 +1372,9 @@ interoperability of messages end-to-end encrypted inside the MLS
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.11">
                 <p id="section-toc.1-1.13.2.11.1"><a href="#appendix-C.11" class="auto internal xref">C.11</a>. <a href="#name-changes-between-draft-ietf-mimi-con" class="internal xref">Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.12">
+                <p id="section-toc.1-1.13.2.12.1"><a href="#appendix-C.12" class="auto internal xref">C.12</a>. <a href="#name-changes-between-draft-ietf-mimi-con-2" class="internal xref">Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
@@ -1500,8 +1503,10 @@ of identifier described as the senderClientUrl in the examples.<a href="#section
 This is the type of identifier described as the MLS group URL in the examples.<a href="#section-3.2-2.3" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-3.2-3">This proposal relies on URIs for naming and identifiers. All the examples use
-the <code>mimi:</code> URI scheme (as described in Table 1 of <span>[<a href="#I-D.ietf-mimi-protocol" class="cite xref">I-D.ietf-mimi-protocol</a>]</span>), but any instant messaging scheme could be used, such as the <code>im:</code> URI scheme (<span>[<a href="#RFC3862" class="cite xref">RFC3862</a>]</span>).<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">This proposal relies on the Uniform Resource Identifier (URI) <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> for
+naming and identifiers. All the examples in this document use the <code>mimi:</code> URI
+scheme (as described in Table 1 of <span>[<a href="#I-D.ietf-mimi-protocol" class="cite xref">I-D.ietf-mimi-protocol</a>]</span>), but any instant
+messaging scheme could be used, such as the <code>im:</code> URI scheme (<span>[<a href="#RFC3862" class="cite xref">RFC3862</a>]</span>).<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="message-id">
@@ -1515,30 +1520,40 @@ messages. Every MIMI content message contains a 16-octet per-message
 cryptographically random salt, and has a 32-octet message ID which is calculated
 from the hash of the message (including the salt), the sender URI, and the
 room URI.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3-2">Calculation of the message ID works as follows. The first octet of the MessageID
+<p id="section-3.3-2">The <code>senderUri</code> represents the participant (the senderUserUrl) of the sender of
+the message, as made available by the enclosing protocol, complete with its
+scheme. The <code>roomUri</code> represents a URI for the group chat or "room", as made
+available by the enclosing protocol, complete with its scheme. One or both of
+these URIs MAY also be present in the MIMI content extensions <a href="#extensions" class="auto internal xref">Section 4.3</a>. Two
+specific extensions are defined in <a href="#keys-registry" class="auto internal xref">Section 8.2.1</a>. If either a <code>senderUri</code> or
+a <code>roomUri</code> is present in such an extension, the extension value MUST match the
+URI in the enclosing protocol. The receiver of a MIMI content message MUST
+reject the message if either value in the extensions is present but does not
+match the URI in the enclosing protocol.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-3">Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
 <a href="https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg">IANA hash algorithm registry</a>.
 The <code>senderUriLength</code> and <code>roomUriLength</code> are big-endian unsigned 16-bit integers representing the length of the sender URI (in octets), and the room URI, respectively.
 The <code>senderUriLength</code>, sender URI, <code>roomUriLength</code>, room URI, the entire MIMI
 message content (including the salt), and the salt (again) are all concatenated,
 and then hashed with the algorithm identified in the first octet. The first 31
-octets of the hash_output is appended to the hash function ID.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3.3-3">
+octets of the hash_output is appended to the hash function ID.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.3-4">
 <pre>hash_output = hash( senderUriLength || senderUri ||
                     roomUriLength   || roomUri   ||
                     message         || salt )
 messageId = hashAlg || hash_output[0..30]
 
-</pre><a href="#section-3.3-3" class="pilcrow">¶</a>
+</pre><a href="#section-3.3-4" class="pilcrow">¶</a>
 </div>
-<p id="section-3.3-4">The MIMI content format uses the SHA-256 hash algorithm (identifier 0x01) by
+<p id="section-3.3-5">The MIMI content format uses the SHA-256 hash algorithm (identifier 0x01) by
 default, regardless of the hash algorithm of the cipher suite of a room's MLS
 group. The initial octet allows the MIMI protocol to deprecate SHA-256 and
 specify a new default algorithm in the future (for example if a practical
-birthday attack on SHA-256 becomes feasible).<a href="#section-3.3-4" class="pilcrow">¶</a></p>
-<blockquote id="section-3.3-5">
-          <p id="section-3.3-5.1">The salt is duplicated in the input to the hash to avoid a SHA-256 length
-extension attack.<a href="#section-3.3-5.1" class="pilcrow">¶</a></p>
+birthday attack on SHA-256 becomes feasible).<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+<blockquote id="section-3.3-6">
+          <p id="section-3.3-6.1">The salt is duplicated in the input to the hash to avoid a SHA-256 length
+extension attack.<a href="#section-3.3-6.1" class="pilcrow">¶</a></p>
 </blockquote>
 </section>
 </div>
@@ -1689,7 +1704,7 @@ mechanism provided in <span>[<a href="#I-D.ietf-mls-extensions" class="cite xref
 such as the format defined in <span>[<a href="#I-D.mahy-mimi-message-status" class="cite xref">I-D.mahy-mimi-message-status</a>]</span>.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="extension-fields">
+<div id="extensions">
 <section id="section-4.3">
         <h3 id="name-extension-fields">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-extension-fields" class="section-name selfRef">Extension Fields</a>
@@ -3303,9 +3318,15 @@ Contact Information:
 represent malicious messages. These should be logged and discarded.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-9.1-2.1">
-            <p id="section-9.1-2.1.1">sender of the message<a href="#section-9.1-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-9.1-2.1.1">sender and destination of the message<a href="#section-9.1-2.1.1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-9.1-2.1.2.1">where the apparent sender is not a member of the target MLS group<a href="#section-9.1-2.1.2.1" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="section-9.1-2.1.2.2">where a <code>sender_uri</code> extension, if present, does not match the out-of-band
+sender URI<a href="#section-9.1-2.1.2.2" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="section-9.1-2.1.2.3">where a <code>room_uri</code> extension, if present, does not match the out-of-band
+room URI<a href="#section-9.1-2.1.2.3" class="pilcrow">¶</a>
 </li>
             </ul>
 </li>
@@ -3574,6 +3595,10 @@ application, should render the text like any other link.<a href="#section-9.6-9"
 <dt id="RFC2392">[RFC2392]</dt>
         <dd>
 <span class="refAuthor">Levinson, E.</span>, <span class="refTitle">"Content-ID and Message-ID Uniform Resource Locators"</span>, <span class="seriesInfo">RFC 2392</span>, <span class="seriesInfo">DOI 10.17487/RFC2392</span>, <time datetime="1998-08" class="refDate">August 1998</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2392">https://www.rfc-editor.org/info/rfc2392</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3986">[RFC3986]</dt>
+        <dd>
+<span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC5116">[RFC5116]</dt>
         <dd>
@@ -4334,6 +4359,43 @@ and the CDDL validates the CBOR.<a href="#appendix-C.8-1.7" class="pilcrow">¶</
           <li class="compact" id="appendix-C.11-1.7">remove a TODO related to lastSeen, which was long ago removed<a href="#appendix-C.11-1.7" class="pilcrow">¶</a>
 </li>
           <li class="compact" id="appendix-C.11-1.8">fix some typos<a href="#appendix-C.11-1.8" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+<div id="changes-between-draft-ietf-mimi-content-08-and-draft-ietf-mimi-content-09-1">
+<section id="appendix-C.12">
+        <h3 id="name-changes-between-draft-ietf-mimi-con-2">
+<a href="#appendix-C.12" class="section-number selfRef">C.12. </a><a href="#name-changes-between-draft-ietf-mimi-con-2" class="section-name selfRef">Changes between draft-ietf-mimi-content-08 and draft-ietf-mimi-content-09</a>
+        </h3>
+<ul class="compact">
+<li class="compact" id="appendix-C.12-1.1">clarify Message ID calc when <code>senderUri</code> or <code>roomUri</code> not in extensions;
+mismatch between out-of-band and extensions values is a hard error.<a href="#appendix-C.12-1.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.12-1.2">tighten up wording about nesting and body-part limits<a href="#appendix-C.12-1.2" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.12-1.3">made text about timestamps clearer<a href="#appendix-C.12-1.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.12-1.4">add receiver CBOR decoding language<a href="#appendix-C.12-1.4" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.12-1.5">
+            <p id="appendix-C.12-1.5.1">make CDDL, text, and examples self-consistent<a href="#appendix-C.12-1.5.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-C.12-1.5.2.1">fix CDDL: URLs are untagged<a href="#appendix-C.12-1.5.2.1" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="appendix-C.12-1.5.2.2">fix CDDL: extensions no longer limited to 4096 bytes<a href="#appendix-C.12-1.5.2.2" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="appendix-C.12-1.5.2.3">fix one old message ID in examples<a href="#appendix-C.12-1.5.2.3" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="appendix-C.12-1.5.2.4">make the heart emoji comment consistent with example<a href="#appendix-C.12-1.5.2.4" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="appendix-C.12-1.5.2.5">rename name/value in implied.cddl to avoid conflict with main CDDL<a href="#appendix-C.12-1.5.2.5" class="pilcrow">¶</a>
+</li>
+            </ul>
+</li>
+          <li class="compact" id="appendix-C.12-1.6">clarify calculation of <code>contentHash</code><a href="#appendix-C.12-1.6" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="appendix-C.12-1.7">editorial pass, fix refs<a href="#appendix-C.12-1.7" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
