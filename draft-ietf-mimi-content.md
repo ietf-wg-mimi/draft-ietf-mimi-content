@@ -143,7 +143,8 @@ specific extensions are defined in (#keys-registry). If either a `senderUri` or
 a `roomUri` is present in such an extension, the extension value MUST match the
 URI in the enclosing protocol. The receiver of a MIMI content message MUST
 reject the message if either value in the extensions is present but does not
-match the URI in the enclosing protocol.
+match the URI in the enclosing protocol. These comparisons use simple string
+comparison, as described in Section 6.2.1 of [@!RFC3986], with no normalization.
 
 Calculation of the message ID works as follows. The first octet of the MessageID
 is the hash function ID from the
